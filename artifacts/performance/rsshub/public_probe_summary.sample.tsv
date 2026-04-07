@@ -1,0 +1,3 @@
+probe_kind	target_host	status_code	latency_ms	result	checked_at_utc	note
+rsshub_health	rsshub.app	200	184	ok	2026-03-24T18:10:00Z	sanitized public sample
+rsshub_health	hub.slarker.me	200	241	ok	2026-03-24T18:10:08Z	sanitized public sample

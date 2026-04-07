@@ -1,0 +1,18 @@
+{
+  "manifest_version": 1,
+  "release_tag": "v0.1.1",
+  "generated_at": "2026-03-26T07:07:28.159294+00:00",
+  "evidence_scope": "historical-example",
+  "historical_example": true,
+  "git": {
+    "head_sha": "99f03eceb5a231f514948f1ea7247d4315709fc0",
+    "branch": "main",
+    "latest_tag": "closure-preflight-20260325-1549",
+    "dirty": true
+  },
+  "artifacts": {
+    "checksums_file": "artifacts/releases/v0.1.1/checksums.sha256",
+    "rollback_readiness_file": "artifacts/releases/v0.1.1/rollback/db-rollback-readiness.json",
+    "rollback_drill_file": "artifacts/releases/v0.1.1/rollback/drill.json"
+  }
+}

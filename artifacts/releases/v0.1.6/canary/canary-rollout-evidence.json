@@ -1,0 +1,7 @@
+{
+  "mode": "dry-run",
+  "release_tag": "v0.1.6",
+  "script": "scripts/deploy/canary_rollout.sh",
+  "result": "success",
+  "notes": "Dry-run canary routing snippet rendered for release evidence closeout."
+}

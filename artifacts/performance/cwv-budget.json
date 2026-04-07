@@ -1,0 +1,10 @@
+{
+  "name": "sourceharbor-cwv-budget",
+  "version": 1,
+  "budgets": {
+    "lcp_ms_p75": 2500,
+    "inp_ms_p75": 200,
+    "cls_p75": 0.1
+  },
+  "notes": "Release-readiness budget targets for the command center and public proof surfaces."
+}
