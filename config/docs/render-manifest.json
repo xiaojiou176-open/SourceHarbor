@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "generated_docs": [
+    {
+      "id": "governance_dashboard_reference",
+      "path": "docs/generated/governance-dashboard.md",
+      "kind": "render_only",
+      "sources": [
+        "config/docs/nav-registry.json",
+        "config/docs/boundary-policy.json",
+        "config/governance/public-entrypoints.json",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "id": "ci_topology_reference",
+      "path": "docs/generated/ci-topology.md",
+      "kind": "render_only",
+      "sources": [
+        ".github/workflows/ci.yml",
+        ".githooks/pre-push",
+        "config/governance/root-allowlist.json",
+        "config/governance/runtime-outputs.json",
+        ".github/workflows/build-ci-standard-image.yml",
+        ".github/workflows/release-evidence-attest.yml"
+      ]
+    },
+    {
+      "id": "required_checks_reference",
+      "path": "docs/generated/required-checks.md",
+      "kind": "render_only",
+      "sources": [
+        ".github/workflows/ci.yml",
+        ".githooks/pre-push"
+      ]
+    },
+    {
+      "id": "external_lane_truth_reference",
+      "path": "docs/generated/external-lane-truth-entry.md",
+      "kind": "render_only",
+      "sources": [
+        "config/governance/external-lane-contract.json",
+        "config/governance/current-proof-contract.json",
+        ".runtime-cache/reports/governance/external-lane-workflows.json"
+      ]
+    }
+  ],
+  "fragments": []
+}

@@ -1,0 +1,700 @@
+{
+  "version": 1,
+  "report_path": ".runtime-cache/reports/governance/disk-space-audit.json",
+  "cleanup_report_path": ".runtime-cache/reports/governance/disk-space-cleanup.json",
+  "migration_report_path": ".runtime-cache/reports/governance/disk-space-legacy-migration.json",
+  "legacy_retirement_quiet_minutes": 1440,
+  "canonical_paths": {
+    "repo_runtime_root": ".runtime-cache",
+    "user_state_root": "$HOME/.cache/sourceharbor",
+    "user_cache_root": "$HOME/.cache/sourceharbor",
+    "user_project_venv": "$HOME/.cache/sourceharbor/project-venv",
+    "legacy_state_root": "$HOME/.video-digestor",
+    "legacy_cache_root": "$HOME/.cache/video-digestor"
+  },
+  "legacy_extra_roots": [
+    "$HOME/.sourceharbor"
+  ],
+  "duplicate_env_policy": {
+    "canonical_mainline_path": "$HOME/.cache/sourceharbor/project-venv",
+    "duplicate_glob": "$HOME/.cache/sourceharbor/project-venv*",
+    "reference_files": [
+      ".env",
+      ".env.example",
+      "scripts/lib/standard_env.sh",
+      "infra/systemd/sourceharbor-api.service",
+      "infra/systemd/sourceharbor-worker.service"
+    ]
+  },
+  "migration_variables": [
+    {
+      "name": "PIPELINE_ARTIFACT_ROOT",
+      "canonical_path": "$HOME/.cache/sourceharbor/artifacts",
+      "path_kind": "directory",
+      "ownership": "repo-primary",
+      "allow_existing_target": false,
+      "retire_source_on_migrate": true
+    },
+    {
+      "name": "PIPELINE_WORKSPACE_DIR",
+      "canonical_path": "$HOME/.cache/sourceharbor/workspace",
+      "path_kind": "directory",
+      "ownership": "repo-primary",
+      "allow_existing_target": false,
+      "retire_source_on_migrate": true
+    },
+    {
+      "name": "SQLITE_PATH",
+      "canonical_path": "$HOME/.cache/sourceharbor/state/worker_state.db",
+      "path_kind": "file",
+      "ownership": "repo-primary",
+      "allow_existing_target": false,
+      "retire_source_on_migrate": true
+    },
+    {
+      "name": "SQLITE_STATE_PATH",
+      "canonical_path": "$HOME/.cache/sourceharbor/state/api_state.db",
+      "path_kind": "file",
+      "ownership": "repo-primary",
+      "allow_existing_target": false,
+      "retire_source_on_migrate": true
+    },
+    {
+      "name": "UV_PROJECT_ENVIRONMENT",
+      "canonical_path": "$HOME/.cache/sourceharbor/project-venv",
+      "path_kind": "directory",
+      "ownership": "repo-primary",
+      "allow_existing_target": true,
+      "existing_target_verify_command": [
+        "bash",
+        "-lc",
+        "test -x \"$TARGET_PATH/bin/python\" && \"$TARGET_PATH/bin/python\" -V >/dev/null"
+      ],
+      "retire_source_on_migrate": false
+    }
+  ],
+  "legacy_reference_files": [
+    ".env",
+    ".env.example",
+    "infra/systemd/sourceharbor-api.service",
+    "infra/systemd/sourceharbor-worker.service"
+  ],
+  "audit_targets": [
+    {
+      "id": "repo-root",
+      "label": "Repo root",
+      "path": ".",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "repo-root",
+      "count_in_layer_total": true
+    },
+    {
+      "id": "repo-runtime-cache",
+      "label": "Repo runtime cache",
+      "path": ".runtime-cache",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "runtime-cache"
+    },
+    {
+      "id": "repo-runtime-tmp",
+      "label": "Repo runtime tmp",
+      "path": ".runtime-cache/tmp",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "runtime-scratch",
+      "highlight": true
+    },
+    {
+      "id": "repo-web-runtime",
+      "label": "Repo web runtime workspace",
+      "path": ".runtime-cache/tmp/web-runtime",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "runtime-duplicate"
+    },
+    {
+      "id": "repo-verify-venv",
+      "label": "Repo verify venv",
+      "path": ".runtime-cache/tmp/sourceharbor-verify-venv",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "runtime-duplicate"
+    },
+    {
+      "id": "repo-ws6-test-venv",
+      "label": "Repo ws6 test venv",
+      "path": ".runtime-cache/tmp/ws6-test-venv",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "runtime-duplicate"
+    },
+    {
+      "id": "repo-web-node-modules",
+      "label": "Repo web node_modules",
+      "path": "apps/web/node_modules",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "mainline-dependency",
+      "highlight": true
+    },
+    {
+      "id": "repo-python-venv",
+      "label": "Repo Python venv",
+      "path": ".venv",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "mainline-dependency",
+      "highlight": true
+    },
+    {
+      "id": "repo-proof-scratch-manual-image-audit",
+      "label": "Repo manual image audit scratch",
+      "path": ".runtime-cache/tmp/manual-image-audit",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "proof-scratch",
+      "highlight": true
+    },
+    {
+      "id": "repo-proof-scratch-public-image-audit",
+      "label": "Repo public image audit scratch",
+      "path": ".runtime-cache/tmp/public-image-audit",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "proof-scratch",
+      "highlight": true
+    },
+    {
+      "id": "repo-proof-scratch-audit-images",
+      "label": "Repo audit images scratch",
+      "path": ".runtime-cache/tmp/audit-images",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "proof-scratch",
+      "highlight": true
+    },
+    {
+      "id": "repo-proof-scratch-audit-images-direct",
+      "label": "Repo direct audit images scratch",
+      "path": ".runtime-cache/tmp/audit-images-direct",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "proof-scratch",
+      "highlight": true
+    },
+    {
+      "id": "repo-proof-scratch-image-audit",
+      "label": "Repo image audit scratch",
+      "path": ".runtime-cache/tmp/image-audit",
+      "layer": "repo-internal",
+      "ownership": "repo-exclusive",
+      "category": "proof-scratch",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-state-root",
+      "label": "SourceHarbor external state root",
+      "path": "$HOME/.cache/sourceharbor",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "external-state",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-artifacts",
+      "label": "SourceHarbor artifacts root",
+      "path": "$HOME/.cache/sourceharbor/artifacts",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-state",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-workspace",
+      "label": "SourceHarbor workspace root",
+      "path": "$HOME/.cache/sourceharbor/workspace",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-state",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-sqlite-state",
+      "label": "SourceHarbor sqlite state root",
+      "path": "$HOME/.cache/sourceharbor/state",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-state",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-browser-root",
+      "label": "SourceHarbor dedicated Chrome user data root",
+      "path": "$HOME/.cache/sourceharbor/browser/chrome-user-data",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-browser-state",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-tmp-root",
+      "label": "SourceHarbor external tmp root",
+      "path": "$HOME/.cache/sourceharbor/tmp",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "external-owned",
+      "highlight": true
+    },
+    {
+      "id": "legacy-sourceharbor-root",
+      "label": "Legacy SourceHarbor state root",
+      "path": "$HOME/.sourceharbor",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "legacy-compatible",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-project-venv",
+      "label": "SourceHarbor project venv",
+      "path": "$HOME/.cache/sourceharbor/project-venv",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-mainline",
+      "highlight": true
+    },
+    {
+      "id": "external-sourceharbor-cache",
+      "label": "SourceHarbor external cache root",
+      "path": "$HOME/.cache/sourceharbor",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "external-owned",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "external-video-digestor-project-venv",
+      "label": "Legacy video-digestor project venv",
+      "path": "$HOME/.cache/video-digestor/project-venv",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "protected-mainline",
+      "highlight": true
+    },
+    {
+      "id": "external-video-digestor-cache",
+      "label": "Legacy video-digestor cache root",
+      "path": "$HOME/.cache/video-digestor",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "legacy-compatible",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "external-video-digestor-state",
+      "label": "Legacy video-digestor state root",
+      "path": "$HOME/.video-digestor",
+      "layer": "repo-external-repo-owned",
+      "ownership": "repo-primary",
+      "category": "legacy-compatible",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "shared-ms-playwright",
+      "label": "Shared Playwright browser cache",
+      "path": "$HOME/Library/Caches/ms-playwright",
+      "layer": "shared-layer",
+      "ownership": "shared",
+      "category": "shared-cache",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "shared-uv-cache",
+      "label": "Shared uv package cache",
+      "path": "$HOME/.cache/uv",
+      "layer": "shared-layer",
+      "ownership": "shared",
+      "category": "shared-cache",
+      "count_in_layer_total": true,
+      "highlight": true
+    },
+    {
+      "id": "shared-uv-python",
+      "label": "Shared uv Python installs",
+      "path": "$HOME/.local/share/uv/python",
+      "layer": "shared-layer",
+      "ownership": "shared",
+      "category": "shared-toolchain",
+      "count_in_layer_total": true,
+      "highlight": true
+    }
+  ],
+  "docker_named_volumes": [
+    "sourceharbor_core_postgres_data",
+    "miniflux_db_data"
+  ],
+  "cleanup_waves": {
+    "safe": {
+      "label": "safe",
+      "description": "Repo-owned rebuildable caches that do not carry current pipeline state.",
+      "candidates": [
+        {
+          "id": "repo-mypy-cache",
+          "path": ".mypy_cache",
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "repo-pycache-dirs",
+          "path_glob": "**/__pycache__",
+          "exclude_globs": [
+            ".git/**",
+            ".runtime-cache/**",
+            "apps/web/node_modules/**"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "repo-pyc-files",
+          "path_glob": "**/*.pyc",
+          "exclude_globs": [
+            ".git/**",
+            ".runtime-cache/**",
+            "apps/web/node_modules/**"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "repo-pyo-files",
+          "path_glob": "**/*.pyo",
+          "exclude_globs": [
+            ".git/**",
+            ".runtime-cache/**",
+            "apps/web/node_modules/**"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "runtime-pytest-cache",
+          "path": ".runtime-cache/tmp/pytest-cache",
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "runtime-ruff-cache",
+          "path": ".runtime-cache/tmp/ruff-cache",
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        },
+        {
+          "id": "runtime-micro-run-files",
+          "path_glob": ".runtime-cache/run/**/*",
+          "file_only": true,
+          "max_size_bytes": 262144,
+          "quiet_minutes": 1440,
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "safe-clear"
+        }
+      ]
+    },
+    "repo-tmp": {
+      "label": "repo-tmp",
+      "description": "Repo-owned duplicate runtime workdirs and venvs that require extra gates.",
+      "candidates": [
+        {
+          "id": "repo-web-runtime",
+          "path": ".runtime-cache/tmp/web-runtime",
+          "quiet_minutes": 10,
+          "lock_paths": [
+            ".runtime-cache/run/web-runtime/.prepare-lock",
+            ".runtime-cache/run/web-runtime/*.pid",
+            ".runtime-cache/run/web-runtime/*.lock",
+            ".runtime-cache/run/web-runtime/*.sock"
+          ],
+          "requires_lsof_clear": true,
+          "rebuild_command": [
+            "bash",
+            "scripts/ci/prepare_web_runtime.sh"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "cautious-clear"
+        },
+        {
+          "id": "repo-verify-venv",
+          "path": ".runtime-cache/tmp/sourceharbor-verify-venv",
+          "quiet_minutes": 10,
+          "requires_lsof_clear": true,
+          "rebuild_command": [
+            "bash",
+            "-lc",
+            "UV_PROJECT_ENVIRONMENT=\"$PWD/.runtime-cache/tmp/sourceharbor-verify-venv\" uv sync --frozen --extra dev --extra e2e >/dev/null"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "cautious-clear"
+        },
+        {
+          "id": "repo-ws6-test-venv",
+          "path": ".runtime-cache/tmp/ws6-test-venv",
+          "quiet_minutes": 10,
+          "requires_lsof_clear": true,
+          "rebuild_command": [
+            "bash",
+            "-lc",
+            "UV_PROJECT_ENVIRONMENT=\"$PWD/.runtime-cache/tmp/ws6-test-venv\" uv sync --frozen --extra dev >/dev/null"
+          ],
+          "layer": "repo-internal",
+          "ownership": "repo-exclusive",
+          "classification": "cautious-clear"
+        }
+      ]
+    },
+    "external-history": {
+      "label": "external-history",
+      "description": "Repo-owned external history copies that must prove they are no longer referenced.",
+      "candidates": [
+        {
+          "id": "external-root-venv-backup",
+          "path": "$HOME/.cache/sourceharbor/root-venv-backup",
+          "quiet_minutes": 1440,
+          "reference_markers": [
+            "root-venv-backup"
+          ],
+          "equivalent_paths": [
+            "$HOME/.cache/sourceharbor/project-venv"
+          ],
+          "verify_command": [
+            "bash",
+            "-lc",
+            "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+          ],
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+        {
+          "id": "external-sourceharbor-ghcr-venvs",
+          "path_glob": "$HOME/.cache/sourceharbor/codex-ghcr-*",
+          "quiet_minutes": 1440,
+          "reference_markers": [
+            "codex-ghcr-"
+          ],
+          "equivalent_paths": [
+            "$HOME/.cache/sourceharbor/project-venv"
+          ],
+          "verify_command": [
+            "bash",
+            "-lc",
+            "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+          ],
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+        {
+          "id": "external-sourceharbor-duplicate-project-venvs",
+          "path_glob": "$HOME/.cache/sourceharbor/project-venv-*",
+          "quiet_minutes": 10080,
+          "reference_markers": [
+            "project-venv-"
+          ],
+          "equivalent_paths": [
+            "$HOME/.cache/sourceharbor/project-venv"
+          ],
+          "verify_command": [
+            "bash",
+            "-lc",
+            "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+          ],
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+        {
+          "id": "external-sourceharbor-ws6-test-venv",
+          "path": "$HOME/.cache/sourceharbor/ws6-test-venv",
+          "quiet_minutes": 1440,
+          "reference_markers": [
+            "ws6-test-venv"
+          ],
+          "equivalent_paths": [
+            "$HOME/.cache/sourceharbor/project-venv"
+          ],
+          "verify_command": [
+            "bash",
+            "-lc",
+            "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+          ],
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+      {
+        "id": "external-video-digestor-closure-fix-venv",
+        "path": "$HOME/.cache/video-digestor/closure-fix-venv",
+        "quiet_minutes": 1440,
+          "reference_markers": [
+            "closure-fix-venv"
+          ],
+          "equivalent_paths": [
+            "$HOME/.cache/sourceharbor/project-venv"
+          ],
+          "verify_command": [
+            "bash",
+            "-lc",
+            "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+          ],
+        "layer": "repo-external-repo-owned",
+        "ownership": "repo-primary",
+        "classification": "verify-first"
+      },
+      {
+        "id": "external-video-digestor-cache-root",
+        "path": "$HOME/.cache/video-digestor",
+        "quiet_minutes": 1440,
+        "requires_lsof_clear": true,
+        "reference_markers": [
+          "video-digestor/project-venv",
+          "$HOME/.cache/video-digestor"
+        ],
+        "equivalent_paths": [
+          "$HOME/.cache/sourceharbor/project-venv"
+        ],
+        "verify_command": [
+          "bash",
+          "-lc",
+          "test -d \"$HOME/.cache/sourceharbor/project-venv\""
+        ],
+        "layer": "repo-external-repo-owned",
+        "ownership": "repo-primary",
+        "classification": "verify-first"
+      }
+    ]
+  },
+    "external-cache-auto": {
+      "label": "external-cache-auto",
+      "description": "Repo-owned external cache/state directories that may be auto-maintained after TTL, quiet-window, and lock checks pass.",
+      "candidates": [
+        {
+          "id": "external-sourceharbor-workspace-items",
+          "path_glob": "$HOME/.cache/sourceharbor/workspace/*",
+          "quiet_minutes": 10080,
+          "requires_lsof_clear": true,
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+        {
+          "id": "external-sourceharbor-artifact-items",
+          "path_glob": "$HOME/.cache/sourceharbor/artifacts/*",
+          "quiet_minutes": 43200,
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        },
+        {
+          "id": "external-sourceharbor-tmp-items",
+          "path_glob": "$HOME/.cache/sourceharbor/tmp/*",
+          "quiet_minutes": 2880,
+          "requires_lsof_clear": true,
+          "layer": "repo-external-repo-owned",
+          "ownership": "repo-primary",
+          "classification": "verify-first"
+        }
+      ]
+    }
+  },
+  "external_cache_maintenance": {
+    "report_path": ".runtime-cache/reports/governance/external-cache-maintenance.json",
+    "stamp_path": "$HOME/.cache/sourceharbor/maintenance/external-cache-maintenance-stamp.json",
+    "auto_interval_minutes": 60,
+    "groups": {
+      "project-venv": {
+        "path": "$HOME/.cache/sourceharbor/project-venv",
+        "kind": "protected-mainline",
+        "max_total_size_mb": 1024
+      },
+      "state": {
+        "path": "$HOME/.cache/sourceharbor/state",
+        "kind": "protected-state",
+        "max_total_size_mb": 512
+      },
+      "duplicate-envs": {
+        "path_glob": "$HOME/.cache/sourceharbor/project-venv-*",
+        "kind": "duplicate-env",
+        "ttl_days": 7,
+        "quiet_minutes": 10080,
+        "max_total_size_mb": 1024
+      },
+      "workspace": {
+        "path_glob": "$HOME/.cache/sourceharbor/workspace/*",
+        "kind": "workspace",
+        "ttl_days": 7,
+        "quiet_minutes": 10080,
+        "requires_lsof_clear": true,
+        "max_total_size_mb": 1024
+      },
+      "artifacts": {
+        "path_glob": "$HOME/.cache/sourceharbor/artifacts/*",
+        "kind": "artifacts",
+        "ttl_days": 30,
+        "quiet_minutes": 43200,
+        "max_total_size_mb": 2048
+      },
+      "tmp": {
+        "path_glob": "$HOME/.cache/sourceharbor/tmp/*",
+        "kind": "tmp",
+        "ttl_days": 2,
+        "quiet_minutes": 2880,
+        "requires_lsof_clear": true,
+        "max_total_size_mb": 512
+      }
+    }
+  },
+  "docker_hygiene": {
+    "report_path": ".runtime-cache/reports/governance/docker-hygiene.json",
+    "repo_container_prefixes": [
+      "sourceharbor-"
+    ],
+    "repo_network_prefixes": [
+      "sourceharbor"
+    ],
+    "repo_named_volumes": [
+      "sourceharbor_core_postgres_data",
+      "miniflux_db_data"
+    ],
+    "local_debug_image_quiet_hours": 24,
+    "repo_local_debug_images": [
+      "ghcr.io/xiaojiou176-open/sourceharbor-ci-standard:local-debug"
+    ]
+  },
+  "excluded_paths": [
+    "apps/web/node_modules",
+    ".venv",
+    "$HOME/.cache/sourceharbor/project-venv",
+    "$HOME/.cache/sourceharbor/state",
+    "$HOME/.cache/sourceharbor/browser/chrome-user-data",
+    "$HOME/Library/Caches/ms-playwright",
+    "$HOME/.cache/uv",
+    "$HOME/.local/share/uv/python"
+  ]
+}

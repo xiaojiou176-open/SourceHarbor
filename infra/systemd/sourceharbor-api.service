@@ -1,0 +1,24 @@
+[Unit]
+Description=SourceHarbor - FastAPI Backend
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=sourceharbor
+Group=sourceharbor
+WorkingDirectory=/opt/sourceharbor/repo
+EnvironmentFile=/opt/sourceharbor/.env
+ExecStart=/usr/bin/bash -lc 'exec "${UV_PROJECT_ENVIRONMENT:-$HOME/.cache/sourceharbor/project-venv}/bin/uvicorn" apps.api.app.main:app --host 127.0.0.1 --port 8000 --workers 2 --log-level info'
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sourceharbor-api
+
+# Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

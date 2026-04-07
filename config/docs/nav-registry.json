@@ -1,0 +1,72 @@
+{
+  "version": 2,
+  "sections": [
+    {
+      "id": "entry",
+      "title": "Entry",
+      "docs": [
+        "README.md",
+        "NOTICE.md",
+        "docs/start-here.md",
+        "docs/see-it-fast.md",
+        "docs/index.md",
+        "docs/proof.md",
+        "docs/project-status.md",
+        "docs/public-distribution.md",
+        "docs/site-capability.md",
+        "docs/media-kit.md",
+        "docs/mcp-quickstart.md",
+        "docs/builders.md",
+        "docs/public-skills.md",
+        "docs/runtime-truth.md",
+        "docs/samples/README.md"
+      ]
+    },
+    {
+      "id": "operations",
+      "title": "Operations",
+      "docs": [
+        "docs/runbook-local.md",
+        "docs/testing.md",
+        "docs/reference/logging.md",
+        "docs/generated/required-checks.md",
+        "docs/generated/ci-topology.md"
+      ]
+    },
+    {
+      "id": "explanation",
+      "title": "Explanation",
+      "docs": [
+        "docs/architecture.md",
+        "docs/compare.md",
+        "docs/compat/codex.md",
+        "docs/compat/claude-code.md",
+        "docs/compat/openclaw.md",
+        "docs/faq.md",
+        "docs/blueprints/2026-03-31-ask-your-sources-grounded-answer-contract.md",
+        "docs/blueprints/2026-03-31-program-closeout-matrix.md",
+        "docs/blueprints/2026-03-31-agent-autopilot-spike.md",
+        "docs/blueprints/2026-03-31-hosted-readiness-spike.md",
+        "docs/reference/ecosystem-and-big-bet-decisions.md",
+        "docs/reference/project-positioning.md",
+        "docs/reference/public-repo-readiness.md",
+        "docs/reference/ai-evaluation.md"
+      ]
+    },
+    {
+      "id": "public-trust",
+      "title": "Public Trust",
+      "docs": [
+        "CONTRIBUTING.md",
+        "SUPPORT.md",
+        "SECURITY.md",
+        "CODE_OF_CONDUCT.md",
+        "CHANGELOG.md",
+        "docs/reference/public-assets-provenance.md",
+        "docs/reference/public-artifact-exposure.md",
+        "docs/reference/public-rights-and-provenance.md",
+        "docs/reference/public-privacy-and-data-boundary.md"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "default_profile": "legacy",
+  "profiles": {
+    "legacy": {
+      "description": "Backward-compatible profile using the legacy single contract.",
+      "contracts": [
+        "infra/config/env.contract.json"
+      ],
+      "include_paths": [
+        "apps",
+        "scripts"
+      ]
+    },
+    "split-full": {
+      "description": "Union of split contracts for full repository validation.",
+      "contracts": [
+        "infra/config/env/contract.core.json",
+        "infra/config/env/contract.runtime.json",
+        "infra/config/env/contract.scripts.json",
+        "infra/config/env/contract.test.json"
+      ],
+      "include_paths": [
+        "apps",
+        "scripts"
+      ]
+    },
+    "core": {
+      "description": "Core shared env vars only.",
+      "contracts": [
+        "infra/config/env/contract.core.json"
+      ],
+      "include_paths": [
+        "apps"
+      ]
+    },
+    "runtime": {
+      "description": "Runtime app vars (api/worker/mcp/web + shared).",
+      "contracts": [
+        "infra/config/env/contract.core.json",
+        "infra/config/env/contract.runtime.json"
+      ],
+      "include_paths": [
+        "apps/api/app",
+        "apps/worker/worker",
+        "apps/mcp",
+        "apps/web"
+      ]
+    },
+    "scripts": {
+      "description": "Script and orchestration vars only.",
+      "contracts": [
+        "infra/config/env/contract.scripts.json"
+      ],
+      "include_paths": [
+        "scripts"
+      ]
+    },
+    "test": {
+      "description": "Test-only vars used by application test suites.",
+      "contracts": [
+        "infra/config/env/contract.test.json"
+      ],
+      "include_paths": [
+        "apps/api/tests"
+      ]
+    }
+  }
+}

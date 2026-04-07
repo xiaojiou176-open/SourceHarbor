@@ -1,0 +1,28 @@
+title: "Announcement: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for maintainer updates, public milestones, release notes, and important repo changes.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What changed, in plain language?
+      placeholder: SourceHarbor now has a result-first README, public proof docs, and a stronger GitHub profile.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Why it matters
+      description: Why should operators, evaluators, or contributors care right now?
+      placeholder: This update makes the repo easier to understand, evaluate, and share.
+    validations:
+      required: true
+  - type: textarea
+    id: links
+    attributes:
+      label: Links and follow-up
+      description: Link to docs, PRs, release notes, or proof pages.
+      placeholder: README, docs/start-here.md, docs/proof.md, release notes

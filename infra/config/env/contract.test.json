@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "name": "test",
+  "description": "Test-only environment variables.",
+  "variables": []
+}

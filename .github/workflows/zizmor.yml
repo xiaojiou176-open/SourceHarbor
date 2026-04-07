@@ -1,0 +1,43 @@
+name: zizmor
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read # read workflow sources from the repository checkout
+  actions: read # allow online audit lookups against workflow metadata
+
+concurrency:
+  group: zizmor-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          clean: true
+          persist-credentials: false
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@71321a20a9ded102f6e9ce5718a2fcec2c4f70d8 # v0.5.2
+        with:
+          advanced-security: false
+          persona: pedantic
+          min-severity: high
+          inputs: >-
+            .github/workflows/ci.yml
+            .github/workflows/pre-commit.yml
+            .github/workflows/codeql.yml
+            .github/workflows/dependency-review.yml
+            .github/workflows/zizmor.yml
+            .github/workflows/trivy.yml
+            .github/workflows/trufflehog.yml

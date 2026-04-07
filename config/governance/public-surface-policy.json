@@ -1,0 +1,93 @@
+{
+  "version": 2,
+  "forbidden_tracked_globs": [
+    "artifacts/performance/rsshub/*.tsv",
+    ".agents/**"
+  ],
+  "allowed_tracked_paths": [
+    "artifacts/performance/rsshub/public_probe_summary.sample.tsv"
+  ],
+  "required_public_samples": [
+    "artifacts/performance/rsshub/public_probe_summary.sample.tsv"
+  ],
+  "internal_only_surfaces": [
+    ".agents/**",
+    ".runtime-cache/**",
+    ".env"
+  ],
+  "contact_policy": {
+    "README.md": {
+      "must_contain": [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "SUPPORT.md",
+        "CODE_OF_CONDUCT.md",
+        ".github/CODEOWNERS",
+        "THIRD_PARTY_NOTICES.md",
+        "docs/reference/public-artifact-exposure.md"
+      ],
+      "must_not_contain": []
+    },
+    "docs/start-here.md": {
+      "must_contain": [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "SUPPORT.md",
+        "CODE_OF_CONDUCT.md",
+        ".github/CODEOWNERS",
+        "THIRD_PARTY_NOTICES.md",
+        "docs/reference/public-rights-and-provenance.md",
+        "docs/reference/public-privacy-and-data-boundary.md",
+        "docs/reference/public-artifact-exposure.md"
+      ],
+      "must_not_contain": []
+    },
+    "docs/index.md": {
+      "must_contain": [
+        "CONTRIBUTING.md",
+        "SECURITY.md",
+        "SUPPORT.md",
+        "CODE_OF_CONDUCT.md",
+        ".github/CODEOWNERS",
+        "THIRD_PARTY_NOTICES.md",
+        "docs/reference/public-artifact-exposure.md"
+      ],
+      "must_not_contain": []
+    },
+    "SECURITY.md": {
+      "must_contain": [
+        "https://github.com/xiaojiou176-open/sourceharbor/security",
+        "This repository does not offer email-based private vulnerability intake."
+      ],
+      "must_not_contain": [
+        "codex-test@example.com",
+        "if it is enabled for this repository"
+      ]
+    },
+    ".github/CODEOWNERS": {
+      "must_contain": [
+        "@xiaojiou176"
+      ],
+      "must_not_contain": [
+        "example.com",
+        "codex-test"
+      ]
+    },
+    "SUPPORT.md": {
+      "must_contain": [
+        "https://github.com/xiaojiou176-open/sourceharbor/security"
+      ],
+      "must_not_contain": [
+        "codex-test@example.com"
+      ]
+    },
+    ".github/ISSUE_TEMPLATE/config.yml": {
+      "must_contain": [
+        "https://github.com/xiaojiou176-open/sourceharbor/security"
+      ],
+      "must_not_contain": [
+        "codex-test@example.com"
+      ]
+    }
+  }
+}

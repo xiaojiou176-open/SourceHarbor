@@ -1,0 +1,48 @@
+name: Normalize Self-Hosted Workspace
+description: Normalize ownership and remove stale runtime residue before checkout on self-hosted runners.
+
+runs:
+  using: composite
+  steps:
+    - name: Normalize self-hosted workspace (pre-checkout)
+      shell: bash
+      run: |
+        set -euo pipefail
+        workspace="${GITHUB_WORKSPACE:?}"
+        uid="$(id -u)"
+        gid="$(id -g)"
+        stale_paths=(
+          "$workspace/.runtime-cache"
+        )
+        if command -v sudo >/dev/null 2>&1; then
+          if sudo find "$workspace" -mindepth 1 -uid 0 -print -quit | grep -q .; then
+            echo "Detected root-owned residue under $workspace; normalizing ownership"
+            sudo chown -R "$uid:$gid" "$workspace"
+          fi
+          for path in "${stale_paths[@]}"; do
+            if sudo test -e "$path"; then
+              echo "Removing stale workspace path: $path"
+              sudo chmod -R u+w "$path" 2>/dev/null || true
+              sudo rm -rf "$path"
+            fi
+          done
+        else
+          for path in "${stale_paths[@]}"; do
+            rm -rf "$path" || true
+          done
+        fi
+        generated_web_files=(
+          "$workspace/apps/web/next-env.d.ts"
+          "$workspace/apps/web/tsconfig.json"
+        )
+        for path in "${generated_web_files[@]}"; do
+          if command -v sudo >/dev/null 2>&1 && sudo test -e "$path"; then
+            echo "Restoring generated workspace file: $path"
+            sudo git -C "$workspace" checkout -- "$path" || sudo rm -f "$path" || true
+            continue
+          fi
+          rm -f "$path" || true
+          if [[ "$path" == "$workspace/apps/web/tsconfig.json" ]]; then
+            git -C "$workspace" checkout -- apps/web/tsconfig.json >/dev/null 2>&1 || true
+          fi
+        done

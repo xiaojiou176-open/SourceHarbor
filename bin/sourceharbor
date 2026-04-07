@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+print_help() {
+  cat <<'EOF'
+Usage: ./bin/sourceharbor <command> [args...]
+
+Thin repo-owned CLI/help facade over the existing SourceHarbor bin entrypoints.
+This is the current truthful CLI substrate for local operators and builders.
+This repo-local command is not itself the packaged public CLI.
+The installable packaged CLI lives in `packages/sourceharbor-cli`.
+
+Commands:
+  help                 Show this help message.
+  bootstrap            Run ./bin/bootstrap-full-stack
+  up                   Run ./bin/full-stack up
+  down                 Run ./bin/full-stack down
+  status               Run ./bin/full-stack status
+  full-stack           Run ./bin/full-stack
+  mcp                  Run ./bin/dev-mcp
+  doctor               Run ./bin/doctor
+  smoke                Run ./bin/smoke-full-stack
+  web-e2e              Run ./bin/web-e2e
+  strict-ci            Run ./bin/repo-side-strict-ci
+  quality-gate         Run ./bin/quality-gate
+  governance-audit     Run ./bin/governance-audit
+  chrome-bootstrap     Run ./bin/bootstrap-repo-chrome
+  chrome-start         Run ./bin/start-repo-chrome
+
+Examples:
+  ./bin/sourceharbor help
+  ./bin/sourceharbor bootstrap --install-deps 0
+  ./bin/sourceharbor up
+  ./bin/sourceharbor status
+  ./bin/sourceharbor doctor --json
+  ./bin/sourceharbor mcp
+  ./bin/sourceharbor chrome-bootstrap
+  ./bin/sourceharbor chrome-start
+EOF
+}
+
+COMMAND="${1:-help}"
+if [[ $# -gt 0 ]]; then
+  shift
+fi
+
+case "$COMMAND" in
+  help|-h|--help)
+    print_help
+    ;;
+  bootstrap|bootstrap-full-stack)
+    exec "$ROOT_DIR/bin/bootstrap-full-stack" "$@"
+    ;;
+  up|down|status)
+    exec "$ROOT_DIR/bin/full-stack" "$COMMAND" "$@"
+    ;;
+  full-stack)
+    exec "$ROOT_DIR/bin/full-stack" "$@"
+    ;;
+  mcp|dev-mcp)
+    exec "$ROOT_DIR/bin/dev-mcp" "$@"
+    ;;
+  doctor)
+    exec "$ROOT_DIR/bin/doctor" "$@"
+    ;;
+  smoke|smoke-full-stack)
+    exec "$ROOT_DIR/bin/smoke-full-stack" "$@"
+    ;;
+  web-e2e)
+    exec "$ROOT_DIR/bin/web-e2e" "$@"
+    ;;
+  strict-ci|repo-side-strict-ci)
+    exec "$ROOT_DIR/bin/repo-side-strict-ci" "$@"
+    ;;
+  quality-gate)
+    exec "$ROOT_DIR/bin/quality-gate" "$@"
+    ;;
+  governance-audit)
+    exec "$ROOT_DIR/bin/governance-audit" "$@"
+    ;;
+  chrome-bootstrap)
+    exec "$ROOT_DIR/bin/bootstrap-repo-chrome" "$@"
+    ;;
+  chrome-start)
+    exec "$ROOT_DIR/bin/start-repo-chrome" "$@"
+    ;;
+  *)
+    echo "Unknown command: $COMMAND" >&2
+    echo >&2
+    print_help >&2
+    exit 2
+    ;;
+esac

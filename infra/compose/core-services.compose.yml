@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: ${STRICT_CI_SERVICE_IMAGE_PGVECTOR_PG16:-pgvector/pgvector:pg16@sha256:7d400e340efb42f4d8c9c12c6427adb253f726881a9985d2a471bf0eed824dff}
+    container_name: sourceharbor-core-postgres
+    ports:
+      - "127.0.0.1:${CORE_POSTGRES_PORT:-15432}:5432"
+    environment:
+      POSTGRES_DB: sourceharbor
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${CORE_POSTGRES_PASSWORD:-postgres}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - sourceharbor_core_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sourceharbor"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  temporal:
+    image: ${STRICT_CI_SERVICE_IMAGE_TEMPORAL_AUTO_SETUP:-temporalio/auto-setup:1.27.2@sha256:b44cbfeb43dbeae42db113b44fb8414c3452f05643b3d6b1592f955277d73526}
+    container_name: sourceharbor-core-temporal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "7233:7233"
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PWD: ${CORE_POSTGRES_PASSWORD:-postgres}
+      POSTGRES_SEEDS: postgres
+    restart: unless-stopped
+
+volumes:
+  sourceharbor_core_postgres_data:

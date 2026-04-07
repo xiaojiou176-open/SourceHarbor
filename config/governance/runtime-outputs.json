@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "runtime_root": ".runtime-cache",
+  "root_forbidden": [
+    ".cache",
+    ".coverage",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "cache",
+    "logs",
+    "mutants",
+    "playwright-report",
+    "test-results",
+    "htmlcov"
+  ],
+  "nested_forbidden": [
+    ".runtime-cache",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+    "node_modules",
+    ".next",
+    ".next-e2e-*",
+    "playwright-report",
+    "test-results",
+    "htmlcov",
+    "mutants",
+    "*.pyc",
+    "*.pyo"
+  ],
+  "subdirectories": {
+    "run": {
+      "owner": "platform",
+      "classification": "runtime-state",
+      "ttl_days": 1,
+      "max_total_size_mb": 128,
+      "max_file_count": 4096,
+      "rebuild_entrypoint": "scripts/runtime/run_runtime_cache_maintenance.sh --normalize-only --subdir run",
+      "freshness_required": false,
+      "description": "PID files, lock files, resolved runtime routing state, and ephemeral process metadata."
+    },
+    "logs": {
+      "owner": "platform",
+      "classification": "structured-logs",
+      "ttl_days": 30,
+      "max_total_size_mb": 512,
+      "max_file_count": 20000,
+      "rebuild_entrypoint": "scripts/runtime/prune_logs_and_evidence.py --subdir logs",
+      "freshness_required": false,
+      "description": "Structured runtime, governance, infra, and test logs."
+    },
+    "reports": {
+      "owner": "platform",
+      "classification": "machine-reports",
+      "ttl_days": 30,
+      "max_total_size_mb": 512,
+      "max_file_count": 12000,
+      "rebuild_entrypoint": "scripts/runtime/build_evidence_index.py --rebuild-all",
+      "freshness_required": true,
+      "description": "Machine-consumable summaries, junit, coverage, mutation, and audit reports."
+    },
+    "evidence": {
+      "owner": "platform",
+      "classification": "debug-evidence",
+      "ttl_days": 14,
+      "max_total_size_mb": 1024,
+      "max_file_count": 12000,
+      "rebuild_entrypoint": "scripts/runtime/prune_logs_and_evidence.py --subdir evidence",
+      "freshness_required": true,
+      "description": "Trace, screenshot, HAR, video, and persisted UI audit evidence."
+    },
+    "tmp": {
+      "owner": "platform",
+      "classification": "scratch",
+      "ttl_days": 2,
+      "max_total_size_mb": 1024,
+      "max_file_count": 80000,
+      "rebuild_entrypoint": "scripts/runtime/run_runtime_cache_maintenance.sh --normalize-only --subdir tmp",
+      "freshness_required": false,
+      "description": "Final-form scratch root for short-lived temporary files, isolated workdirs, repo-side execution state, repo-side web runtime workspace, and quarantined local private state."
+    }
+  }
+}

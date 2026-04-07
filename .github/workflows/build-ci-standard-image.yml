@@ -1,0 +1,202 @@
+name: build-ci-standard-image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-ci-standard-image-${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    environment:
+      name: external-ghcr-publish
+    permissions:
+      contents: read
+      packages: write # publish the strict CI image to GHCR
+      attestations: write # attach provenance and SBOM attestations
+      artifact-metadata: write # upload metadata-backed diagnostics and supply-chain artifacts
+      id-token: write # mint OIDC tokens for attestation workflows
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          clean: true
+          persist-credentials: false
+
+      - name: Install hosted runner prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: Enforce runner disk budget
+        run: |
+          bash scripts/governance/runner_workspace_maintenance.sh --workspace "$GITHUB_WORKSPACE" --include-runner-diag 1
+          python3 scripts/governance/check_runner_baseline.py --profile ci-heavy --workspace "$GITHUB_WORKSPACE"
+
+      - name: Resolve GHCR credentials
+        env:
+          GHCR_WRITE_USERNAME: ${{ secrets.GHCR_WRITE_USERNAME }}
+          GHCR_WRITE_TOKEN: ${{ secrets.GHCR_WRITE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
+        run: |
+          username=""
+          token=""
+          mode=""
+          if [[ -n "${GHCR_WRITE_TOKEN}" ]]; then
+            username="${GHCR_WRITE_USERNAME:-$GH_ACTOR}"
+            token="${GHCR_WRITE_TOKEN}"
+            mode="ghcr-write-token"
+          else
+            username="${GH_ACTOR}"
+            token="${GITHUB_TOKEN}"
+            mode="github-actions-token"
+          fi
+          if [[ -z "$username" || -z "$token" ]]; then
+            echo "failed to resolve GHCR credentials for hosted publish" >&2
+            exit 1
+          fi
+          {
+            echo "GHCR_LOGIN_USERNAME=$username"
+            echo "GHCR_LOGIN_TOKEN=$token"
+            echo "GHCR_LOGIN_MODE=$mode"
+          } >> "$GITHUB_ENV"
+
+      - name: Login to GHCR
+        env:
+          GHCR_LOGIN_USERNAME: ${{ env.GHCR_LOGIN_USERNAME }}
+          GHCR_LOGIN_TOKEN: ${{ env.GHCR_LOGIN_TOKEN }}
+        run: |
+          username="${GHCR_LOGIN_USERNAME}"
+          token="${GHCR_LOGIN_TOKEN}"
+          echo "$token" | docker login ghcr.io -u "$username" --password-stdin
+
+      - name: Standard image publish preflight
+        env:
+          GHCR_WRITE_USERNAME: ${{ secrets.GHCR_WRITE_USERNAME }}
+          GHCR_WRITE_TOKEN: ${{ secrets.GHCR_WRITE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTIONS: "true"
+        run: ./scripts/ci/check_standard_image_publish_readiness.sh
+
+      - name: GHCR registry auth probe
+        if: ${{ always() }}
+        env:
+          GHCR_WRITE_USERNAME: ${{ secrets.GHCR_WRITE_USERNAME }}
+          GHCR_WRITE_TOKEN: ${{ secrets.GHCR_WRITE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: python3 scripts/governance/probe_ghcr_registry_auth.py
+
+      - name: Upload GHCR readiness diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: ghcr-readiness-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            .runtime-cache/reports/governance/standard-image-publish-readiness.json
+            .runtime-cache/reports/governance/ghcr-registry-auth-probe.json
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
+
+      - name: Build and push strict CI standard image
+        env:
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: ./scripts/ci/build_standard_image.sh --push --tag "$SOURCE_COMMIT" --metadata-file .runtime-cache/reports/build-ci-standard-image/metadata.json
+
+      - name: Resolve published image digest
+        id: digest
+        run: |
+          digest="$(python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          metadata = json.loads(Path(".runtime-cache/reports/build-ci-standard-image/metadata.json").read_text(encoding="utf-8"))
+          print(metadata["containerimage.digest"])
+          PY
+          )"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare strict CI image SBOM output directory
+        run: mkdir -p .runtime-cache/reports/attestations
+
+      - name: Generate strict CI image SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0.24.0
+        with:
+          image: ghcr.io/xiaojiou176/sourceharbor-ci-standard:${{ github.sha }}
+          format: cyclonedx-json
+          output-file: .runtime-cache/reports/attestations/strict-ci-image.cdx.json
+          upload-artifact: false
+          registry-username: ${{ env.GHCR_LOGIN_USERNAME }}
+          registry-password: ${{ env.GHCR_LOGIN_TOKEN }}
+
+      - name: Record strict CI contract candidate (artifact only)
+        env:
+          PUBLISHED_DIGEST: ${{ steps.digest.outputs.digest }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              "standard_image": {
+                  "tag": os.environ["SOURCE_COMMIT"],
+                  "digest": os.environ["PUBLISHED_DIGEST"],
+              },
+              "source_commit": os.environ["SOURCE_COMMIT"],
+              "promotion_rule": "manual-pr-only",
+          }
+          candidate_path = Path(".runtime-cache/reports/build-ci-standard-image/contract-candidate.json")
+          candidate_path.parent.mkdir(parents=True, exist_ok=True)
+          candidate_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+      - name: Upload strict CI supply-chain artifacts
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: strict-ci-image-supply-chain-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            .runtime-cache/reports/governance/standard-image-publish-readiness.json
+            .runtime-cache/reports/build-ci-standard-image/metadata.json
+            .runtime-cache/reports/build-ci-standard-image/contract-candidate.json
+            .runtime-cache/reports/attestations/strict-ci-image.cdx.json
+
+      - name: Attest strict CI image provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4
+        with:
+          subject-name: ghcr.io/xiaojiou176/sourceharbor-ci-standard
+          subject-digest: ${{ steps.digest.outputs.digest }}
+          push-to-registry: true
+
+      - name: Attest strict CI image SBOM
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        with:
+          subject-name: ghcr.io/xiaojiou176/sourceharbor-ci-standard
+          subject-digest: ${{ steps.digest.outputs.digest }}
+          sbom-path: .runtime-cache/reports/attestations/strict-ci-image.cdx.json
+          push-to-registry: true
+
+      - name: Summarize manual promotion boundary
+        env:
+          PUBLISHED_DIGEST: ${{ steps.digest.outputs.digest }}
+          SOURCE_COMMIT: ${{ github.sha }}
+        run: |
+          {
+            echo "### Strict CI image publish result"
+            echo "- published digest: \`${PUBLISHED_DIGEST}\`"
+            echo "- source commit: \`${SOURCE_COMMIT}\`"
+            echo "- repository write-back: disabled"
+            echo "- next step: promote \`infra/config/strict_ci_contract.json\` through a reviewed PR using the uploaded \`contract-candidate.json\` artifact"
+          } >> "$GITHUB_STEP_SUMMARY"

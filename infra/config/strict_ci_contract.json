@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "standard_image": {
+    "repository": "ghcr.io/xiaojiou176-open/sourceharbor-ci-standard",
+    "tag": "897e073e246868e284a7d974b9b2ba03c1d50661",
+    "digest": "sha256:8910a9a90aca43c0f97986d5b531cd8ddde3922481272643d5a073dbf9e17851",
+    "dockerfile": ".devcontainer/Dockerfile",
+    "workdir": "/workspace"
+  },
+  "devcontainer": {
+    "workspace_folder": "/workspace",
+    "remote_user": "vscode"
+  },
+  "toolchain": {
+    "python_version": "3.12",
+    "uv_version": "0.10.7",
+    "node_major": "22",
+    "temporal_cli_version": "1.5.1",
+    "temporal_cli_sha256_linux_amd64": "ddc95e08b0b076efd4ea9733a3f488eb7d2be875f8834e616cd2a37358b4852d",
+    "temporal_cli_sha256_linux_arm64": "bd1b0db9f18b051026de8bf6cc1505f2510f14bbb7a8b9a4a91fff46c77454f5",
+    "base_image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm@sha256:7876580dc67fd460fd962f004cbeb480027e9bbc0657096f1087db11f9eaff39"
+  },
+  "quality": {
+    "coverage_min": 95,
+    "core_coverage_min": 95,
+    "mutation_min_score": 0.64,
+    "mutation_min_effective_ratio": 0.27,
+    "mutation_max_no_tests_ratio": 0.72,
+    "web_button_combined_threshold": 1.0,
+    "web_button_e2e_threshold": 0.6,
+    "web_button_unit_threshold": 0.93
+  },
+  "cache": {
+    "root": "/tmp/ci-cache",
+    "uv": "/tmp/ci-cache/uv",
+    "playwright": "/tmp/ci-cache/ms-playwright",
+    "pre_commit": "/tmp/ci-cache/pre-commit"
+  },
+  "trigger_policy": {
+    "profile_governance_push_release": true,
+    "live_smoke_push_release": true,
+    "live_smoke_schedule_cron": "0 3 * * *"
+  },
+  "service_images": {
+    "pgvector_pg16": "pgvector/pgvector:pg16@sha256:7d400e340efb42f4d8c9c12c6427adb253f726881a9985d2a471bf0eed824dff",
+    "temporal_auto_setup": "temporalio/auto-setup:1.27.2@sha256:b44cbfeb43dbeae42db113b44fb8414c3452f05643b3d6b1592f955277d73526",
+    "postgres_miniflux": "postgres:16-alpine@sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416",
+    "miniflux": "miniflux/miniflux@sha256:802ab7d045826d047883476e2310bf59f5d9b3875f7a8106fa0c43638d01fd64",
+    "nextflux": "electh/nextflux@sha256:cd48b8aab1f4a658257609edf9b1726567a648da23402d68cef8e70bcd4bb88a"
+  }
+}

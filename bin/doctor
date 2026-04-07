@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=./scripts/runtime/entrypoint.sh
+source "$ROOT_DIR/scripts/runtime/entrypoint.sh"
+sourceharbor_entrypoint_bootstrap governance doctor "" "$@"
+cd "$ROOT_DIR"
+export PYTHONDONTWRITEBYTECODE=1
+# shellcheck source=./scripts/lib/load_env.sh
+source "$ROOT_DIR/scripts/lib/load_env.sh"
+load_repo_env "$ROOT_DIR" "doctor" "${ENV_PROFILE:-local}"
+
+exec python3 "$ROOT_DIR/scripts/runtime/doctor.py" "$@"

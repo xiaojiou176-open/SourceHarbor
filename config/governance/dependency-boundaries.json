@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "internal_roots": [
+    "apps.",
+    "integrations."
+  ],
+  "python_rules": [
+    {
+      "scope": "apps/api/app",
+      "allow_internal_prefixes": [
+        "apps.api.app.",
+        "integrations."
+      ],
+      "reason": "API may depend only on its own implementation namespace and explicit integration adapters."
+    },
+    {
+      "scope": "apps/worker/worker",
+      "allow_internal_prefixes": [
+        "apps.worker.worker.",
+        "integrations."
+      ],
+      "reason": "Worker may depend only on its own implementation namespace and explicit integration adapters."
+    },
+    {
+      "scope": "apps/mcp",
+      "allow_internal_prefixes": [
+        "apps.mcp.",
+        "integrations."
+      ],
+      "reason": "MCP must stay inside its own namespace or explicit integration adapters; runtime crossings happen over HTTP/contracts."
+    }
+  ],
+  "frontend_rules": [
+    {
+      "scope": "apps/web",
+      "allow_import_prefixes": [
+        "@/app/",
+        "@/components/",
+        "@/lib/",
+        "./",
+        "../"
+      ],
+      "forbid_substrings": [
+        "apps/api/",
+        "apps/worker/",
+        "apps/mcp/"
+      ],
+      "reason": "Web may import only web-local aliases/relative paths and must not reach into sibling apps or repo packages by file path."
+    }
+  ],
+  "package_purity_rules": [
+    {
+      "scope": "contracts",
+      "forbid_substrings": [
+        "httpx",
+        "requests",
+        "aiohttp",
+        "os.getenv",
+        "os.environ",
+        "subprocess",
+        "socket"
+      ],
+      "reason": "Contracts must remain schema-only and free of runtime side effects or environment coupling."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "ledgers": [
+    {
+      "name": "agent-execution-ledger",
+      "status": "compatibility-bridge",
+      "owner": "local-user",
+      "compatibility_paths": [
+        ".agents/Plans"
+      ],
+      "authoritative_target_path": ".runtime-cache/evidence/ai-ledgers",
+      "introduced_at": "2026-03-27T01:15:46-07:00",
+      "write_forbidden_after": "2026-04-03T00:00:00-07:00",
+      "read_only_after": "2026-04-10T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "notes": "Compatibility bridge for active local execution plans. `.agents/Plans` remains a temporary landing zone only while downstream prompts and local tooling still require it. The long-term local-private execution ledger root is `.runtime-cache/evidence/ai-ledgers`."
+    }
+  ]
+}

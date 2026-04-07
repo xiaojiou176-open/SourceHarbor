@@ -1,0 +1,23 @@
+[Unit]
+Description=SourceHarbor - Temporal Worker
+After=network.target sourceharbor-api.service
+Wants=sourceharbor-api.service
+
+[Service]
+Type=simple
+User=sourceharbor
+Group=sourceharbor
+WorkingDirectory=/opt/sourceharbor/repo
+EnvironmentFile=/opt/sourceharbor/.env
+ExecStart=/usr/bin/bash -lc 'exec "${UV_PROJECT_ENVIRONMENT:-$HOME/.cache/sourceharbor/project-venv}/bin/python" -m apps.worker.worker.main'
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sourceharbor-worker
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

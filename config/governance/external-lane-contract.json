@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "lanes": [
+    {
+      "name": "remote-platform-integrity",
+      "canonical_artifact": ".runtime-cache/reports/governance/remote-platform-truth.json",
+      "verification_scope": "remote-platform-truth",
+      "allowed_statuses": [
+        "pass",
+        "blocked"
+      ],
+      "blocked_types": [
+        "repo-readability",
+        "branch-protection-platform-boundary",
+        "required-check-integrity-mismatch"
+      ]
+    },
+    {
+      "name": "ghcr-standard-image",
+      "canonical_artifact": ".runtime-cache/reports/governance/standard-image-publish-readiness.json",
+      "remote_workflow_artifact": ".runtime-cache/reports/governance/external-lane-workflows.json",
+      "verified_requires_current_head": true,
+      "current_head_required_statuses": [
+        "verified",
+        "queued",
+        "in_progress"
+      ],
+      "historical_state": "historical",
+      "verification_scope": "standard-image-publish-readiness",
+      "allowed_statuses": [
+        "ready",
+        "queued",
+        "in_progress",
+        "verified",
+        "historical",
+        "blocked"
+      ],
+      "blocked_types": [
+        "buildx-runtime-preparation-failure",
+        "registry-auth-failure",
+        "package-ownership-or-write-package-failure"
+      ]
+    },
+    {
+      "name": "release-evidence-attestation",
+      "canonical_artifact": ".runtime-cache/reports/release/release-evidence-attest-readiness.json",
+      "remote_workflow_artifact": ".runtime-cache/reports/governance/external-lane-workflows.json",
+      "verified_requires_current_head": true,
+      "current_head_required_statuses": [
+        "verified",
+        "queued",
+        "in_progress"
+      ],
+      "historical_state": "historical",
+      "verification_scope": "release-evidence-attest-readiness",
+      "allowed_statuses": [
+        "ready",
+        "queued",
+        "in_progress",
+        "verified",
+        "historical",
+        "blocked"
+      ],
+      "blocked_types": [
+        "repo-evidence-missing",
+        "artifact-quota-or-billing-failure",
+        "attestation-failure"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+minimum_pre_commit_version: "3.6.0"
+default_stages: [pre-commit]
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
+fail_fast: true
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+        exclude: ^apps/web/package-lock\.json$
+      - id: trailing-whitespace
+        exclude: ^apps/web/package-lock\.json$
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+        args: ["--config=.gitleaks.toml"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.2
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+        files: ^(apps/(api|worker|mcp)|scripts)/.*\.(py|pyi)$
+      - id: ruff-format
+        files: ^(apps/(api|worker|mcp)|scripts)/.*\.(py|pyi)$
+
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v2.4.4
+    hooks:
+      - id: biome-check
+        args: ["--unsafe"]
+        files: ^apps/web/.*\.(js|jsx|ts|tsx|cjs|cts|mjs|mts|json|jsonc|css)$
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.31.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.21.0
+    hooks:
+      - id: markdownlint-cli2
+        args: ["--fix"]
+        additional_dependencies: ["markdownlint-cli2@0.21.0"]
+        files: ^(docs/.*\.md|README\.md|AGENTS\.md|CLAUDE\.md|CONTRIBUTING\.md|SECURITY\.md|SUPPORT\.md|\.github/PULL_REQUEST_TEMPLATE\.md)$
+
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
+    hooks:
+      - id: shellcheck
+        args: ["-x", "-e", "SC2011,SC2012,SC2034,SC2053,SC2097,SC2098"]
+        files: ^(scripts|\.githooks|infra)/.*\.(sh|bash)$|(^|/)(entrypoint|bootstrap|setup)\.sh$
+
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.11
+    hooks:
+      - id: actionlint
+        args: ["-ignore", "shellcheck"]
+        files: ^\.github/workflows/.*\.(yml|yaml)$
+
+  - repo: local
+    hooks:
+      - id: public-asset-provenance
+        name: public-asset-provenance
+        entry: python3 scripts/governance/check_public_asset_provenance.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: root-policy-alignment
+        name: root-policy-alignment
+        entry: python3 scripts/governance/check_root_policy_alignment.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: public-entrypoint-references
+        name: public-entrypoint-references
+        entry: python3 scripts/governance/check_public_entrypoint_references.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: route-contract-alignment
+        name: route-contract-alignment
+        entry: python3 scripts/governance/check_route_contract_alignment.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: host-safety-contract
+        name: host-safety-contract
+        entry: python3 scripts/governance/check_host_safety_contract.py
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: runtime-outputs
+        name: runtime-outputs
+        entry: bash -lc 'python3 scripts/runtime/clean_source_runtime_residue.py --apply --write-report "${TMPDIR:-/tmp}/source-runtime-residue.json" >/dev/null && python3 scripts/governance/check_runtime_outputs.py'
+        language: system
+        pass_filenames: false
+        always_run: true

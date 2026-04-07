@@ -1,0 +1,119 @@
+name: release-evidence-attest
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag to package and attest.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  attestations: write
+  id-token: write
+  artifact-metadata: write
+
+concurrency:
+  group: release-evidence-attest-${{ github.workflow }}-${{ inputs.release_tag || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  release-evidence:
+    name: release-evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: external-release-evidence
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          clean: true
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install hosted runner prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: Enforce runner disk budget
+        run: |
+          bash scripts/governance/runner_workspace_maintenance.sh --workspace "$GITHUB_WORKSPACE" --include-runner-diag 1
+          python3 scripts/governance/check_runner_baseline.py --profile ci-heavy --workspace "$GITHUB_WORKSPACE"
+
+      - name: Setup Python 3.12 for release evidence scripts
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Capture release evidence bundle inputs
+        id: release_tag
+        run: |
+          release_tag="${{ inputs.release_tag }}"
+          if [[ -z "$release_tag" ]]; then
+            echo "release tag is required for release evidence attestation" >&2
+            exit 1
+          fi
+          echo "release_tag=$release_tag" >> "$GITHUB_OUTPUT"
+          bash scripts/release/capture_release_manifest.sh "$release_tag"
+          bash scripts/release/run_db_rollback_drill.sh "$release_tag"
+          python3 scripts/release/verify_db_rollback_readiness.py \
+            --repo-root . \
+            --release-tag "$release_tag" \
+            --output "artifacts/releases/$release_tag/rollback/db-rollback-readiness.json"
+          bash scripts/release/capture_canary_rollout_evidence.sh "$release_tag"
+
+      - name: Generate release prechecks
+        run: |
+          python3 scripts/release/generate_release_prechecks.py \
+            --skip-observability-checks \
+            --release-tag "${{ steps.release_tag.outputs.release_tag }}"
+
+      - name: Release evidence attestation preflight
+        run: |
+          python3 scripts/release/check_release_evidence_attest_readiness.py --release-tag "${{ steps.release_tag.outputs.release_tag }}"
+
+      - name: Package release evidence
+        run: |
+          release_dir="artifacts/releases/${{ steps.release_tag.outputs.release_tag }}"
+          bundle_path=".runtime-cache/reports/release/release-evidence-${{ steps.release_tag.outputs.release_tag }}.tar.gz"
+          mkdir -p "$(dirname "$bundle_path")"
+          tar -czf "$bundle_path" -C "$release_dir" .
+          echo "bundle_path=$bundle_path" >> "$GITHUB_ENV"
+
+      - name: Upload release evidence bundle
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: release-evidence-${{ steps.release_tag.outputs.release_tag }}-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: error
+          path: |
+            .runtime-cache/reports/release/release-evidence-attest-readiness.json
+            .runtime-cache/reports/release/release-evidence-${{ steps.release_tag.outputs.release_tag }}.tar.gz
+            .runtime-cache/reports/release-readiness/prechecks.json
+            artifacts/releases/${{ steps.release_tag.outputs.release_tag }}/manifest.json
+            artifacts/releases/${{ steps.release_tag.outputs.release_tag }}/checksums.sha256
+            artifacts/releases/${{ steps.release_tag.outputs.release_tag }}/rollback/db-rollback-readiness.json
+            artifacts/releases/${{ steps.release_tag.outputs.release_tag }}/rollback/drill.json
+
+      - name: Attest release evidence bundle provenance
+        uses: actions/attest-build-provenance@a2bbfa25375fe432b6a289bc6b6cd05ecd0c4c32 # v4
+        with:
+          subject-path: .runtime-cache/reports/release/release-evidence-${{ steps.release_tag.outputs.release_tag }}.tar.gz
+
+      - name: Write attestation verification summary
+        if: always()
+        run: |
+          {
+            echo "## Release Evidence Attestation"
+            echo
+            echo "- release_tag: \`${{ steps.release_tag.outputs.release_tag }}\`"
+            echo "- bundle: \`.runtime-cache/reports/release/release-evidence-${{ steps.release_tag.outputs.release_tag }}.tar.gz\`"
+            echo "- evidence_scope: \`current-run\`"
+            echo
+            echo "Suggested verification:"
+            echo "\`\`\`bash"
+            echo "gh attestation verify .runtime-cache/reports/release/release-evidence-${{ steps.release_tag.outputs.release_tag }}.tar.gz --repo ${{ github.repository }}"
+            echo "\`\`\`"
+          } >> "$GITHUB_STEP_SUMMARY"

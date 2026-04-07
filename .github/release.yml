@@ -1,0 +1,31 @@
+changelog:
+  exclude:
+    labels:
+      - skip-changelog
+  categories:
+    - title: Product Surface
+      labels:
+        - docs
+        - readme
+        - branding
+        - ux
+    - title: Runtime And Pipeline
+      labels:
+        - backend
+        - api
+        - worker
+        - pipeline
+    - title: Web Command Center
+      labels:
+        - frontend
+        - web
+    - title: Agent And MCP
+      labels:
+        - mcp
+        - agents
+    - title: Verification And Governance
+      labels:
+        - test
+        - ci
+        - governance
+        - security

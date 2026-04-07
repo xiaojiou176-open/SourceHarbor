@@ -1,0 +1,27 @@
+title: "Idea: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share product, workflow, integration, or growth ideas here.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What real user or operator problem is driving this idea?
+      placeholder: It is too hard to turn a strong digest into a shareable external briefing.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: What should SourceHarbor do?
+      placeholder: Add a publishable briefing surface that turns digest artifacts into shareable review pages.
+    validations:
+      required: true
+  - type: textarea
+    id: proof
+    attributes:
+      label: Evidence, examples, or references
+      description: Include comparable products, usage patterns, screenshots, or links if helpful.

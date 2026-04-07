@@ -1,0 +1,3094 @@
+openapi: 3.1.0
+info:
+  title: SourceHarbor API
+  version: 0.1.11
+  description: API contract for subscriptions, ingest polling, jobs, videos and artifacts.
+servers:
+  - url: http://127.0.0.1:9000
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      responses:
+        '200':
+          description: System health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthzResponse'
+
+  /api/v1/subscriptions:
+    get:
+      operationId: listSubscriptions
+      parameters:
+        - in: query
+          name: platform
+          schema:
+            $ref: '#/components/schemas/Platform'
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: enabled_only
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Subscription list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+    post:
+      operationId: upsertSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUpsertRequest'
+      responses:
+        '200':
+          description: Upsert result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionUpsertResponse'
+
+  /api/v1/subscriptions/templates:
+    get:
+      operationId: listSubscriptionTemplates
+      responses:
+        '200':
+          description: Supported subscription templates and support tiers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionTemplateCatalogResponse'
+
+  /api/v1/subscriptions/{id}:
+    delete:
+      operationId: removeSubscription
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/v1/subscriptions/batch-update-category:
+    post:
+      operationId: batchUpdateSubscriptionCategory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Batch category update result
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/watchlists:
+    get:
+      operationId: listWatchlists
+      responses:
+        '200':
+          description: Watchlist list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Watchlist'
+    post:
+      operationId: upsertWatchlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WatchlistUpsertRequest'
+      responses:
+        '200':
+          description: Watchlist upsert result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Watchlist'
+
+  /api/v1/watchlists/{watchlist_id}:
+    delete:
+      operationId: deleteWatchlist
+      parameters:
+        - in: path
+          name: watchlist_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /api/v1/watchlists/{watchlist_id}/trend:
+    get:
+      operationId: getWatchlistTrend
+      parameters:
+        - in: path
+          name: watchlist_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit_runs
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 3
+        - in: query
+          name: limit_cards
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 60
+            default: 18
+        - in: query
+          name: limit_stories
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            default: 4
+        - in: query
+          name: limit_evidence_per_story
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 8
+            default: 3
+      responses:
+        '200':
+          description: Watchlist trend with timeline and merged story groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistTrendResponse'
+        '404':
+          description: Not found
+
+  /api/v1/watchlists/{watchlist_id}/briefing:
+    get:
+      operationId: getWatchlistBriefing
+      parameters:
+        - in: path
+          name: watchlist_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: limit_runs
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 4
+        - in: query
+          name: limit_cards
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 60
+            default: 18
+        - in: query
+          name: limit_stories
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            default: 4
+        - in: query
+          name: limit_evidence_per_story
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 8
+            default: 3
+      responses:
+        '200':
+          description: Unified watchlist briefing with summary, differences, and evidence drill-down
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistBriefingResponse'
+        '404':
+          description: Not found
+
+  /api/v1/watchlists/{watchlist_id}/briefing/page:
+    get:
+      operationId: getWatchlistBriefingPage
+      parameters:
+        - in: path
+          name: watchlist_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: story_id
+          schema:
+            type: string
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: limit_runs
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 4
+        - in: query
+          name: limit_cards
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 60
+            default: 18
+        - in: query
+          name: limit_stories
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            default: 4
+        - in: query
+          name: limit_evidence_per_story
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 8
+            default: 3
+      responses:
+        '200':
+          description: Server-owned watchlist briefing page payload with selected story context and Ask handoff
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchlistBriefingPageResponse'
+        '404':
+          description: Not found
+
+  /api/v1/ingest/poll:
+    post:
+      operationId: pollIngest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestPollRequest'
+      responses:
+        '202':
+          description: Poll result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestPollResponse'
+
+  /api/v1/ingest/runs:
+    get:
+      operationId: listIngestRuns
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: platform
+          schema:
+            $ref: '#/components/schemas/Platform'
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Recent ingest runs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IngestRunSummary'
+
+  /api/v1/ingest/runs/{run_id}:
+    get:
+      operationId: getIngestRun
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Ingest run detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestRun'
+        '404':
+          description: Not found
+
+  /api/v1/jobs/{job_id}:
+    get:
+      operationId: getJob
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Not found
+
+  /api/v1/jobs/{job_id}/compare:
+    get:
+      operationId: compareJob
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job compare detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCompareResponse'
+        '404':
+          description: Not found
+
+  /api/v1/jobs/{job_id}/bundle:
+    get:
+      operationId: getJobEvidenceBundle
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job evidence bundle for drill-down and async reuse
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobEvidenceBundleResponse'
+        '404':
+          description: Not found
+
+  /api/v1/knowledge/cards:
+    get:
+      operationId: listKnowledgeCards
+      parameters:
+        - in: query
+          name: job_id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: video_id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: card_type
+          schema:
+            type: string
+        - in: query
+          name: topic_key
+          schema:
+            type: string
+        - in: query
+          name: claim_kind
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
+      responses:
+        '200':
+          description: Knowledge cards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeCard'
+
+  /api/v1/jobs/{job_id}/knowledge-cards:
+    get:
+      operationId: getJobKnowledgeCards
+      parameters:
+        - in: path
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Knowledge cards derived from one job
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KnowledgeCardResponse'
+        '404':
+          description: Not found
+
+  /api/v1/retrieval/search:
+    post:
+      operationId: retrievalSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetrievalSearchRequest'
+      responses:
+        '200':
+          description: Retrieval search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetrievalSearchResponse'
+
+  /api/v1/retrieval/answer:
+    post:
+      operationId: retrievalAnswer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskAnswerRequest'
+      responses:
+        '200':
+          description: Briefing-aware answer contract
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskAnswerResponse'
+
+  /api/v1/retrieval/answer/page:
+    post:
+      operationId: retrievalAnswerPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AskPageRequest'
+      responses:
+        '200':
+          description: Server-owned Ask page payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskPageResponse'
+
+  /api/v1/ops/inbox:
+    get:
+      operationId: getOpsInbox
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 20
+            default: 5
+        - in: query
+          name: window_hours
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 168
+            default: 24
+      responses:
+        '200':
+          description: Operator inbox rollup for failures, gates, and next actions
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid ops inbox request
+        '503':
+          description: Ops inbox unavailable
+
+  /api/v1/computer-use/run:
+    post:
+      operationId: runComputerUse
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComputerUseRunRequest'
+      responses:
+        '200':
+          description: Computer use planning result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComputerUseRunResponse'
+        '400':
+          description: Invalid request payload
+
+  /api/v1/health/providers:
+    get:
+      operationId: getProviderHealth
+      parameters:
+        - in: query
+          name: window_hours
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 168
+            default: 24
+      responses:
+        '200':
+          description: Provider health rollup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProviderHealthResponse'
+
+  /api/v1/videos:
+    get:
+      operationId: listVideos
+      parameters:
+        - in: query
+          name: platform
+          schema:
+            $ref: '#/components/schemas/Platform'
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/JobStatus'
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Video list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Video'
+
+  /api/v1/videos/process:
+    post:
+      operationId: processVideo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoProcessRequest'
+      responses:
+        '202':
+          description: Process job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoProcessResponse'
+        '503':
+          description: Temporal unavailable
+
+  /api/v1/artifacts/markdown:
+    get:
+      operationId: getArtifactMarkdown
+      parameters:
+        - in: query
+          name: job_id
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: video_url
+          schema:
+            type: string
+            minLength: 1
+        - in: query
+          name: include_meta
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Markdown artifact text (plain text by default, JSON when include_meta=true)
+          content:
+            text/markdown:
+              schema:
+                type: string
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtifactMarkdownWithMeta'
+        '400':
+          description: Missing query parameters
+        '404':
+          description: Artifact not found
+
+  /api/v1/artifacts/assets:
+    get:
+      operationId: getArtifactAsset
+      parameters:
+        - in: query
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Artifact asset binary payload
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Artifact asset not found
+
+  /api/v1/workflows/run:
+    post:
+      operationId: runWorkflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowRunRequest'
+      responses:
+        '200':
+          description: Workflow run accepted/completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRunResponse'
+        '502':
+          description: Workflow execution failed
+        '503':
+          description: Temporal unavailable or workflow start failed
+
+  /api/v1/notifications/config:
+    get:
+      operationId: getNotificationConfig
+      responses:
+        '200':
+          description: Notification config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationConfig'
+    put:
+      operationId: updateNotificationConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationConfigUpdateRequest'
+      responses:
+        '200':
+          description: Updated notification config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationConfig'
+
+  /api/v1/notifications/test:
+    post:
+      operationId: sendNotificationTest
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationTestRequest'
+      responses:
+        '200':
+          description: Test notification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationSendResponse'
+        '400':
+          description: Bad request
+        '503':
+          description: Notification provider unavailable
+
+  /api/v1/reports/daily/send:
+    post:
+      operationId: sendDailyReport
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DailyReportSendRequest'
+      responses:
+        '200':
+          description: Daily report notification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DailyReportSendResponse'
+        '400':
+          description: Bad request
+        '503':
+          description: Notification provider unavailable
+
+  /api/v1/notifications/category/send:
+    post:
+      operationId: sendCategoryNotification
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Category notification result
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/feed/digests:
+    get:
+      operationId: getDigestFeed
+      parameters:
+        - in: query
+          name: source
+          schema:
+            $ref: '#/components/schemas/Platform'
+        - in: query
+          name: category
+          schema:
+            type: string
+        - in: query
+          name: feedback
+          schema:
+            type: string
+            enum: [saved, useful, noisy, dismissed, archived]
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [recent, curated]
+        - in: query
+          name: sub
+          schema:
+            type: string
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: cursor
+          schema:
+            type: string
+        - in: query
+          name: since
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Digest feed result
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/feed/feedback:
+    get:
+      operationId: getFeedFeedback
+      parameters:
+        - in: query
+          name: job_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Feed feedback state
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedFeedback'
+    put:
+      operationId: putFeedFeedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedFeedbackUpdateRequest'
+      responses:
+        '200':
+          description: Feed feedback updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedFeedback'
+
+  /api/v1/ui-audit/run:
+    post:
+      operationId: runUiAudit
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: UI audit run started
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/ui-audit/{run_id}:
+    get:
+      operationId: getUiAuditRun
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: UI audit run detail
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/ui-audit/{run_id}/findings:
+    get:
+      operationId: listUiAuditFindings
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: UI audit findings
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/ui-audit/{run_id}/artifact:
+    get:
+      operationId: getUiAuditArtifact
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: UI audit artifact
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/ui-audit/{run_id}/autofix:
+    post:
+      operationId: runUiAuditAutofix
+      parameters:
+        - in: path
+          name: run_id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: UI audit autofix plan
+          content:
+            application/json:
+              schema:
+                type: object
+
+components:
+  schemas:
+    HealthzResponse:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+
+    Platform:
+      type: string
+      description: Source platform key. `youtube` and `bilibili` are strong-supported video lanes; other string values are allowed for generic RSSHub/RSS substrate usage.
+      examples: [youtube, bilibili, rsshub, generic]
+
+    SourceType:
+      type: string
+      description: Source identifier type. Known strong-supported values include `youtube_channel_id` and `bilibili_uid`; generic strings such as `rsshub_route` remain allowed without claiming per-route verification.
+      examples: [youtube_channel_id, bilibili_uid, url, rsshub_route]
+
+    SubscriptionSupportTier:
+      type: string
+      enum: [strong_supported, generic_supported]
+
+    SubscriptionContentProfile:
+      type: string
+      enum: [video, article]
+
+    JobStatus:
+      type: string
+      enum: [queued, running, succeeded, failed]
+
+    Subscription:
+      type: object
+      required:
+        [id, platform, source_type, source_value, support_tier, content_profile, rsshub_route, enabled, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        platform:
+          $ref: '#/components/schemas/Platform'
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        source_value:
+          type: string
+        source_name:
+          type: string
+        support_tier:
+          $ref: '#/components/schemas/SubscriptionSupportTier'
+        content_profile:
+          $ref: '#/components/schemas/SubscriptionContentProfile'
+        adapter_type:
+          type: string
+          enum: [rsshub_route, rss_generic]
+        source_url:
+          type: string
+          nullable: true
+        rsshub_route:
+          type: string
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 100
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SubscriptionUpsertRequest:
+      type: object
+      required: [platform, source_type, source_value]
+      properties:
+        platform:
+          $ref: '#/components/schemas/Platform'
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        source_value:
+          type: string
+        adapter_type:
+          type: string
+          enum: [rsshub_route, rss_generic]
+        source_url:
+          type: string
+          nullable: true
+        rsshub_route:
+          type: string
+          nullable: true
+        category:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 100
+        enabled:
+          type: boolean
+
+    SubscriptionTemplateSupportTier:
+      type: object
+      required: [id, label, description, content_profile, supports_video_pipeline, verification_status]
+      properties:
+        id:
+          $ref: '#/components/schemas/SubscriptionSupportTier'
+        label:
+          type: string
+        description:
+          type: string
+        content_profile:
+          $ref: '#/components/schemas/SubscriptionContentProfile'
+        supports_video_pipeline:
+          type: boolean
+        verification_status:
+          type: string
+
+    SubscriptionTemplate:
+      type: object
+      required:
+        [id, label, description, support_tier, platform, source_type, adapter_type, content_profile, source_url_required, supports_video_pipeline]
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        support_tier:
+          $ref: '#/components/schemas/SubscriptionSupportTier'
+        platform:
+          $ref: '#/components/schemas/Platform'
+        source_type:
+          $ref: '#/components/schemas/SourceType'
+        adapter_type:
+          type: string
+          enum: [rsshub_route, rss_generic]
+        content_profile:
+          $ref: '#/components/schemas/SubscriptionContentProfile'
+        category:
+          type: string
+          nullable: true
+        source_value_placeholder:
+          type: string
+          nullable: true
+        source_url_placeholder:
+          type: string
+          nullable: true
+        rsshub_route_hint:
+          type: string
+          nullable: true
+        source_url_required:
+          type: boolean
+        supports_video_pipeline:
+          type: boolean
+        fill_now:
+          type: string
+          nullable: true
+        proof_boundary:
+          type: string
+          nullable: true
+        evidence_note:
+          type: string
+          nullable: true
+
+    SubscriptionTemplateCatalogResponse:
+      type: object
+      required: [support_tiers, templates]
+      properties:
+        support_tiers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionTemplateSupportTier'
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionTemplate'
+
+    SubscriptionUpsertResponse:
+      type: object
+      required: [subscription, created]
+      properties:
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        created:
+          type: boolean
+
+    Watchlist:
+      type: object
+      required:
+        [id, name, matcher_type, matcher_value, delivery_channel, enabled, created_at, updated_at]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        matcher_type:
+          type: string
+          enum: [topic_key, claim_kind, platform, source_match]
+        matcher_value:
+          type: string
+        delivery_channel:
+          type: string
+          enum: [dashboard, email]
+        enabled:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string
+
+    WatchlistUpsertRequest:
+      type: object
+      required: [name, matcher_type, matcher_value]
+      properties:
+        id:
+          type: string
+          nullable: true
+        name:
+          type: string
+        matcher_type:
+          type: string
+          enum: [topic_key, claim_kind, platform, source_match]
+        matcher_value:
+          type: string
+        delivery_channel:
+          type: string
+          enum: [dashboard, email]
+          default: dashboard
+        enabled:
+          type: boolean
+
+    WatchlistTrendCard:
+      type: object
+      required:
+        [card_id, job_id, video_id, platform, created_at, card_type, card_body, source_section]
+      properties:
+        card_id:
+          type: string
+        job_id:
+          type: string
+        video_id:
+          type: string
+        platform:
+          $ref: '#/components/schemas/Platform'
+        video_title:
+          type: string
+          nullable: true
+        source_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        card_type:
+          type: string
+        card_title:
+          type: string
+          nullable: true
+        card_body:
+          type: string
+        source_section:
+          type: string
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        claim_kind:
+          type: string
+          nullable: true
+
+    WatchlistTrendRun:
+      type: object
+      required:
+        [job_id, video_id, platform, title, created_at, matched_card_count, cards, topics, claim_kinds, added_topics, removed_topics, added_claim_kinds, removed_claim_kinds]
+      properties:
+        job_id:
+          type: string
+        video_id:
+          type: string
+        platform:
+          $ref: '#/components/schemas/Platform'
+        title:
+          type: string
+        source_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        matched_card_count:
+          type: integer
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistTrendCard'
+        topics:
+          type: array
+          items:
+            type: string
+        claim_kinds:
+          type: array
+          items:
+            type: string
+        added_topics:
+          type: array
+          items:
+            type: string
+        removed_topics:
+          type: array
+          items:
+            type: string
+        added_claim_kinds:
+          type: array
+          items:
+            type: string
+        removed_claim_kinds:
+          type: array
+          items:
+            type: string
+
+    WatchlistMergedStory:
+      type: object
+      required:
+        [id, story_key, headline, latest_created_at, matched_card_count, platforms, claim_kinds, source_urls, run_ids, cards]
+      properties:
+        id:
+          type: string
+        story_key:
+          type: string
+        headline:
+          type: string
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        latest_created_at:
+          type: string
+        matched_card_count:
+          type: integer
+        platforms:
+          type: array
+          items:
+            type: string
+        claim_kinds:
+          type: array
+          items:
+            type: string
+        source_urls:
+          type: array
+          items:
+            type: string
+        run_ids:
+          type: array
+          items:
+            type: string
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistTrendCard'
+
+    WatchlistTrendSummary:
+      type: object
+      required: [recent_runs, matched_cards, matcher_type, matcher_value]
+      properties:
+        recent_runs:
+          type: integer
+        matched_cards:
+          type: integer
+        matcher_type:
+          type: string
+        matcher_value:
+          type: string
+
+    WatchlistTrendResponse:
+      type: object
+      required: [watchlist, summary, timeline, merged_stories]
+      properties:
+        watchlist:
+          $ref: '#/components/schemas/Watchlist'
+        summary:
+          $ref: '#/components/schemas/WatchlistTrendSummary'
+        timeline:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistTrendRun'
+        merged_stories:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistMergedStory'
+
+    WatchlistBriefingSignal:
+      type: object
+      required: [story_key, headline, matched_card_count, reason]
+      properties:
+        story_key:
+          type: string
+        headline:
+          type: string
+        matched_card_count:
+          type: integer
+        latest_run_job_id:
+          type: string
+          nullable: true
+        reason:
+          type: string
+
+    WatchlistBriefingSummary:
+      type: object
+      required: [overview, source_count, run_count, story_count, matched_cards, signals]
+      properties:
+        overview:
+          type: string
+        source_count:
+          type: integer
+        run_count:
+          type: integer
+        story_count:
+          type: integer
+        matched_cards:
+          type: integer
+        primary_story_headline:
+          type: string
+          nullable: true
+        signals:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistBriefingSignal'
+
+    WatchlistBriefingCompare:
+      type: object
+      required:
+        [job_id, has_previous, changed, added_lines, removed_lines, compare_route]
+      properties:
+        job_id:
+          type: string
+        has_previous:
+          type: boolean
+        previous_job_id:
+          type: string
+          nullable: true
+        changed:
+          type: boolean
+        added_lines:
+          type: integer
+        removed_lines:
+          type: integer
+        diff_excerpt:
+          type: string
+          nullable: true
+        compare_route:
+          type: string
+
+    WatchlistBriefingDifferences:
+      type: object
+      required:
+        [added_topics, removed_topics, added_claim_kinds, removed_claim_kinds, new_story_keys, removed_story_keys]
+      properties:
+        latest_job_id:
+          type: string
+          nullable: true
+        previous_job_id:
+          type: string
+          nullable: true
+        added_topics:
+          type: array
+          items:
+            type: string
+        removed_topics:
+          type: array
+          items:
+            type: string
+        added_claim_kinds:
+          type: array
+          items:
+            type: string
+        removed_claim_kinds:
+          type: array
+          items:
+            type: string
+        new_story_keys:
+          type: array
+          items:
+            type: string
+        removed_story_keys:
+          type: array
+          items:
+            type: string
+        compare:
+          allOf:
+            - $ref: '#/components/schemas/WatchlistBriefingCompare'
+          nullable: true
+
+    WatchlistBriefingRoutes:
+      type: object
+      required: [watchlist_trend]
+      properties:
+        watchlist_trend:
+          type: string
+        briefing:
+          type: string
+          nullable: true
+        ask:
+          type: string
+          nullable: true
+        job_compare:
+          type: string
+          nullable: true
+        job_bundle:
+          type: string
+          nullable: true
+        job_knowledge_cards:
+          type: string
+          nullable: true
+
+    WatchlistBriefingStoryEvidence:
+      type: object
+      required:
+        [story_id, story_key, headline, source_count, run_count, matched_card_count, platforms, claim_kinds, source_urls, evidence_cards, routes]
+      properties:
+        story_id:
+          type: string
+        story_key:
+          type: string
+        headline:
+          type: string
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        source_count:
+          type: integer
+        run_count:
+          type: integer
+        matched_card_count:
+          type: integer
+        platforms:
+          type: array
+          items:
+            type: string
+        claim_kinds:
+          type: array
+          items:
+            type: string
+        source_urls:
+          type: array
+          items:
+            type: string
+        latest_run_job_id:
+          type: string
+          nullable: true
+        evidence_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistTrendCard'
+        routes:
+          $ref: '#/components/schemas/WatchlistBriefingRoutes'
+
+    WatchlistBriefingRunEvidence:
+      type: object
+      required: [job_id, video_id, platform, title, created_at, matched_card_count, routes]
+      properties:
+        job_id:
+          type: string
+        video_id:
+          type: string
+        platform:
+          $ref: '#/components/schemas/Platform'
+        title:
+          type: string
+        source_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+        matched_card_count:
+          type: integer
+        routes:
+          $ref: '#/components/schemas/WatchlistBriefingRoutes'
+
+    WatchlistBriefingEvidence:
+      type: object
+      required: [stories, featured_runs]
+      properties:
+        suggested_story_id:
+          type: string
+          nullable: true
+        stories:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistBriefingStoryEvidence'
+        featured_runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistBriefingRunEvidence'
+
+    WatchlistBriefingSelection:
+      type: object
+      required: [selection_basis]
+      properties:
+        selected_story_id:
+          type: string
+          nullable: true
+        selection_basis:
+          type: string
+          enum: [requested_story_id, query_match, suggested_story_id, first_story, none]
+        story:
+          allOf:
+            - $ref: '#/components/schemas/WatchlistBriefingStoryEvidence'
+          nullable: true
+
+    WatchlistBriefingResponse:
+      type: object
+      required: [watchlist, summary, differences, evidence]
+      properties:
+        watchlist:
+          $ref: '#/components/schemas/Watchlist'
+        summary:
+          $ref: '#/components/schemas/WatchlistBriefingSummary'
+        differences:
+          $ref: '#/components/schemas/WatchlistBriefingDifferences'
+        evidence:
+          $ref: '#/components/schemas/WatchlistBriefingEvidence'
+        selection:
+          allOf:
+            - $ref: '#/components/schemas/WatchlistBriefingSelection'
+          nullable: true
+
+    WatchlistBriefingPageContext:
+      type: object
+      required: [watchlist_id, selection_basis]
+      properties:
+        watchlist_id:
+          type: string
+        watchlist_name:
+          type: string
+          nullable: true
+        story_id:
+          type: string
+          nullable: true
+        selected_story_id:
+          type: string
+          nullable: true
+        story_headline:
+          type: string
+          nullable: true
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        selection_basis:
+          type: string
+          enum: [requested_story_id, query_match, suggested_story_id, first_story, none]
+        question_seed:
+          type: string
+          nullable: true
+
+    WatchlistBriefingPageCitation:
+      type: object
+      required: [kind, label, snippet]
+      properties:
+        kind:
+          type: string
+          enum: [briefing_story, briefing_card, job_compare]
+        label:
+          type: string
+        snippet:
+          type: string
+        source_url:
+          type: string
+          nullable: true
+        job_id:
+          type: string
+          nullable: true
+        route:
+          type: string
+          nullable: true
+        route_label:
+          type: string
+          nullable: true
+
+    WatchlistBriefingPageFallbackAction:
+      type: object
+      required: [kind, label]
+      properties:
+        kind:
+          type: string
+          enum: [open_briefing, open_story, open_job, open_knowledge, open_trend]
+        label:
+          type: string
+        route:
+          type: string
+          nullable: true
+
+    WatchlistBriefingPageResponse:
+      type: object
+      required: [context, briefing, citations, routes, fallback_actions]
+      properties:
+        context:
+          $ref: '#/components/schemas/WatchlistBriefingPageContext'
+        briefing:
+          $ref: '#/components/schemas/WatchlistBriefingResponse'
+        selected_story:
+          allOf:
+            - $ref: '#/components/schemas/WatchlistBriefingStoryEvidence'
+          nullable: true
+        story_change_summary:
+          type: string
+          nullable: true
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistBriefingPageCitation'
+        routes:
+          $ref: '#/components/schemas/WatchlistBriefingRoutes'
+        ask_route:
+          type: string
+          nullable: true
+        compare_route:
+          type: string
+          nullable: true
+        fallback_reason:
+          type: string
+          nullable: true
+        fallback_next_step:
+          type: string
+          nullable: true
+        fallback_actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/WatchlistBriefingPageFallbackAction'
+
+    IngestPollRequest:
+      type: object
+      properties:
+        subscription_id:
+          type: string
+          format: uuid
+        platform:
+          $ref: '#/components/schemas/Platform'
+        max_new_videos:
+          type: integer
+          minimum: 1
+          default: 50
+
+    IngestCandidate:
+      type: object
+      required: [video_id, platform, video_uid, source_url, job_id]
+      properties:
+        video_id:
+          type: string
+          format: uuid
+        platform:
+          $ref: '#/components/schemas/Platform'
+        video_uid:
+          type: string
+        source_url:
+          type: string
+        title:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        job_id:
+          type: string
+          format: uuid
+
+    IngestPollResponse:
+      type: object
+      required: [run_id, status, enqueued, candidates]
+      properties:
+        run_id:
+          type: string
+          format: uuid
+        workflow_id:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [queued, running, succeeded, failed, skipped]
+        enqueued:
+          type: integer
+          minimum: 0
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/IngestCandidate'
+
+    IngestRunItem:
+      type: object
+      required:
+        [id, platform, video_uid, source_url, content_type, item_status, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        subscription_id:
+          type: string
+          format: uuid
+          nullable: true
+        video_id:
+          type: string
+          format: uuid
+          nullable: true
+        job_id:
+          type: string
+          format: uuid
+          nullable: true
+        ingest_event_id:
+          type: string
+          format: uuid
+          nullable: true
+        platform:
+          $ref: '#/components/schemas/Platform'
+        video_uid:
+          type: string
+        source_url:
+          type: string
+        title:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        entry_hash:
+          type: string
+          nullable: true
+        pipeline_mode:
+          type: string
+          nullable: true
+        content_type:
+          type: string
+          enum: [video, article]
+        item_status:
+          type: string
+          enum: [queued, deduped, skipped]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    IngestRunSummary:
+      type: object
+      required:
+        [
+          id,
+          max_new_videos,
+          status,
+          jobs_created,
+          candidates_count,
+          feeds_polled,
+          entries_fetched,
+          entries_normalized,
+          ingest_events_created,
+          ingest_event_duplicates,
+          job_duplicates,
+          created_at,
+          updated_at
+        ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        subscription_id:
+          type: string
+          format: uuid
+          nullable: true
+        workflow_id:
+          type: string
+          nullable: true
+        platform:
+          $ref: '#/components/schemas/Platform'
+          nullable: true
+        max_new_videos:
+          type: integer
+          minimum: 1
+        status:
+          type: string
+          enum: [queued, running, succeeded, failed, skipped]
+        jobs_created:
+          type: integer
+          minimum: 0
+        candidates_count:
+          type: integer
+          minimum: 0
+        feeds_polled:
+          type: integer
+          minimum: 0
+        entries_fetched:
+          type: integer
+          minimum: 0
+        entries_normalized:
+          type: integer
+          minimum: 0
+        ingest_events_created:
+          type: integer
+          minimum: 0
+        ingest_event_duplicates:
+          type: integer
+          minimum: 0
+        job_duplicates:
+          type: integer
+          minimum: 0
+        error_message:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    IngestRun:
+      allOf:
+        - $ref: '#/components/schemas/IngestRunSummary'
+        - type: object
+          required: [items]
+          properties:
+            requested_by:
+              type: string
+              nullable: true
+            requested_trace_id:
+              type: string
+              nullable: true
+            filters_json:
+              type: object
+              nullable: true
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/IngestRunItem'
+
+    JobStep:
+      type: object
+      required: [name, status, attempt]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        attempt:
+          type: integer
+        started_at:
+          type: string
+          nullable: true
+        finished_at:
+          type: string
+          nullable: true
+        error:
+          nullable: true
+
+    JobStepDetail:
+      type: object
+      required: [name, status, attempt]
+      properties:
+        name:
+          type: string
+        status:
+          type: string
+        attempt:
+          type: integer
+        started_at:
+          type: string
+          nullable: true
+        finished_at:
+          type: string
+          nullable: true
+        error:
+          nullable: true
+
+    JobCompareStats:
+      type: object
+      required: [added_lines, removed_lines, changed]
+      properties:
+        added_lines:
+          type: integer
+        removed_lines:
+          type: integer
+        changed:
+          type: boolean
+
+    JobCompareResponse:
+      type: object
+      required: [job_id, has_previous, diff_markdown, stats]
+      properties:
+        job_id:
+          type: string
+        previous_job_id:
+          type:
+            - string
+            - 'null'
+        has_previous:
+          type: boolean
+        current_digest:
+          type:
+            - string
+            - 'null'
+        previous_digest:
+          type:
+            - string
+            - 'null'
+        diff_markdown:
+          type: string
+        stats:
+          $ref: '#/components/schemas/JobCompareStats'
+
+    KnowledgeCard:
+      type: object
+      required:
+        [id, job_id, video_id, card_type, source_section, body, order_index, created_at, updated_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        job_id:
+          type: string
+          format: uuid
+        video_id:
+          type: string
+          format: uuid
+        card_type:
+          type: string
+          enum: [summary, takeaway, action]
+        source_section:
+          type: string
+        title:
+          type:
+            - string
+            - 'null'
+        body:
+          type: string
+        order_index:
+          type: integer
+        metadata_json:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    KnowledgeCardResponse:
+      type: object
+      required: [card_type, title, body, source_section, order_index]
+      properties:
+        card_type:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+        source_section:
+          type: string
+        order_index:
+          type: integer
+
+    FeedFeedback:
+      type: object
+      required: [job_id, saved, feedback_label, exists, created_at, updated_at]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        saved:
+          type: boolean
+        feedback_label:
+          type:
+            - string
+            - 'null'
+          enum: [useful, noisy, dismissed, archived, null]
+        exists:
+          type: boolean
+        created_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        updated_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+
+    FeedFeedbackUpdateRequest:
+      type: object
+      required: [job_id, saved]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        saved:
+          type: boolean
+        feedback_label:
+          type:
+            - string
+            - 'null'
+          enum: [useful, noisy, dismissed, archived, null]
+
+    RetrievalSearchRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          minLength: 1
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 10
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+          default: keyword
+        filters:
+          type: object
+          default: {}
+          additionalProperties: true
+
+    RetrievalHit:
+      type: object
+      required: [job_id, video_id, platform, video_uid, source_url, kind, source, snippet, score]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        video_id:
+          type: string
+          format: uuid
+        platform:
+          $ref: '#/components/schemas/Platform'
+        video_uid:
+          type: string
+        source_url:
+          type: string
+        title:
+          type: string
+          nullable: true
+        kind:
+          type: string
+        mode:
+          type: string
+          nullable: true
+        source:
+          type: string
+          enum: [digest, transcript, outline, knowledge_cards, comments, meta]
+        snippet:
+          type: string
+        score:
+          type: number
+
+    RetrievalSearchResponse:
+      type: object
+      required: [query, top_k, filters, items]
+      properties:
+        query:
+          type: string
+        top_k:
+          type: integer
+          minimum: 1
+        filters:
+          type: object
+          additionalProperties: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetrievalHit'
+
+    AskAnswerRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          minLength: 1
+        watchlist_id:
+          type: string
+          nullable: true
+        story_id:
+          type: string
+          nullable: true
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 5
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+          default: keyword
+        filters:
+          type: object
+          default: {}
+          additionalProperties: true
+
+    AskAnswerContext:
+      type: object
+      required: [selection_basis, mode, filters, briefing_available]
+      properties:
+        watchlist_id:
+          type: string
+          nullable: true
+        watchlist_name:
+          type: string
+          nullable: true
+        story_id:
+          type: string
+          nullable: true
+        selected_story_id:
+          type: string
+          nullable: true
+        story_headline:
+          type: string
+          nullable: true
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        selection_basis:
+          type: string
+          enum: [requested_story_id, query_match, suggested_story_id, first_story, none]
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+        filters:
+          type: object
+          additionalProperties: true
+        briefing_available:
+          type: boolean
+
+    AskAnswerBody:
+      type: object
+      required: [direct_answer, summary, confidence]
+      properties:
+        direct_answer:
+          type: string
+        summary:
+          type: string
+        reason:
+          type: string
+          nullable: true
+        confidence:
+          type: string
+          enum: [grounded, limited]
+
+    AskAnswerChanges:
+      type: object
+      required:
+        [summary, added_topics, removed_topics, added_claim_kinds, removed_claim_kinds, new_story_keys, removed_story_keys, has_previous]
+      properties:
+        summary:
+          type: string
+        story_focus_summary:
+          type: string
+          nullable: true
+        latest_job_id:
+          type: string
+          nullable: true
+        previous_job_id:
+          type: string
+          nullable: true
+        added_topics:
+          type: array
+          items:
+            type: string
+        removed_topics:
+          type: array
+          items:
+            type: string
+        added_claim_kinds:
+          type: array
+          items:
+            type: string
+        removed_claim_kinds:
+          type: array
+          items:
+            type: string
+        new_story_keys:
+          type: array
+          items:
+            type: string
+        removed_story_keys:
+          type: array
+          items:
+            type: string
+        compare_excerpt:
+          type: string
+          nullable: true
+        compare_route:
+          type: string
+          nullable: true
+        has_previous:
+          type: boolean
+
+    AskAnswerCitation:
+      type: object
+      required: [kind, label, snippet]
+      properties:
+        kind:
+          type: string
+          enum: [briefing_story, briefing_card, retrieval_hit, job_compare]
+        label:
+          type: string
+        snippet:
+          type: string
+        source_url:
+          type: string
+          nullable: true
+        job_id:
+          type: string
+          nullable: true
+        route:
+          type: string
+          nullable: true
+        route_label:
+          type: string
+          nullable: true
+
+    AskAnswerSelectedStory:
+      type: object
+      required:
+        [story_id, story_key, headline, source_count, run_count, matched_card_count, platforms, claim_kinds, source_urls, routes]
+      properties:
+        story_id:
+          type: string
+        story_key:
+          type: string
+        headline:
+          type: string
+        topic_key:
+          type: string
+          nullable: true
+        topic_label:
+          type: string
+          nullable: true
+        source_count:
+          type: integer
+        run_count:
+          type: integer
+        matched_card_count:
+          type: integer
+        platforms:
+          type: array
+          items:
+            type: string
+        claim_kinds:
+          type: array
+          items:
+            type: string
+        source_urls:
+          type: array
+          items:
+            type: string
+        latest_run_job_id:
+          type: string
+          nullable: true
+        routes:
+          $ref: '#/components/schemas/WatchlistBriefingRoutes'
+
+    AskAnswerEvidenceCard:
+      type: object
+      required: [body]
+      properties:
+        card_id:
+          type: string
+          nullable: true
+        job_id:
+          type: string
+          nullable: true
+        platform:
+          type: string
+          nullable: true
+        source_url:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        body:
+          type: string
+        source_section:
+          type: string
+          nullable: true
+
+    AskAnswerEvidence:
+      type: object
+      required: [citation_count, retrieval_hit_count, retrieval_items, story_cards]
+      properties:
+        briefing_overview:
+          type: string
+          nullable: true
+        selected_story_id:
+          type: string
+          nullable: true
+        selected_story_headline:
+          type: string
+          nullable: true
+        latest_job_id:
+          type: string
+          nullable: true
+        citation_count:
+          type: integer
+        retrieval_hit_count:
+          type: integer
+        retrieval_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RetrievalHit'
+        story_cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/AskAnswerEvidenceCard'
+
+    AskAnswerFallback:
+      type: object
+      required: [status, actions]
+      properties:
+        status:
+          type: string
+          enum:
+            [grounded, limited, briefing_unavailable, story_not_found, insufficient_evidence]
+        reason:
+          type: string
+          nullable: true
+        suggested_next_step:
+          type: string
+          nullable: true
+        actions:
+          type: array
+          items:
+            type: object
+            required: [kind, label]
+            properties:
+              kind:
+                type: string
+                enum: [open_briefing, open_story, open_job, open_knowledge, open_search]
+              label:
+                type: string
+              route:
+                type: string
+                nullable: true
+
+    AskAnswerResponse:
+      type: object
+      required: [query, context, answer, changes, citations, evidence, fallback]
+      properties:
+        query:
+          type: string
+        context:
+          $ref: '#/components/schemas/AskAnswerContext'
+        selected_story:
+          allOf:
+            - $ref: '#/components/schemas/AskAnswerSelectedStory'
+          nullable: true
+        answer:
+          $ref: '#/components/schemas/AskAnswerBody'
+        changes:
+          $ref: '#/components/schemas/AskAnswerChanges'
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AskAnswerCitation'
+        evidence:
+          $ref: '#/components/schemas/AskAnswerEvidence'
+        fallback:
+          $ref: '#/components/schemas/AskAnswerFallback'
+
+    AskPageRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ''
+        watchlist_id:
+          type: string
+          nullable: true
+        story_id:
+          type: string
+          nullable: true
+        topic_key:
+          type: string
+          nullable: true
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 6
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+          default: keyword
+        filters:
+          type: object
+          additionalProperties: true
+          default: {}
+
+    AskPageResponse:
+      type: object
+      required:
+        [question, mode, top_k, context, answer_state, answer_confidence, citations, fallback_actions]
+      properties:
+        question:
+          type: string
+        mode:
+          type: string
+          enum: [keyword, semantic, hybrid]
+        top_k:
+          type: integer
+        context:
+          $ref: '#/components/schemas/AskAnswerContext'
+        answer_state:
+          type: string
+          enum: [briefing_grounded, missing_context, briefing_unavailable, no_confident_answer]
+        answer_headline:
+          type: string
+          nullable: true
+        answer_summary:
+          type: string
+          nullable: true
+        answer_reason:
+          type: string
+          nullable: true
+        answer_confidence:
+          type: string
+          enum: [grounded, limited]
+        story_change_summary:
+          type: string
+          nullable: true
+        story_page:
+          allOf:
+            - $ref: '#/components/schemas/WatchlistBriefingPageResponse'
+          nullable: true
+        retrieval:
+          allOf:
+            - $ref: '#/components/schemas/RetrievalSearchResponse'
+          nullable: true
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/AskAnswerCitation'
+        fallback_reason:
+          type: string
+          nullable: true
+        fallback_next_step:
+          type: string
+          nullable: true
+        fallback_actions:
+          type: array
+          items:
+            type: object
+            required: [kind, label]
+            properties:
+              kind:
+                type: string
+                enum: [open_briefing, open_story, open_job, open_knowledge, open_search]
+              label:
+                type: string
+              route:
+                type: string
+                nullable: true
+
+    ComputerUseSafety:
+      type: object
+      required: [confirm_before_execute, blocked_actions, max_actions]
+      properties:
+        confirm_before_execute:
+          type: boolean
+          default: true
+        blocked_actions:
+          type: array
+          items:
+            type: string
+          default: []
+        max_actions:
+          type: integer
+          minimum: 1
+          maximum: 20
+          default: 8
+
+    ComputerUseRunRequest:
+      type: object
+      required: [instruction, screenshot_base64]
+      properties:
+        instruction:
+          type: string
+          minLength: 1
+        screenshot_base64:
+          type: string
+          minLength: 1
+        safety:
+          $ref: '#/components/schemas/ComputerUseSafety'
+
+    ComputerUseAction:
+      type: object
+      required: [step, action, target, input_text, reasoning]
+      properties:
+        step:
+          type: integer
+          minimum: 1
+        action:
+          type: string
+        target:
+          type: string
+          nullable: true
+        input_text:
+          type: string
+          nullable: true
+        reasoning:
+          type: string
+          nullable: true
+
+    ComputerUseRunResponse:
+      type: object
+      required: [actions, require_confirmation, blocked_actions, final_text, thought_metadata]
+      properties:
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComputerUseAction'
+        require_confirmation:
+          type: boolean
+        blocked_actions:
+          type: array
+          items:
+            type: string
+        final_text:
+          type: string
+        thought_metadata:
+          type: object
+          additionalProperties: true
+
+    JobDegradation:
+      type: object
+      properties:
+        step:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        reason:
+          type: string
+          nullable: true
+        error:
+          nullable: true
+        error_kind:
+          type: string
+          nullable: true
+        retry_meta:
+          type: object
+          nullable: true
+          additionalProperties: true
+        cache_meta:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    PipelineFinalStatus:
+      type: string
+      enum: [succeeded, degraded, failed]
+
+    NotificationRetrySummary:
+      type: object
+      required: [delivery_id, status, attempt_count]
+      properties:
+        delivery_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        attempt_count:
+          type: integer
+          minimum: 0
+        next_retry_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_error_kind:
+          type: string
+          nullable: true
+
+    ProviderHealthSummary:
+      type: object
+      required: [provider, ok, warn, fail]
+      properties:
+        provider:
+          type: string
+        ok:
+          type: integer
+          minimum: 0
+        warn:
+          type: integer
+          minimum: 0
+        fail:
+          type: integer
+          minimum: 0
+        last_status:
+          type: string
+          nullable: true
+        last_checked_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_error_kind:
+          type: string
+          nullable: true
+        last_message:
+          type: string
+          nullable: true
+
+    ProviderHealthResponse:
+      type: object
+      required: [window_hours, providers]
+      properties:
+        window_hours:
+          type: integer
+          minimum: 1
+        providers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProviderHealthSummary'
+
+    Job:
+      type: object
+      required:
+        [id, video_id, kind, status, idempotency_key, created_at, updated_at, step_summary, steps, degradations, pipeline_final_status, artifacts_index, llm_required, llm_gate_passed, hard_fail_reason]
+      properties:
+        id:
+          type: string
+          format: uuid
+        video_id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [video_digest_v1, phase2_ingest_stub]
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        idempotency_key:
+          type: string
+        error_message:
+          type: string
+          nullable: true
+        artifact_digest_md:
+          type: string
+          nullable: true
+        artifact_root:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        step_summary:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStep'
+        steps:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobStepDetail'
+        degradations:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobDegradation'
+        pipeline_final_status:
+          allOf:
+            - $ref: '#/components/schemas/PipelineFinalStatus'
+          nullable: true
+        llm_required:
+          type: boolean
+          nullable: true
+        llm_gate_passed:
+          type: boolean
+          nullable: true
+        hard_fail_reason:
+          type: string
+          nullable: true
+        artifacts_index:
+          type: object
+          additionalProperties:
+            type: string
+        notification_retry:
+          allOf:
+            - $ref: '#/components/schemas/NotificationRetrySummary'
+          nullable: true
+
+    ArtifactMarkdownWithMeta:
+      type: object
+      required: [markdown]
+      properties:
+        markdown:
+          type: string
+        meta:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    NotificationConfig:
+      type: object
+      required:
+        [enabled, to_email, daily_digest_enabled, daily_digest_hour_utc, failure_alert_enabled, created_at, updated_at]
+      properties:
+        enabled:
+          type: boolean
+        to_email:
+          type: string
+          nullable: true
+        daily_digest_enabled:
+          type: boolean
+        daily_digest_hour_utc:
+          type: integer
+          minimum: 0
+          maximum: 23
+          nullable: true
+        failure_alert_enabled:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    NotificationConfigUpdateRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          default: true
+        to_email:
+          type: string
+          nullable: true
+        daily_digest_enabled:
+          type: boolean
+          default: false
+        daily_digest_hour_utc:
+          type: integer
+          minimum: 0
+          maximum: 23
+          nullable: true
+        failure_alert_enabled:
+          type: boolean
+          default: true
+
+    WorkflowRunRequest:
+      type: object
+      required: [workflow]
+      properties:
+        workflow:
+          type: string
+          pattern: ^(poll_feeds|daily_digest|notification_retry|cleanup|provider_canary)$
+        run_once:
+          type: boolean
+          default: true
+        wait_for_result:
+          type: boolean
+          default: false
+        workflow_id:
+          type: string
+          nullable: true
+        payload:
+          type: object
+          additionalProperties: true
+          default: {}
+
+    WorkflowRunResponse:
+      type: object
+      required: [workflow, workflow_name, workflow_id, status, started_at, result]
+      properties:
+        workflow:
+          type: string
+        workflow_name:
+          type: string
+        workflow_id:
+          type: string
+        run_id:
+          type: string
+          nullable: true
+        status:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        result:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    NotificationTestRequest:
+      type: object
+      properties:
+        to_email:
+          type: string
+          nullable: true
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+          nullable: true
+
+    NotificationSendResponse:
+      type: object
+      required:
+        [delivery_id, status, provider_message_id, error_message, recipient_email, subject, sent_at, created_at]
+      properties:
+        delivery_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [queued, sent, failed, skipped]
+        provider_message_id:
+          type: string
+          nullable: true
+        error_message:
+          type: string
+          nullable: true
+        recipient_email:
+          type: string
+        subject:
+          type: string
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    DailyReportSendRequest:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          nullable: true
+        to_email:
+          type: string
+          nullable: true
+        subject:
+          type: string
+          nullable: true
+        body:
+          type: string
+          nullable: true
+
+    DailyReportSendResponse:
+      type: object
+      required:
+        [sent, status, delivery_id, date, recipient_email, subject, error_message, sent_at, created_at]
+      properties:
+        sent:
+          type: boolean
+        status:
+          type: string
+          enum: [queued, sent, failed, skipped]
+        delivery_id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date
+        recipient_email:
+          type: string
+        subject:
+          type: string
+        error_message:
+          type: string
+          nullable: true
+        sent_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Video:
+      type: object
+      required: [id, platform, video_uid, source_url, first_seen_at, last_seen_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        platform:
+          $ref: '#/components/schemas/Platform'
+        video_uid:
+          type: string
+        source_url:
+          type: string
+        title:
+          type: string
+          nullable: true
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        first_seen_at:
+          type: string
+          format: date-time
+        last_seen_at:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/JobStatus'
+          nullable: true
+        last_job_id:
+          type: string
+          format: uuid
+          nullable: true
+
+    VideoProcessInput:
+      type: object
+      required: [platform, url]
+      properties:
+        platform:
+          $ref: '#/components/schemas/Platform'
+        url:
+          type: string
+          minLength: 1
+        video_id:
+          type: string
+          nullable: true
+
+    VideoProcessRequest:
+      type: object
+      required: [video]
+      properties:
+        video:
+          $ref: '#/components/schemas/VideoProcessInput'
+        mode:
+          type: string
+          enum: [full, text_only, refresh_comments, refresh_llm]
+          default: full
+        overrides:
+          type: object
+          additionalProperties: true
+          default: {}
+        force:
+          type: boolean
+          default: false
+
+    VideoProcessResponse:
+      type: object
+      required:
+        [job_id, video_db_id, video_uid, status, idempotency_key, mode, overrides, force, reused]
+      properties:
+        job_id:
+          type: string
+          format: uuid
+        video_db_id:
+          type: string
+          format: uuid
+        video_uid:
+          type: string
+        status:
+          $ref: '#/components/schemas/JobStatus'
+        idempotency_key:
+          type: string
+        mode:
+          type: string
+        overrides:
+          type: object
+          additionalProperties: true
+        force:
+          type: boolean
+        reused:
+          type: boolean
+        workflow_id:
+          type: string
+          nullable: true

@@ -1,0 +1,41 @@
+# agent and runtime surfaces
+.agents/
+.agent/
+.codex/
+.claude/
+.serena/
+.runtime-cache/
+logs/
+log/
+*.log
+
+# environment and local secrets
+.env
+.env.*
+!.env.example
+!.env.test
+!.env.test.example
+
+# python
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# node
+node_modules/
+apps/web/node_modules.broken*/
+.next/
+*.tsbuildinfo
+
+# local build and temp
+dist/
+build/
+coverage/
+tmp/
+.tmp/
+docs/specs/
+
+# os/editor
+.DS_Store

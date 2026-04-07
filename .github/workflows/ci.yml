@@ -1,0 +1,51 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  python-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      UV_PROJECT_ENVIRONMENT: ${{ github.workspace }}/../sourceharbor-project-venv
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          clean: true
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+      - run: uv sync --frozen --extra dev --extra e2e
+      - run: python3 scripts/governance/check_env_contract.py --strict
+      - run: python3 scripts/governance/check_host_safety_contract.py
+      - run: python3 scripts/governance/check_test_assertions.py
+      - run: uv run python3 scripts/governance/check_route_contract_alignment.py
+      - run: python3 scripts/governance/check_public_entrypoint_references.py
+      - run: python3 scripts/governance/check_local_private_ledger_migration.py
+      - run: python3 scripts/governance/check_external_lane_contract.py
+      - run: bash scripts/ci/python_tests.sh
+
+  web-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          clean: true
+      - uses: ./.github/actions/setup-web-node
+        with:
+          node-version: "22"
+          install-command: bash scripts/ci/prepare_web_runtime.sh
+      - run: SOURCE_HARBOR_REPO_ROOT="$GITHUB_WORKSPACE" npm --prefix "$WEB_RUNTIME_WEB_DIR" run lint

@@ -1,0 +1,33 @@
+title: "Q&A: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask setup, usage, evaluation, or architecture questions here.
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question
+      description: Ask the question as directly as possible.
+      placeholder: What is the fastest way to get a first digest into the feed after booting the stack locally?
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you already tried
+      description: Commands, docs, URLs, or steps you already checked.
+      placeholder: I followed docs/start-here.md, booted the stack, and can reach /healthz but do not yet see feed items.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Related area
+      options:
+        - Quickstart
+        - API
+        - Worker pipeline
+        - MCP
+        - Web command center
+        - Notifications
+        - Retrieval
+        - Deployment / operations

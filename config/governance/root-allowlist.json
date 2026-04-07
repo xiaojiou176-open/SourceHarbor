@@ -1,0 +1,374 @@
+{
+  "version": 3,
+  "tracked_root_allowlist": [
+    {
+      "path": ".devcontainer",
+      "kind": "iac",
+      "reason": "Standard development environment contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".env.example",
+      "kind": "contract",
+      "reason": "Published environment variable template.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".git",
+      "kind": "vcs",
+      "reason": "Repository metadata directory.",
+      "owner": "git",
+      "mutable": true
+    },
+    {
+      "path": ".githooks",
+      "kind": "governance",
+      "reason": "Git hook entrypoints for repository gates.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".github",
+      "kind": "governance",
+      "reason": "CI/CD workflows and reusable actions.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".gitignore",
+      "kind": "governance",
+      "reason": "Repository ignore policy.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".gitleaks.toml",
+      "kind": "security",
+      "reason": "Secrets scanning configuration.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".golangci.yml",
+      "kind": "tooling",
+      "reason": "Go lint configuration for helper surfaces.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".markdownlint-cli2.jsonc",
+      "kind": "tooling",
+      "reason": "Markdown lint configuration.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "kind": "governance",
+      "reason": "Pre-commit hook contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".runtime-cache",
+      "kind": "runtime-output",
+      "reason": "Single repository-side runtime output root.",
+      "owner": "platform",
+      "mutable": true
+    },
+    {
+      "path": ".secrets.baseline",
+      "kind": "security",
+      "reason": "Detect-secrets baseline retained for auxiliary scans.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".stylelintignore",
+      "kind": "tooling",
+      "reason": "Stylelint ignore contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": ".stylelintrc.json",
+      "kind": "tooling",
+      "reason": "Stylelint configuration.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "AGENTS.md",
+      "kind": "governance",
+      "reason": "Repository AI execution constitution.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "apps",
+      "kind": "responsibility-layer",
+      "reason": "Runtime service and application entrypoints.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "bin",
+      "kind": "governance",
+      "reason": "Stable public repository entrypoints wrapping internal script implementations.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "biome.json",
+      "kind": "tooling",
+      "reason": "Biome configuration for frontend formatting and linting.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "CHANGELOG.md",
+      "kind": "docs",
+      "reason": "Project changelog.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "kind": "docs",
+      "reason": "Public contribution boundary and limited-maintenance contribution contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "CODE_OF_CONDUCT.md",
+      "kind": "docs",
+      "reason": "Public interaction baseline for limited-maintenance collaboration.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "CLAUDE.md",
+      "kind": "governance",
+      "reason": "Companion AI operating contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "config",
+      "kind": "governance",
+      "reason": "Repository governance control planes and structured facts.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "contracts",
+      "kind": "responsibility-layer",
+      "reason": "Source contracts and generated schema surfaces.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "docs",
+      "kind": "docs",
+      "reason": "Repository knowledge, runbooks, generated references, and governance contracts.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "examples",
+      "kind": "docs",
+      "reason": "Public runnable examples for builder-facing CLI and SDK surfaces.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "env",
+      "kind": "config",
+      "reason": "Profile overlays and environment templates.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "ENVIRONMENT.md",
+      "kind": "docs",
+      "reason": "Environment contract explanation.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "evals",
+      "kind": "contract",
+      "reason": "Minimal formal evaluation assets and baseline policy.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "infra",
+      "kind": "responsibility-layer",
+      "reason": "Infrastructure configuration, compose files, and migrations.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "integrations",
+      "kind": "responsibility-layer",
+      "reason": "Explicit adapters for external APIs, binaries, and runtime integration surfaces.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "packages",
+      "kind": "responsibility-layer",
+      "reason": "Public installable builder-facing CLI and SDK packages.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "LICENSE",
+      "kind": "docs",
+      "reason": "Source-first public repository license grant.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "NOTICE.md",
+      "kind": "docs",
+      "reason": "Short redistribution, provenance, and notice entrypoint for public/source-first consumers.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "pyproject.toml",
+      "kind": "contract",
+      "reason": "Python dependency and toolchain contract.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "README.md",
+      "kind": "docs",
+      "reason": "Repository front door.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "SECURITY.md",
+      "kind": "docs",
+      "reason": "Public security reporting boundary and response policy.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "artifacts",
+      "kind": "responsibility-layer",
+      "reason": "Long-lived release evidence, performance baselines, and governance snapshots retained outside runtime output roots.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "scripts",
+      "kind": "responsibility-layer",
+      "reason": "Repository execution entrypoints grouped by governance, runtime, CI, vendor, release, and deploy responsibilities.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "starter-packs",
+      "kind": "docs",
+      "reason": "Public compatibility packs and reproducible starter surfaces for Codex, Claude Code, and SDK onboarding.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "SUPPORT.md",
+      "kind": "docs",
+      "reason": "Public support boundary for the limited-maintenance source-first repository.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "templates",
+      "kind": "docs",
+      "reason": "Public prompt and workflow starter templates referenced by compatibility packs and docs.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "kind": "docs",
+      "reason": "Machine-rendered third-party rights ledger for public source-first distribution.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
+      "path": "uv.lock",
+      "kind": "contract",
+      "reason": "Locked Python dependency graph.",
+      "owner": "platform",
+      "mutable": false
+    }
+  ],
+  "local_private_root_tolerations": [
+    {
+      "path": ".agents",
+      "kind": "local-private",
+      "reason": "The agent workspace root is an internal execution surface. Active plans may exist locally under `.agents/Plans/`, but the `.agents/**` tree must stay untracked and outside the public root narrative.",
+      "owner": "local-user",
+      "must_be_untracked": true,
+      "nested_boundary_hints": [
+        {
+          "path": ".agents/Plans",
+          "boundary": "internal-execution-ledger",
+          "current_tracking_state": "local-private-or-untracked",
+          "target_tracking_state": "local-private-or-untracked",
+          "reason": "Plan files are execution ledgers for active local work, not public control-board artifacts.",
+          "authoritative_target_path": ".runtime-cache/evidence/ai-ledgers"
+        }
+      ]
+    },
+    {
+      "path": ".env",
+      "kind": "local-private",
+      "reason": "Local runtime environment overlay file is allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    },
+    {
+      "path": ".vscode",
+      "kind": "local-private",
+      "reason": "Local editor workspace settings are allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    },
+    {
+      "path": ".codex",
+      "kind": "local-private",
+      "reason": "Local Codex workspace state is allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    },
+    {
+      "path": ".claude",
+      "kind": "local-private",
+      "reason": "Local Claude workspace state is allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    },
+    {
+      "path": ".serena",
+      "kind": "local-private",
+      "reason": "Local Serena semantic index/cache state is allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    },
+    {
+      "path": ".cursor",
+      "kind": "local-private",
+      "reason": "Local Cursor workspace state is allowed at repo root but must stay untracked.",
+      "owner": "local-user",
+      "must_be_untracked": true
+    }
+  ]
+}

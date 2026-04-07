@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "trust_boundary": {
+    "mode": "local-proof-first",
+    "summary": "Public docs should point readers to the shortest truthful local proof path before making any stronger remote claim."
+  },
+  "first_hop_truth_surfaces": [
+    "README.md",
+    "docs/start-here.md",
+    "docs/proof.md",
+    "docs/testing.md"
+  ],
+  "manual_docs": {
+    "README.md": {
+      "purpose": "front door and product promise"
+    },
+    "docs/start-here.md": {
+      "purpose": "shortest truthful operator path"
+    },
+    "docs/proof.md": {
+      "purpose": "public evidence ladder and honesty boundary"
+    },
+    "docs/testing.md": {
+      "purpose": "test and CI contract explanation"
+    }
+  }
+}

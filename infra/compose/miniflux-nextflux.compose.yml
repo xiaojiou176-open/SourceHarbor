@@ -1,0 +1,47 @@
+services:
+  miniflux:
+    image: ${STRICT_CI_SERVICE_IMAGE_MINIFLUX:-miniflux/miniflux@sha256:802ab7d045826d047883476e2310bf59f5d9b3875f7a8106fa0c43638d01fd64}
+    container_name: sourceharbor-miniflux
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://miniflux:${MINIFLUX_DB_PASSWORD:-change_me}@db/miniflux?sslmode=disable
+      RUN_MIGRATIONS: "1"
+      CREATE_ADMIN: "1"
+      ADMIN_USERNAME: ${MINIFLUX_ADMIN_USERNAME:-admin}
+      ADMIN_PASSWORD: ${MINIFLUX_ADMIN_PASSWORD:-change_me}
+      BASE_URL: ${MINIFLUX_BASE_URL:-http://127.0.0.1:8080}
+      POLLING_FREQUENCY: ${MINIFLUX_POLLING_FREQUENCY:-30}
+      CLEANUP_ARCHIVE_READ_DAYS: ${MINIFLUX_CLEANUP_ARCHIVE_READ_DAYS:-30}
+      CLEANUP_REMOVE_SESSIONS_DAYS: ${MINIFLUX_CLEANUP_REMOVE_SESSIONS_DAYS:-30}
+    restart: unless-stopped
+
+  db:
+    image: ${STRICT_CI_SERVICE_IMAGE_POSTGRES_MINIFLUX:-postgres:16-alpine@sha256:20edbde7749f822887a1a022ad526fde0a47d6b2be9a8364433605cf65099416}
+    container_name: sourceharbor-miniflux-db
+    environment:
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: ${MINIFLUX_DB_PASSWORD:-change_me}
+      POSTGRES_DB: miniflux
+    volumes:
+      - miniflux_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miniflux -d miniflux"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  nextflux:
+    image: ${STRICT_CI_SERVICE_IMAGE_NEXTFLUX:-electh/nextflux@sha256:cd48b8aab1f4a658257609edf9b1726567a648da23402d68cef8e70bcd4bb88a}
+    container_name: sourceharbor-nextflux
+    ports:
+      - "${NEXTFLUX_PORT:-3000}:3000"
+    depends_on:
+      - miniflux
+    restart: unless-stopped
+
+volumes:
+  miniflux_db_data:

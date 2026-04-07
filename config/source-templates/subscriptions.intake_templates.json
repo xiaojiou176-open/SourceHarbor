@@ -1,0 +1,98 @@
+{
+  "support_tiers": [
+    {
+      "id": "strong_supported",
+      "label": "Strong support",
+      "description": "Purpose-built video subscriptions with first-class routing and durable identifiers.",
+      "content_profile": "video",
+      "supports_video_pipeline": true,
+      "verification_status": "verified_for_youtube_bilibili_only"
+    },
+    {
+      "id": "generic_supported",
+      "label": "Generic support",
+      "description": "Generic RSSHub or RSS intake substrate for broad article-style coverage without overclaiming route-by-route verification.",
+      "content_profile": "article",
+      "supports_video_pipeline": false,
+      "verification_status": "substrate_ready_not_route_by_route_verified"
+    }
+  ],
+  "templates": [
+    {
+      "id": "youtube_channel",
+      "label": "YouTube channel",
+      "description": "Strong preset for recurring YouTube intake when you already know the channel ID, handle, or landing URL.",
+      "support_tier": "strong_supported",
+      "platform": "youtube",
+      "source_type": "youtube_channel_id",
+      "adapter_type": "rsshub_route",
+      "content_profile": "video",
+      "category": "creator",
+      "source_value_placeholder": "UCxxxxxxxxxxxxxxxxxxxxxx",
+      "source_url_placeholder": "https://www.youtube.com/@channel",
+      "rsshub_route_hint": "/youtube/channel/{channel_id}",
+      "source_url_required": false,
+      "supports_video_pipeline": true,
+      "fill_now": "Start with the channel ID or a stable channel URL, then keep the RSSHub route aligned.",
+      "proof_boundary": "YouTube is a strong path today, but route health still matters if you depend on RSSHub for intake.",
+      "evidence_note": "Strongly supported video lane."
+    },
+    {
+      "id": "bilibili_user_video",
+      "label": "Bilibili uploader",
+      "description": "Strong preset for Bilibili creators when the UID is known and you want a repeatable creator feed.",
+      "support_tier": "strong_supported",
+      "platform": "bilibili",
+      "source_type": "bilibili_uid",
+      "adapter_type": "rsshub_route",
+      "content_profile": "video",
+      "category": "creator",
+      "source_value_placeholder": "12345678",
+      "source_url_placeholder": "https://space.bilibili.com/12345678",
+      "rsshub_route_hint": "/bilibili/user/video/{uid}",
+      "source_url_required": false,
+      "supports_video_pipeline": true,
+      "fill_now": "Use the creator UID as the primary identifier and keep the companion RSSHub route ready.",
+      "proof_boundary": "Bilibili creator intake is productized, but route breakage or source-side changes still need monitoring.",
+      "evidence_note": "Strongly supported video lane."
+    },
+    {
+      "id": "generic_rsshub_route",
+      "label": "Generic RSSHub route",
+      "description": "General preset for wider source coverage when RSSHub can normalize a route into a usable feed.",
+      "support_tier": "generic_supported",
+      "platform": "rsshub",
+      "source_type": "rsshub_route",
+      "adapter_type": "rsshub_route",
+      "content_profile": "article",
+      "category": "misc",
+      "source_value_placeholder": "/namespace/path",
+      "source_url_placeholder": "https://example.com/source",
+      "rsshub_route_hint": "/namespace/path",
+      "source_url_required": false,
+      "supports_video_pipeline": false,
+      "fill_now": "Bring the exact RSSHub route you want SourceHarbor to poll, then add a canonical source URL only if it helps operators recognize the feed.",
+      "proof_boundary": "Do not assume every RSSHub route is equally solid. Treat each route as proven only after it survives real runs.",
+      "evidence_note": "Substrate does not block RSSHub universe, but routes are not claimed as individually verified."
+    },
+    {
+      "id": "generic_rss_feed",
+      "label": "Generic RSS or Atom feed",
+      "description": "General preset for any source that already exposes a clean RSS or Atom feed without a platform-specific shortcut.",
+      "support_tier": "generic_supported",
+      "platform": "generic",
+      "source_type": "url",
+      "adapter_type": "rss_generic",
+      "content_profile": "article",
+      "category": "misc",
+      "source_value_placeholder": "https://example.com/feed.xml",
+      "source_url_placeholder": "https://example.com/feed.xml",
+      "rsshub_route_hint": "https://example.com/feed.xml",
+      "source_url_required": false,
+      "supports_video_pipeline": false,
+      "fill_now": "Paste the exact RSS or Atom feed URL into Source value. Leave Source URL empty unless you want to store the same feed URL explicitly.",
+      "proof_boundary": "Feed quality varies a lot. If the feed is noisy or incomplete, the intake surface should stay honest about that.",
+      "evidence_note": "Use Source value for the exact feed URL; Source URL stays optional unless you want to store the same feed URL explicitly."
+    }
+  ]
+}

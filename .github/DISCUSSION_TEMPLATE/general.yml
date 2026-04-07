@@ -1,0 +1,20 @@
+title: "General: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for open conversation that does not fit Q&A, Ideas, or Show and tell.
+  - type: textarea
+    id: context
+    attributes:
+      label: Topic
+      description: What are you discussing?
+      placeholder: I am evaluating SourceHarbor for a long-form research workflow and want to compare operating models.
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal or context
+      description: What decision, question, or conversation are you trying to move forward?
+      placeholder: I want to understand whether SourceHarbor is better as an internal operator tool or a reusable product base.

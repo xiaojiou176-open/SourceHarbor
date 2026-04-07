@@ -1,0 +1,61 @@
+{
+  "version": 2,
+  "rules": [
+    {
+      "id": "startup_topology",
+      "when": [
+        "scripts/runtime/*.sh",
+        "scripts/ci/*.sh",
+        ".githooks/pre-push",
+        ".github/workflows/ci.yml"
+      ],
+      "required_paths": [
+        "README.md",
+        "docs/start-here.md",
+        "docs/runbook-local.md",
+        "docs/testing.md"
+      ]
+    },
+    {
+      "id": "logging_policy",
+      "when": [
+        "scripts/runtime/*.sh",
+        "scripts/governance/check_logging_contract.py",
+        "config/governance/logging-contract.json"
+      ],
+      "required_paths": [
+        "docs/reference/logging.md"
+      ]
+    },
+    {
+      "id": "public_readiness",
+      "when": [
+        "README.md",
+        "docs/proof.md",
+        ".github/workflows/release-evidence-attest.yml",
+        ".github/workflows/build-ci-standard-image.yml"
+      ],
+      "required_paths": [
+        "docs/reference/public-repo-readiness.md",
+        "docs/reference/public-artifact-exposure.md",
+        "docs/reference/public-rights-and-provenance.md",
+        "docs/reference/public-privacy-and-data-boundary.md"
+      ]
+    },
+    {
+      "id": "positioning_and_eval",
+      "when": [
+        "docs/architecture.md",
+        "docs/compare.md",
+        "evals/**",
+        "scripts/governance/check_eval_assets.py"
+      ],
+      "required_paths": [
+        "docs/reference/project-positioning.md",
+        "docs/reference/ai-evaluation.md",
+        "evals/README.md",
+        "evals/rubric.md"
+      ]
+    }
+  ]
+}

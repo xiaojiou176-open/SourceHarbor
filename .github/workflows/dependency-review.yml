@@ -1,0 +1,76 @@
+name: dependency-review
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check dependency review support
+        id: support_check
+        run: |
+          set -euo pipefail
+
+          api_headers=(
+            -H "Accept: application/vnd.github+json"
+            -H "Authorization: Bearer ${{ github.token }}"
+            -H "X-GitHub-Api-Version: 2022-11-28"
+          )
+
+          repo_response="$(mktemp)"
+          repo_status="$(curl -sS -o "$repo_response" -w '%{http_code}' \
+            "${api_headers[@]}" \
+            "https://api.github.com/repos/${{ github.repository }}")"
+
+          if [ "$repo_status" != "200" ]; then
+            echo "::error title=Dependency review preflight failed::Repository metadata request returned HTTP ${repo_status}."
+            exit 1
+          fi
+
+          repo_visibility="$(jq -r '.visibility // "unknown"' < "$repo_response")"
+          advanced_security_status="$(jq -r '.security_and_analysis.advanced_security.status // "unavailable"' < "$repo_response")"
+
+          if [ "$repo_visibility" = "private" ] && [ "$advanced_security_status" != "enabled" ]; then
+            echo "supported=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Dependency review skipped::GitHub Advanced Security is not enabled for this private repository."
+            exit 0
+          fi
+
+          compare_response="$(mktemp)"
+          compare_status="$(curl -sS -o "$compare_response" -w '%{http_code}' \
+            "${api_headers[@]}" \
+            "https://api.github.com/repos/${{ github.repository }}/dependency-graph/compare/${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}")"
+
+          if [ "$compare_status" = "200" ]; then
+            echo "supported=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          compare_message="$(jq -r '.message // empty' < "$compare_response")"
+
+          # 403/404 here means GitHub did not expose dependency review data for this PR.
+          if [ "$compare_status" = "403" ] || [ "$compare_status" = "404" ]; then
+            echo "supported=false" >> "$GITHUB_OUTPUT"
+            if [ -n "$compare_message" ]; then
+              echo "::notice title=Dependency review skipped::${compare_message}"
+            else
+              echo "::notice title=Dependency review skipped::GitHub did not expose dependency review data for this repository."
+            fi
+            exit 0
+          fi
+
+          echo "::error title=Dependency review preflight failed::Dependency graph compare returned HTTP ${compare_status}${compare_message:+: ${compare_message}}"
+          exit 1
+
+      - if: ${{ steps.support_check.outputs.supported == 'true' }}
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          clean: true
+
+      - if: ${{ steps.support_check.outputs.supported == 'true' }}
+        uses: actions/dependency-review-action@2031cfc080254a8a887f58cffee85186f0e49e48 # v4.9.0

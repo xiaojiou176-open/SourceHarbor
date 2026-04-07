@@ -1,0 +1,26 @@
+title: "Show and tell: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share what you built with SourceHarbor, what you learned, or how you adapted it.
+  - type: textarea
+    id: built
+    attributes:
+      label: What you built
+      description: Show the workflow, integration, or artifact you created.
+      placeholder: I used SourceHarbor to turn creator interviews into searchable internal research notes.
+    validations:
+      required: true
+  - type: textarea
+    id: stack
+    attributes:
+      label: Setup details
+      description: Which surfaces did you use?
+      placeholder: Web command center + API jobs endpoint + retrieval search + MCP artifacts tool.
+  - type: textarea
+    id: takeaway
+    attributes:
+      label: Best takeaway or screenshot
+      description: What would help another person understand why this is interesting?
+      placeholder: The strongest part was seeing job trace, digest output, and retrieval all backed by the same artifact chain.

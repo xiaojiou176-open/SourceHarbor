@@ -1,0 +1,35 @@
+name: trufflehog
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read # read Git history for secret scanning
+
+concurrency:
+  group: trufflehog-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trufflehog:
+    name: trufflehog
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          clean: true
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@aade3bff5594fe8808578dd4db3dfeae9bf2abdc # v3.91.1
+        with:
+          path: ./
+          version: 3.91.1
+          extra_args: --results=verified,unknown

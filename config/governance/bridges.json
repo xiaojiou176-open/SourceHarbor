@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "bridges": [
+    {
+      "name": "web-runtime-workspace-bridge",
+      "status": "active-bridge",
+      "owner": "platform",
+      "introduced_at": "2026-03-16T17:45:00-07:00",
+      "write_forbidden_after": "2026-03-23T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "source_paths": [
+        "./bin/prepare-web-runtime",
+        "scripts/ci/prepare_web_runtime.sh"
+      ],
+      "target_paths": [
+        ".runtime-cache/tmp/web-runtime",
+        ".runtime-cache/run/web-runtime"
+      ],
+      "notes": "Repo-tracked Web source tree must stay machine-state-free; the repo-side web runtime root under .runtime-cache/tmp/web-runtime (including workspace/apps/web and transient build artifacts) and readiness state under .runtime-cache/run/web-runtime are intentionally bridged."
+    },
+    {
+      "name": "ops-cleanup-runtime-bridge",
+      "status": "active-bridge",
+      "owner": "platform",
+      "introduced_at": "2026-03-16T17:45:00-07:00",
+      "write_forbidden_after": "2026-03-23T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "source_paths": [
+        "./bin/start-ops-workflows",
+        "scripts/runtime/start_ops_workflows.sh",
+        "apps/worker/worker/temporal/activities_entry.py",
+        "apps/worker/worker/temporal/activities_cleanup.py"
+      ],
+      "target_paths": [
+        ".runtime-cache/tmp",
+        ".runtime-cache/run",
+        ".runtime-cache/logs"
+      ],
+      "bridge_kind": "runtime-cleanup-boundary",
+      "repo_side_default_targets": [
+        ".runtime-cache/tmp/ops-cleanup/workspace",
+        ".runtime-cache/tmp/ops-cleanup/cache"
+      ],
+      "operator_side_override_prefixes": [
+        "/tmp/sourceharbor",
+        "/tmp/sourceharbor",
+        "/private/tmp/sourceharbor",
+        "/private/tmp/sourceharbor"
+      ],
+      "forbidden_repo_root_targets": [
+        "cache",
+        ".cache"
+      ],
+      "notes": "Long-running ops workflows must default to repo-side .runtime-cache/tmp staging and may override only into governed operator-side tmp roots; repo root cache/.cache is not a legal bridge target."
+    },
+    {
+      "name": "standard-image-readiness-bridge",
+      "status": "active-bridge",
+      "owner": "platform",
+      "introduced_at": "2026-03-16T17:45:00-07:00",
+      "write_forbidden_after": "2026-03-23T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "source_paths": [
+        "./scripts/ci/check_standard_image_publish_readiness.sh",
+        ".github/workflows/build-ci-standard-image.yml"
+      ],
+      "target_paths": [
+        ".runtime-cache/reports/governance/standard-image-publish-readiness.json"
+      ],
+      "notes": "External standard-image status is mediated through a repo-owned readiness artifact; remote image publication must not be summarized without this bridge surface."
+    },
+    {
+      "name": "env-compose-runtime-bridge",
+      "status": "active-bridge",
+      "owner": "platform",
+      "introduced_at": "2026-03-16T17:45:00-07:00",
+      "write_forbidden_after": "2026-03-23T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "source_paths": [
+        "./bin/validate-profile",
+        "scripts/env/compose_env.sh"
+      ],
+      "target_paths": [
+        ".runtime-cache/tmp/.env.local.resolved"
+      ],
+      "notes": "Public/source-first environment preflight is allowed to materialize a resolved env receipt under .runtime-cache/tmp only."
+    },
+    {
+      "name": "agent-plan-ledger-bridge",
+      "status": "active-bridge",
+      "owner": "local-user",
+      "introduced_at": "2026-03-27T01:15:46-07:00",
+      "write_forbidden_after": "2026-04-03T00:00:00-07:00",
+      "remove_after": "2026-06-30T00:00:00-07:00",
+      "source_paths": [
+        ".agents/Plans"
+      ],
+      "target_paths": [
+        ".runtime-cache/evidence/ai-ledgers"
+      ],
+      "bridge_kind": "local-execution-ledger",
+      "notes": "Plan files may continue to land under .agents/Plans during the current compatibility window, but the long-term authoritative local-private execution ledger target is .runtime-cache/evidence/ai-ledgers."
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+# shellcheck source=./scripts/lib/standard_env.sh
+source "$ROOT_DIR/scripts/lib/standard_env.sh"
+
+ensure_external_uv_project_environment "$ROOT_DIR"
+
+echo "[pre-push] sync local web environment"
+mkdir -p .runtime-cache/run/hooks
+WEB_MANIFEST_HASH_FILE=".runtime-cache/run/hooks/web-package-manifests.sha256"
+PACKAGE_HASH="$(
+  cat apps/web/package.json apps/web/package-lock.json | shasum -a 256 | awk '{print $1}'
+)"
+CURRENT_HASH=""
+if [[ -f "$WEB_MANIFEST_HASH_FILE" ]]; then
+  CURRENT_HASH="$(cat "$WEB_MANIFEST_HASH_FILE" 2>/dev/null || true)"
+fi
+
+if [[ ! -x "apps/web/node_modules/.bin/next" || "$CURRENT_HASH" != "$PACKAGE_HASH" ]]; then
+  npm --prefix apps/web ci --no-audit --no-fund >/dev/null
+  if ! git diff --quiet -- apps/web/package-lock.json apps/web/package.json; then
+    echo "[pre-push] web dependency sync changed tracked package manifests; commit those changes before pushing" >&2
+    exit 1
+  fi
+  printf '%s' "$PACKAGE_HASH" > "$WEB_MANIFEST_HASH_FILE"
+else
+  echo "[pre-push] local web environment already matches tracked manifests"
+fi
+
+echo "[pre-push] env contract"
+python3 scripts/governance/check_env_contract.py --strict
+
+echo "[pre-push] placebo assertion guard"
+python3 scripts/governance/check_test_assertions.py
+
+echo "[pre-push] python tests"
+bash scripts/ci/python_tests.sh
+
+echo "[pre-push] web lint"
+npm --prefix apps/web run lint
+
+echo "[pre-push] passed"

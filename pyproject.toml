@@ -1,0 +1,174 @@
+[project]
+name = "sourceharbor"
+version = "0.1.0"
+description = "Turn YouTube, Bilibili, and RSS sources into readable digests, traceable job runs, and searchable knowledge for operators and agents."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "fastapi>=0.116.0,<1",
+  "google-genai>=1.33.0,<2",
+  "httpx>=0.28.1,<1",
+  "markdown>=3.8.2,<4",
+  "mcp>=1.13.1,<2",
+  "psycopg[binary]>=3.2.10,<4",
+  "pyasn1>=0.6.3,<1",
+  "pyjwt[crypto]>=2.12.0,<3",
+  "pydantic>=2.11.7,<3",
+  "sqlalchemy>=2.0.43,<3",
+  "temporalio>=1.17.0,<2",
+  "trafilatura>=1.12.0,<3",
+  "tzdata>=2025.2",
+  "uvicorn>=0.35.0,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pyyaml>=6.0.3,<7",
+  "pygments>=2.20.0,<3",
+  "pytest>=8.4.1,<10",
+  "pytest-cov>=6.0.0,<8",
+  "pytest-rerunfailures>=15.1,<17",
+  "pytest-xdist>=3.8.0,<4",
+  "mutmut>=3.3.1,<4",
+]
+e2e = [
+  "playwright>=1.55.0,<2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".",
+  "apps/worker",
+]
+cache_dir = ".runtime-cache/tmp/pytest-cache"
+markers = [
+  "allow_unauth_write: enable SOURCE_HARBOR_ALLOW_UNAUTH_WRITE for tests that explicitly opt in",
+]
+reruns = 0
+reruns_delay = 0
+
+[tool.coverage.run]
+data_file = ".runtime-cache/reports/python/.coverage"
+
+[tool.coverage.paths]
+sourceharbor = [
+  ".",
+  "/workspace",
+]
+
+[tool.coverage.report]
+fail_under = 95
+precision = 2
+show_missing = true
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+fix = true
+cache-dir = ".runtime-cache/tmp/ruff-cache"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+  "ANN",
+  "D",
+  "COM812",
+  "ISC001",
+  "EM",
+  "TRY",
+  "TC",
+  "TID",
+  "PLR",
+  "S",
+  "FAST",
+  "B008",
+  "T20",
+  "ASYNC",
+  "FBT",
+  "BLE",
+  "FURB",
+  "E501",
+  "A",
+  "C901",
+  "DTZ",
+  "PGH",
+  "RUF",
+  "PERF",
+  "INP",
+  "PTH",
+  "N",
+  "PT",
+  "ARG",
+  "PLC0415",
+  "EXE001",
+  "PLW2901",
+  "RET504",
+  "SLF001",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**/*.py" = ["S101", "S105"]
+"**/test_*.py" = ["S101", "S105"]
+"scripts/**/*.py" = ["E402"]
+"scripts/runtime/write_run_manifest.py" = ["SIM112"]
+
+[tool.mutmut]
+debug = false
+paths_to_mutate = [
+  "apps/worker/worker/pipeline/orchestrator.py",
+  "apps/worker/worker/pipeline/policies.py",
+  "apps/worker/worker/pipeline/runner.py",
+  "apps/worker/worker/pipeline/runner_policies.py",
+  "apps/worker/worker/pipeline/types.py",
+  "apps/worker/worker/pipeline/step_executor.py",
+  "apps/worker/worker/pipeline/steps/llm_computer_use.py",
+  "apps/worker/worker/pipeline/steps/llm_step_gates.py",
+  "apps/worker/worker/state/sqlite_store.py",
+  "apps/api/app/services/ingest.py",
+  "apps/api/app/services/jobs.py",
+  "apps/api/app/services/subscriptions.py",
+  "apps/api/app/services/videos.py",
+  "apps/api/app/routers/ingest.py",
+  "apps/api/app/routers/jobs.py",
+  "apps/api/app/routers/subscriptions.py",
+  "apps/api/app/routers/videos.py",
+]
+also_copy = [
+  "config",
+  "integrations",
+  "apps/worker/worker",
+  "apps/api/app",
+  "apps/worker/tests",
+  "apps/api/tests",
+]
+max_stack_depth = 32
+pytest_add_cli_args_test_selection = [
+  "apps/worker/tests/test_llm_step_gates.py",
+  "apps/worker/tests/test_coverage_b_policies_and_runner.py",
+  "apps/worker/tests/test_runner_modes.py",
+  "apps/worker/tests/test_runner_llm_and_status.py",
+  "apps/worker/tests/test_runner_app_prefix.py",
+  "apps/worker/tests/test_runner_overrides.py",
+  "apps/worker/tests/test_runner_multimodal.py",
+  "apps/worker/tests/test_llm_computer_use_step.py",
+  "apps/worker/tests/test_runner_policies_app_prefix.py",
+  "apps/worker/tests/test_worker_step_branches.py",
+  "apps/worker/tests/test_step_executor_cancellation.py",
+  "apps/worker/tests/test_step_executor_coverage_extra.py",
+  "apps/worker/tests/test_orchestrator_step_contract.py",
+  "apps/worker/tests/test_temporal_mode_passthrough.py",
+  "apps/worker/tests/test_runner_fallbacks.py",
+  "apps/worker/tests/test_sqlite_store_coverage_helpers.py",
+  "apps/worker/tests/test_sqlite_state_locking.py",
+  "apps/api/tests/test_ingest_service.py",
+  "apps/api/tests/test_jobs_service.py",
+  "apps/api/tests/test_subscriptions_service_coverage.py",
+  "apps/api/tests/test_videos_service_dispatch.py",
+  "apps/api/tests/test_api_routes.py",
+  "apps/api/tests/test_videos_and_subscriptions_router_coverage.py",
+]

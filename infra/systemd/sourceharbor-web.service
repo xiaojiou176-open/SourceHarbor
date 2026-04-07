@@ -1,0 +1,23 @@
+[Unit]
+Description=SourceHarbor - Next.js Web Frontend
+After=network.target sourceharbor-api.service
+
+[Service]
+Type=simple
+User=sourceharbor
+Group=sourceharbor
+WorkingDirectory=/opt/sourceharbor/repo/apps/web
+EnvironmentFile=/opt/sourceharbor/.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start -- --port 3001
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=sourceharbor-web
+
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

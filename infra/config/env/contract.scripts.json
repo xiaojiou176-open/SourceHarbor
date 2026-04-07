@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "name": "scripts",
+  "variables": [
+    {
+      "name": "CORE_POSTGRES_PASSWORD",
+      "scope": "scripts",
+      "required": false,
+      "secret": true,
+      "default": "postgres",
+      "consumer": [
+        "infra/compose/core-services.compose.yml"
+      ],
+      "description": "Core services PostgreSQL password override."
+    },
+    {
+      "name": "CORE_POSTGRES_PORT",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "5432",
+      "consumer": [
+        "infra/compose/core-services.compose.yml"
+      ],
+      "description": "Core services PostgreSQL exposed host port."
+    },
+    {
+      "name": "SOURCE_HARBOR_CACHE_ROOT",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "$HOME/.cache/sourceharbor",
+      "consumer": [
+        "scripts/lib/load_env.sh",
+        "scripts/lib/standard_env.sh"
+      ],
+      "description": "Canonical repo-owned external cache/state root used by local script defaults and cache maintenance."
+    },
+    {
+      "name": "SOURCE_HARBOR_AUTO_MAINTAIN_EXTERNAL_CACHE",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "1",
+      "consumer": [
+        "scripts/lib/load_env.sh"
+      ],
+      "description": "When truthy outside CI, local entrypoints may trigger throttled external cache maintenance."
+    },
+    {
+      "name": "SOURCE_HARBOR_CHROME_USER_DATA_DIR",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "$HOME/.cache/sourceharbor/browser/chrome-user-data",
+      "consumer": [
+        "scripts/runtime/bootstrap_repo_chrome.py",
+        "scripts/runtime/start_repo_chrome.py",
+        "scripts/ci/external_playwright_smoke.sh",
+        "scripts/runtime/resolve_chrome_profile.py"
+      ],
+      "description": "Dedicated repo-owned Chrome user data root for local-only SourceHarbor browser flows."
+    },
+    {
+      "name": "SOURCE_HARBOR_CHROME_PROFILE_NAME",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "sourceharbor",
+      "consumer": [
+        "scripts/runtime/bootstrap_repo_chrome.py",
+        "scripts/runtime/start_repo_chrome.py",
+        "scripts/ci/external_playwright_smoke.sh",
+        "scripts/runtime/resolve_chrome_profile.py"
+      ],
+      "description": "Display name of the dedicated repo-owned Chrome profile used by SourceHarbor."
+    },
+    {
+      "name": "SOURCE_HARBOR_CHROME_PROFILE_DIR",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "Profile 1",
+      "consumer": [
+        "scripts/runtime/bootstrap_repo_chrome.py",
+        "scripts/runtime/start_repo_chrome.py",
+        "scripts/ci/external_playwright_smoke.sh",
+        "scripts/runtime/resolve_chrome_profile.py"
+      ],
+      "description": "Dedicated repo-owned Chrome profile directory. The canonical runtime value is `Profile 1`."
+    },
+    {
+      "name": "SOURCE_HARBOR_CHROME_CDP_PORT",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "9339",
+      "consumer": [
+        "scripts/runtime/start_repo_chrome.py",
+        "scripts/ci/external_playwright_smoke.sh",
+        "scripts/runtime/resolve_chrome_profile.py"
+      ],
+      "description": "Fixed CDP port for the dedicated SourceHarbor Chrome instance."
+    },
+    {
+      "name": "MINIFLUX_ADMIN_PASSWORD",
+      "scope": "scripts",
+      "required": false,
+      "secret": true,
+      "default": null,
+      "consumer": [
+        "scripts/deploy/reader_stack.sh",
+        "scripts/runtime/sync_ai_feed_to_miniflux.py"
+      ],
+      "description": "Miniflux admin password."
+    },
+    {
+      "name": "MINIFLUX_ADMIN_USERNAME",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "admin",
+      "consumer": [
+        "scripts/deploy/reader_stack.sh",
+        "scripts/runtime/sync_ai_feed_to_miniflux.py"
+      ],
+      "description": "Miniflux admin username."
+    },
+    {
+      "name": "MINIFLUX_API_TOKEN",
+      "scope": "scripts",
+      "required": false,
+      "secret": true,
+      "default": null,
+      "consumer": [
+        "scripts/runtime/sync_ai_feed_to_miniflux.py"
+      ],
+      "description": "Miniflux API token for AI sync."
+    },
+    {
+      "name": "MINIFLUX_DB_PASSWORD",
+      "scope": "scripts",
+      "required": false,
+      "secret": true,
+      "default": "change_me",
+      "consumer": [
+        "infra/compose/miniflux-nextflux.compose.yml"
+      ],
+      "description": "PostgreSQL password for Miniflux container."
+    },
+    {
+      "name": "NEXTFLUX_PORT",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "3000",
+      "consumer": [
+        "scripts/deploy/reader_stack.sh",
+        "scripts/ci/smoke_full_stack.sh"
+      ],
+      "description": "Nextflux exposed port."
+    },
+    {
+      "name": "PYTHONDONTWRITEBYTECODE",
+      "scope": "scripts",
+      "required": false,
+      "secret": false,
+      "default": "1",
+      "consumer": [
+        "scripts/ci/bootstrap_strict_ci_runtime.sh",
+        "scripts/ci/python_tests.sh",
+        "scripts/governance/quality_gate.sh"
+      ],
+      "description": "Strict verification hygiene override. Defaults to 1 to suppress repo-side __pycache__ and *.pyc residue during Python-heavy gates."
+    }
+  ]
+}

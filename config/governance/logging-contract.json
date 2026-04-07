@@ -1,0 +1,129 @@
+{
+  "version": 2,
+  "minimum_common_fields": [
+    "run_id",
+    "trace_id",
+    "request_id",
+    "service",
+    "component",
+    "channel",
+    "event",
+    "severity",
+    "source_kind",
+    "ts",
+    "repo_commit",
+    "entrypoint",
+    "env_profile",
+    "message"
+  ],
+  "channel_required_fields": {
+    "app": [
+      "request_id"
+    ],
+    "components": [
+      "request_id"
+    ],
+    "tests": [
+      "request_id",
+      "test_run_id"
+    ],
+    "governance": [
+      "request_id",
+      "gate_run_id"
+    ],
+    "infra": [
+      "request_id"
+    ],
+    "upstreams": [
+      "request_id",
+      "upstream_id",
+      "upstream_operation",
+      "upstream_contract_surface"
+    ]
+  },
+  "allowed_upstream_contract_surfaces": [
+    "public",
+    "internal"
+  ],
+  "channels": {
+    "app": ".runtime-cache/logs/app",
+    "components": ".runtime-cache/logs/components",
+    "tests": ".runtime-cache/logs/tests",
+    "governance": ".runtime-cache/logs/governance",
+    "infra": ".runtime-cache/logs/infra",
+    "upstreams": ".runtime-cache/logs/upstreams"
+  },
+  "reports_root": ".runtime-cache/reports",
+  "evidence_root": ".runtime-cache/evidence",
+  "channel_source_kind_map": {
+    "app": "app",
+    "components": "app",
+    "tests": "test",
+    "governance": "governance",
+    "infra": "infra",
+    "upstreams": "upstream"
+  },
+  "sample_targets": {
+    "app": ".runtime-cache/logs/app/api-http.jsonl",
+    "components": ".runtime-cache/logs/components/full-stack/logging-contract-components.jsonl",
+    "tests": ".runtime-cache/logs/tests/logging-contract-tests.jsonl",
+    "governance": ".runtime-cache/logs/governance/governance-gate.jsonl",
+    "infra": ".runtime-cache/logs/infra/bootstrap/logging-contract-infra.jsonl",
+    "upstreams": ".runtime-cache/logs/upstreams/logging-contract-upstreams.jsonl"
+  },
+  "optional_sample_targets": {
+    "app": [
+      ".runtime-cache/logs/app/worker-commands.jsonl",
+      ".runtime-cache/logs/app/mcp-api.jsonl"
+    ]
+  },
+  "critical_checks": [
+    {
+      "path": "apps/api/app/main.py",
+      "contains": [
+        "def _resolve_trace_id",
+        "response.headers[\"X-Trace-Id\"] = trace_id"
+      ]
+    },
+    {
+      "path": "apps/worker/worker/main.py",
+      "contains": [
+        "\"run_id\": run_id",
+        "def _emit_worker_command_log",
+        "\"worker-commands.jsonl\""
+      ]
+    },
+    {
+      "path": "apps/mcp/server.py",
+      "contains": [
+        "def _redact_sensitive_text",
+        "_redact_sensitive_text(self.message)",
+        "def _log_mcp_api_event",
+        "\"mcp-api.jsonl\""
+      ]
+    },
+    {
+      "path": "docs/reference/logging.md",
+      "contains": [
+        ".runtime-cache/logs/",
+        "run_id",
+        "upstream_contract_surface"
+      ]
+    },
+    {
+      "path": "scripts/runtime/logging.sh",
+      "contains": [
+        "sourceharbor_log_init()",
+        "scripts/runtime/log_jsonl_event.py",
+        "--upstream-contract-surface"
+      ]
+    },
+    {
+      "path": "scripts/governance/gate.sh",
+      "contains": [
+        "source \"$ROOT_DIR/scripts/runtime/logging.sh\"",
+        "sourceharbor_log_init \"governance\""
+      ]
+    }
+  ]
+}
