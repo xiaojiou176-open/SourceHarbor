@@ -103,6 +103,12 @@ def test_generated_docs_reference_current_semantics_and_counts() -> None:
         "Pre-commit workflow jobs in `.github/workflows/pre-commit.yml`: `pre-commit`"
         in ci_topology
     )
+    assert "| `pre-commit` |" in ci_topology
+    assert "| `pre-push` |" in ci_topology
+    assert "| `hosted` |" in ci_topology
+    assert "| `nightly` |" in ci_topology
+    assert "| `manual` |" in ci_topology
+    assert "do not create a separate weekly governance bucket" in ci_topology
     assert "`pre-commit.yml`" in required_checks
     assert "`pre-commit`" in required_checks
     assert "`python-tests`" in required_checks

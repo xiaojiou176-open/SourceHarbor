@@ -15,24 +15,10 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT / "artifacts" / "licenses" / "third-party-license-inventory.json"
 NOTICE_PATH = ROOT / "THIRD_PARTY_NOTICES.md"
-STANDARD_ENV_MARKER_PATH = Path(
-    os.environ.get(
-        "SOURCE_HARBOR_STANDARD_ENV_MARKER_PATH", "/etc/sourceharbor-strict-ci-standard-env"
-    )
-)
-
-
-def _inside_standard_env() -> bool:
-    return (
-        os.environ.get("SOURCE_HARBOR_IN_STANDARD_ENV") == "1" or STANDARD_ENV_MARKER_PATH.is_file()
-    )
 
 
 def _python_inventory_command(code: str) -> list[str]:
-    base = ["uv", "run", "--extra", "dev", "python", "-c", code]
-    if _inside_standard_env():
-        return base
-    return ["bash", "scripts/ci/run_in_standard_env.sh", *base]
+    return ["uv", "run", "--extra", "dev", "python", "-c", code]
 
 
 def _run_python_runtime_inventory() -> list[dict[str, str]]:
