@@ -1,0 +1,55 @@
+<svg width="1400" height="820" viewBox="0 0 1400 820" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="archTitle archDesc">
+  <title id="archTitle">SourceHarbor architecture overview</title>
+  <desc id="archDesc">An architecture overview showing source inputs, API and worker orchestration, artifact generation, retrieval, notification delivery, MCP tools, and the web command center.</desc>
+  <rect width="1400" height="820" rx="32" fill="#F7F1E8"/>
+
+  <rect x="68" y="76" width="228" height="176" rx="26" fill="#0E2D2B"/>
+  <text x="122" y="128" fill="#EAF5F1" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Sources</text>
+  <text x="108" y="172" fill="#C5DDD7" font-family="Arial, Helvetica, sans-serif" font-size="20">YouTube</text>
+  <text x="108" y="204" fill="#C5DDD7" font-family="Arial, Helvetica, sans-serif" font-size="20">Bilibili</text>
+  <text x="108" y="236" fill="#C5DDD7" font-family="Arial, Helvetica, sans-serif" font-size="20">RSS</text>
+
+  <rect x="360" y="76" width="284" height="176" rx="26" fill="#1E6F63"/>
+  <text x="468" y="128" fill="#F8FFFD" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">API</text>
+  <text x="406" y="172" fill="#D8F0EA" font-family="Arial, Helvetica, sans-serif" font-size="20">Subscriptions</text>
+  <text x="406" y="204" fill="#D8F0EA" font-family="Arial, Helvetica, sans-serif" font-size="20">Ingest / Jobs / Feed</text>
+  <text x="406" y="236" fill="#D8F0EA" font-family="Arial, Helvetica, sans-serif" font-size="20">Artifacts / Retrieval</text>
+
+  <rect x="708" y="76" width="260" height="176" rx="26" fill="#F4B65D"/>
+  <text x="790" y="128" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Worker</text>
+  <text x="744" y="172" fill="#5F4311" font-family="Arial, Helvetica, sans-serif" font-size="20">Poll feeds</text>
+  <text x="744" y="204" fill="#5F4311" font-family="Arial, Helvetica, sans-serif" font-size="20">Run pipelines</text>
+  <text x="744" y="236" fill="#5F4311" font-family="Arial, Helvetica, sans-serif" font-size="20">Send digests</text>
+
+  <rect x="1032" y="76" width="300" height="176" rx="26" fill="#FFF9F2" stroke="#DCCDBA"/>
+  <text x="1140" y="128" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">MCP</text>
+  <text x="1074" y="172" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="20">Ingest</text>
+  <text x="1074" y="204" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="20">Artifacts</text>
+  <text x="1074" y="236" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="20">Search / Reports</text>
+
+  <rect x="234" y="336" width="932" height="178" rx="28" fill="#FFF9F2" stroke="#DCCDBA"/>
+  <text x="500" y="396" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Artifact and Knowledge Layer</text>
+  <text x="342" y="438" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="20">Digest markdown / outlines / transcripts / step traces</text>
+  <text x="404" y="468" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="20">Degradation notes / notifications / retrieval records</text>
+
+  <rect x="124" y="582" width="356" height="156" rx="26" fill="#0E2D2B"/>
+  <text x="232" y="640" fill="#EAF5F1" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Web Console</text>
+  <text x="176" y="680" fill="#C5DDD7" font-family="Arial, Helvetica, sans-serif" font-size="18">Overview / Feed / Jobs / Settings</text>
+
+  <rect x="522" y="582" width="356" height="156" rx="26" fill="#1E6F63"/>
+  <text x="626" y="640" fill="#F8FFFD" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Retrieval</text>
+  <text x="570" y="680" fill="#D8F0EA" font-family="Arial, Helvetica, sans-serif" font-size="18">Keyword / Semantic / Hybrid</text>
+
+  <rect x="920" y="582" width="356" height="156" rx="26" fill="#F4B65D"/>
+  <text x="1018" y="640" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Delivery</text>
+  <text x="962" y="680" fill="#5F4311" font-family="Arial, Helvetica, sans-serif" font-size="17">Video digests / daily digests / alerts</text>
+
+  <path d="M296 164H360" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M644 164H708" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M968 164H1032" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M502 252V336" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M838 252V336" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M302 514V582" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M700 514V582" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1098 514V582" stroke="#1E6F63" stroke-width="8" stroke-linecap="round"/>
+</svg>

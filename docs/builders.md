@@ -1,0 +1,245 @@
+# Build With SourceHarbor
+
+SourceHarbor is not only a Web UI.
+
+It already exposes six real builder-facing layers:
+
+1. **HTTP API contract** for system integrations
+2. **MCP surface** for agent clients such as Codex and Claude Code
+3. **Packaged public CLI** for installable command discovery
+4. **Repo-local CLI/help facade** as the underlying direct substrate
+5. **Public TypeScript SDK** for typed HTTP reuse
+6. **Public starter packs** for reproducible Codex / Claude Code / SDK setup, plus a first-cut OpenClaw local pack
+
+It now also exposes a seventh adoption layer:
+
+- **Plugin-grade bundles and official-surface templates** for Codex, Claude
+  Code, OpenClaw, and the official MCP Registry path
+
+Think of the product like one control tower with multiple doors:
+
+- operators use the Web command center
+- integrations use the HTTP API
+- assistants use MCP
+- future SDKs should stay thin wrappers over those same contracts
+- the same contracts now distinguish **strong-supported video intake** from **generalized RSSHub/RSS intake**
+
+The easiest way to keep the builder story honest is to map it to the same front
+doors operators already see:
+
+OpenClaw belongs in this story only as a first-cut local compatibility path.
+It is not a primary front door, registry plugin, or marketplace claim.
+
+| Product door | Builder meaning | Current truth |
+| --- | --- | --- |
+| **`/subscriptions`** | intake contract over one shared template catalog | Web, API, and MCP now all point at the same strong-supported vs generalized intake split |
+| **`/watchlists`** | durable tracking-object substrate | builders can treat watchlists as saved operator intent, not a temporary browser filter |
+| **`/trends`** | compounder front door | repeated runs become merged stories and evidence surfaces instead of one-off search sessions |
+| **`/briefings` + `/ask`** | story-aware answer/change/evidence lane | the same server-owned story payload now carries selected-story context into Ask |
+| **`/mcp`** | agent-facing reuse doorway | assistants reuse the same jobs, retrieval, artifacts, and operator truth instead of a second business-logic stack |
+
+## Best-Fit Clients Today
+
+| Surface | Best fit today | Why |
+| --- | --- | --- |
+| **Codex** | Primary fit | SourceHarbor already exposes a real MCP server plus operator-safe HTTP contracts |
+| **Claude Code** | Primary fit | Same MCP surface, same API-backed state, same retrieval and job evidence |
+| **Repo-local CLI users** | Primary fit | `./bin/sourceharbor help` gives one discoverable facade over the real `bin/*` entrypoints without duplicating business logic |
+| **Custom MCP clients** | Primary fit | `./bin/dev-mcp` starts a real FastMCP server over the current pipeline |
+| **Direct HTTP builders** | Primary fit | The repo already carries a public OpenAPI contract and typed client helpers |
+| **OpenHands / OpenCode** | Secondary fit | They are ecosystem-adjacent if you integrate through MCP or HTTP, but they are not the main front door today |
+| **OpenClaw** | First-cut local pack fit | the repo now ships a local OpenClaw starter pack over the generic MCP / HTTP substrate, but it still is not a primary front-door label or marketplace claim |
+
+## Builder Entry Points
+
+### 1. HTTP API
+
+- Contract source: [`contracts/source/openapi.yaml`](../contracts/source/openapi.yaml)
+- Service entry: [`apps/api/app/main.py`](../apps/api/app/main.py)
+- Start path: [`docs/start-here.md`](./start-here.md)
+
+Representative routes:
+
+- `GET /api/v1/subscriptions/templates`
+- `POST /api/v1/videos/process`
+- `GET /api/v1/jobs/{job_id}`
+- `POST /api/v1/retrieval/search`
+- `POST /api/v1/retrieval/answer/page`
+- `GET /api/v1/ops/inbox`
+- `GET /api/v1/watchlists`
+
+### 2. MCP
+
+- Quickstart: [`docs/mcp-quickstart.md`](./mcp-quickstart.md)
+- Server: [`apps/mcp/server.py`](../apps/mcp/server.py)
+- Local start: `./bin/dev-mcp`
+
+Representative tools:
+
+- `sourceharbor.jobs.get`
+- `sourceharbor.jobs.compare`
+- `sourceharbor.knowledge.cards.list`
+- `sourceharbor.retrieval.search`
+- `sourceharbor.ingest.poll`
+
+### 3. Packaged Public CLI
+
+If you want one installable command surface first:
+
+```bash
+npm install --global ./packages/sourceharbor-cli
+cd /path/to/sourceharbor
+sourceharbor help
+sourceharbor mcp
+```
+
+Current truth:
+
+- package path: [`packages/sourceharbor-cli`](../packages/sourceharbor-cli/README.md)
+- it is a **thin repo-aware public wrapper**
+- inside a checkout it delegates to the repo-local `bin/sourceharbor`
+- it does not replace the repo-local runtime manager
+- outside a checkout it falls back to public docs guidance instead of inventing a second runtime stack
+
+### 4. Repo-Local CLI Substrate
+
+These remain the direct command truth:
+
+- `./bin/sourceharbor help`
+- `./bin/sourceharbor bootstrap`
+- `./bin/sourceharbor full-stack up`
+- `./bin/sourceharbor doctor`
+- `./bin/sourceharbor mcp`
+
+The packaged CLI above does not replace this substrate. It only makes it easier
+to discover and reuse.
+
+### 5. Public TypeScript SDK
+
+If you want a public, typed HTTP client first:
+
+```bash
+npm install ./packages/sourceharbor-sdk
+```
+
+Package path:
+
+- [`packages/sourceharbor-sdk`](../packages/sourceharbor-sdk/README.md)
+
+Current truth:
+
+- it is a **thin contract-first SDK**
+- it stays on top of the HTTP API contract instead of opening a second business-logic stack
+- it intentionally covers the builder-facing API layer, not every web-only operator helper
+
+### 6. Public Starter Packs
+
+If you want public templates instead of internal raw skills:
+
+- [`starter-packs/README.md`](../starter-packs/README.md)
+- [`starter-packs/compatibility.md`](../starter-packs/compatibility.md)
+- [`starter-packs/codex/AGENTS.md`](../starter-packs/codex/AGENTS.md)
+- [`starter-packs/claude-code/CLAUDE.md`](../starter-packs/claude-code/CLAUDE.md)
+- [`starter-packs/openclaw/README.md`](../starter-packs/openclaw/README.md)
+- [`starter-packs/typescript-sdk/example.ts`](../starter-packs/typescript-sdk/example.ts)
+
+### 7. Plugin-Grade Bundles And Official-Surface Templates
+
+If you need artifacts closer to public distribution than a starter README, open:
+
+- [`starter-packs/codex/sourceharbor-codex-plugin/README.md`](../starter-packs/codex/sourceharbor-codex-plugin/README.md)
+- [`starter-packs/claude-code/sourceharbor-claude-plugin/README.md`](../starter-packs/claude-code/sourceharbor-claude-plugin/README.md)
+- [`starter-packs/openclaw/clawhub.package.template.json`](../starter-packs/openclaw/clawhub.package.template.json)
+- [`starter-packs/mcp-registry/sourceharbor-server.template.json`](../starter-packs/mcp-registry/sourceharbor-server.template.json)
+- [`docs/public-distribution.md`](./public-distribution.md)
+
+Current truth:
+
+- **Codex**: the bundle is the strongest official-docs-supported distribution artifact today, but public self-serve official listing is still not open.
+- **Claude Code**: the bundle is submission-ready for the official marketplace path, but live listing still depends on Anthropic review.
+- **OpenClaw**: the local pack remains first-cut, while the ClawHub package template is the strongest publish-ready artifact the repo can ship today.
+- **MCP**: the registry template is metadata-only; real publication still needs a public install artifact and verified namespace ownership.
+
+## Submission And Read-Back Rule
+
+Treat public distribution as complete only when all three exist together:
+
+1. a real package or template artifact
+2. a real submit or listing step on the strongest official surface available
+3. a read-back proof such as a receipt, review URL, listing URL, or exact blocker
+
+That means:
+
+- `submission-ready` is stronger than docs-only
+- `publish-template-ready` is stronger than starter-only
+- but neither one equals a live official listing by itself
+
+If you need the shortest shipping ledger for those last steps, read:
+
+- [`docs/public-distribution.md`](./public-distribution.md)
+- [`docs/media-kit.md`](./media-kit.md)
+
+## Official Submission And Read-Back
+
+If you want to carry SourceHarbor from "public bundle exists" to "officially
+submitted with receipts", keep one ledger per platform.
+
+| Platform | What is already real | What still counts as missing | What read-back would prove it |
+| --- | --- | --- | --- |
+| **Codex** | Codex-compatible plugin bundle and starter-pack path | an official public directory path or another strongest public distribution surface with a truthful public claim | listing URL, marketplace entry, or exact blocker stating that the official directory still is not self-serve |
+| **Claude Code** | submission-ready plugin-grade bundle | live marketplace submission and Anthropic review proof | pending-review URL, listing URL, receipt, or review identifier |
+| **OpenClaw / ClawHub** | local starter pack plus publish-ready ClawHub metadata template | live public publish or listing proof | package URL, listing URL, review URL, or a precise blocker if publication still needs human-controlled account steps |
+| **Official MCP Registry** | official-registry-shaped metadata template | real registry submission and verified namespace/public install artifact | submission receipt, registry URL, or a precise blocker such as namespace verification not yet completed |
+
+Use this rule when you describe progress:
+
+- `bundle-ready` means the artifact exists
+- `submission-ready` means the form/package/template can be submitted now
+- `officially submitted` means there is a real platform-side receipt or review link
+- `listed` means the public page exists and can be revisited later
+
+Do not collapse those four states into one sentence.
+
+If you want the shortest ledger for "what is already public-facing vs what still
+needs submit/read-back proof," read
+[`docs/public-distribution.md`](./public-distribution.md).
+
+## Public Packaging Status
+
+SourceHarbor should still stay honest here.
+
+What ships now:
+
+- **Packaged public CLI:** now
+- **Public TypeScript SDK:** now
+- **Public starter packs / compatibility docs:** available now, but still first-cut
+- **Codex / Claude Code fit via MCP + HTTP API + CLI + SDK:** now
+- **OpenClaw fit via local starter pack + MCP / HTTP substrate:** first-cut now
+- **Codex-compatible plugin bundle:** now
+- **Claude Code plugin bundle:** now
+- **ClawHub package template / MCP Registry template:** now
+
+What stays later:
+
+- **Python SDK:** later
+
+What stays no-go this wave:
+
+- **Plugin / marketplace positioning as the primary product label**
+- **Hosted workspace claims**
+- **generic autonomous agent loops**
+
+If you want the bucketed decision ledger instead of the packaging sequence, read
+[docs/reference/ecosystem-and-big-bet-decisions.md](./reference/ecosystem-and-big-bet-decisions.md).
+
+## Risk Boundaries
+
+These are intentionally not opened in the current builder story:
+
+- write-capable MCP as a default public promise
+- hosted SaaS claims
+- generic autonomous agent loops
+- plugin-first positioning
+
+If you need the public proof boundary before integrating, read
+[`docs/proof.md`](./proof.md).

@@ -1,0 +1,81 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">SourceHarbor builder loop</title>
+  <desc id="desc">A builder-facing visual map showing how Codex, Claude Code, MCP clients, and operators all point to the same SourceHarbor jobs, retrieval, and proof surfaces.</desc>
+  <defs>
+    <linearGradient id="bg" x1="70" y1="40" x2="1530" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF8EF"/>
+      <stop offset="1" stop-color="#E8DED0"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="120" y1="110" x2="1480" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#133533"/>
+      <stop offset="1" stop-color="#0F2524"/>
+    </linearGradient>
+    <linearGradient id="accentA" x1="1160" y1="120" x2="1420" y2="310" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4B65D"/>
+      <stop offset="1" stop-color="#D48B1F"/>
+    </linearGradient>
+    <linearGradient id="accentB" x1="150" y1="610" x2="430" y2="830" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3EA58D"/>
+      <stop offset="1" stop-color="#256F60"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" rx="40" fill="#F5EFE6"/>
+  <rect x="30" y="30" width="1540" height="840" rx="34" fill="url(#bg)"/>
+  <circle cx="1270" cy="170" r="170" fill="url(#accentA)" fill-opacity="0.16"/>
+  <circle cx="260" cy="760" r="210" fill="url(#accentB)" fill-opacity="0.18"/>
+
+  <text x="106" y="128" fill="#123533" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Builder-first view</text>
+  <text x="106" y="206" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="800">Why developers</text>
+  <text x="106" y="286" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="74" font-weight="800">keep reading</text>
+  <text x="106" y="352" fill="#4D645F" font-family="Arial, Helvetica, sans-serif" font-size="26">Search, Ask, MCP, job trace, and proof are all anchored</text>
+  <text x="106" y="388" fill="#4D645F" font-family="Arial, Helvetica, sans-serif" font-size="26">to the same jobs, artifacts, and operator truth.</text>
+
+  <rect x="106" y="438" width="246" height="58" rx="29" fill="#102826"/>
+  <text x="142" y="474" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">Codex-ready</text>
+  <rect x="372" y="438" width="286" height="58" rx="29" fill="#1D5B55"/>
+  <text x="408" y="474" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">Claude Code-ready</text>
+  <rect x="678" y="438" width="220" height="58" rx="29" fill="#F4B65D"/>
+  <text x="718" y="474" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700">MCP-native</text>
+
+  <rect x="92" y="560" width="530" height="238" rx="28" fill="url(#ink)"/>
+  <text x="128" y="616" fill="#F8FBFA" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">What feels different on first contact</text>
+  <text x="128" y="668" fill="#D9E6E2" font-family="Arial, Helvetica, sans-serif" font-size="20">• You can inspect jobs, retries, degradations, and bundles instead of trusting black-box output</text>
+  <text x="128" y="706" fill="#D9E6E2" font-family="Arial, Helvetica, sans-serif" font-size="20">• Search and Ask are grounded in the same evidence shelf used by operators</text>
+  <text x="128" y="744" fill="#D9E6E2" font-family="Arial, Helvetica, sans-serif" font-size="20">• Codex, Claude Code, API builders, and MCP clients share one control plane</text>
+
+  <rect x="700" y="126" width="812" height="660" rx="32" fill="#FFFBF6" stroke="#D8CCBC"/>
+  <text x="742" y="176" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">One control tower, multiple honest doors</text>
+
+  <rect x="742" y="226" width="214" height="112" rx="24" fill="#132F2D"/>
+  <text x="774" y="268" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Codex</text>
+  <text x="774" y="306" fill="#C6DDD7" font-family="Arial, Helvetica, sans-serif" font-size="18">Use MCP or HTTP</text>
+
+  <rect x="980" y="226" width="238" height="112" rx="24" fill="#1E6159"/>
+  <text x="1014" y="268" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Claude Code</text>
+  <text x="1014" y="306" fill="#D8EDE8" font-family="Arial, Helvetica, sans-serif" font-size="18">Same governed surfaces</text>
+
+  <rect x="1242" y="226" width="226" height="112" rx="24" fill="#F4B65D"/>
+  <text x="1274" y="268" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">MCP clients</text>
+  <text x="1274" y="306" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="18">FastMCP today</text>
+
+  <path d="M846 366C846 420 846 452 846 492" stroke="#9FB5B0" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+  <path d="M1099 366C1099 420 1099 452 1099 492" stroke="#9FB5B0" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+  <path d="M1352 366C1352 420 1352 452 1352 492" stroke="#9FB5B0" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+
+  <rect x="834" y="500" width="530" height="170" rx="28" fill="#F7F1E8" stroke="#D8CCBC"/>
+  <text x="866" y="548" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Shared operator truth</text>
+  <rect x="866" y="578" width="144" height="44" rx="16" fill="#132F2D"/>
+  <text x="897" y="607" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Search</text>
+  <rect x="1028" y="578" width="144" height="44" rx="16" fill="#1E6159"/>
+  <text x="1071" y="607" fill="#EAF6F1" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Ask</text>
+  <rect x="1190" y="578" width="144" height="44" rx="16" fill="#F4B65D"/>
+  <text x="1230" y="607" fill="#102826" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Ops</text>
+  <text x="866" y="654" fill="#516864" font-family="Arial, Helvetica, sans-serif" font-size="18">Jobs • Knowledge cards • Artifacts • Watchlists • Trends • Proof</text>
+
+  <path d="M1099 670C1099 710 1099 734 1099 760" stroke="#9FB5B0" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+
+  <rect x="930" y="768" width="340" height="82" rx="22" fill="#102826"/>
+  <text x="968" y="809" fill="#F8FBFA" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">Proof before hype</text>
+  <text x="968" y="836" fill="#D7E5E0" font-family="Arial, Helvetica, sans-serif" font-size="17">Short smoke passes. Strict live smoke still names the real external gate.</text>
+</svg>
