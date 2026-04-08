@@ -49,8 +49,8 @@ Treat release-current truth as its own ledger.
 
 Current live reading:
 
-- the public repo now has a live GitHub Release object: **`v0.1.13`**
-- `v0.1.13` is a real latest-release ledger, and this release line is intended to catch back up with the current remote `main` head after the final metadata drift closeout lands
+- the public repo now has a live GitHub Release object: **`v0.1.14`**
+- `v0.1.14` is the current latest-release ledger, and this release line now catches back up with the current remote `main` head after the distribution-truth closeout landed
 - workflow-dispatch evidence on current `main` is still its own ledger, but it
   now sits alongside a current release page instead of replacing one
 
@@ -70,7 +70,7 @@ and official-surface distribution truth are still separate ledgers.
 
 - current `main` is active and externally verifiable through GitHub checks and workflow-dispatch lanes
 - the public distribution artifacts are real, but several official-surface submissions still need true submit/read-back proof
-- the current public repo now has a live GitHub Release object for `v0.1.13`
+- the current public repo now has a live GitHub Release object for `v0.1.14`
 - official-surface listing truth is still separate from GitHub Release truth
 
 Use:
