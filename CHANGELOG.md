@@ -7,6 +7,14 @@ and this project follows semantic-ish release communication even when the reposi
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-04-08
+
+### Changed
+
+- clarified the container/distribution truth split so local compose, devcontainer parity, and the GHCR strict CI image no longer read like one public Docker install story
+- clarified that SourceHarbor is a multi-surface product repo and that skill-package criteria apply only to its public starter-pack and plugin-grade distribution surfaces
+- bumped the public CLI, public TypeScript SDK, OpenAPI contract, and plugin/template version anchors to `0.1.14` so the latest release line catches back up with the current `main` head after the distribution-truth closeout landed
+
 ## [0.1.13] - 2026-04-07
 
 ### Fixed
