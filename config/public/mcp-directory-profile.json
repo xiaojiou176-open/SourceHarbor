@@ -1,0 +1,56 @@
+{
+  "name": "io.github.xiaojiou176-open/sourceharbor-mcp",
+  "title": "SourceHarbor MCP",
+  "version": "0.1.17",
+  "short_description": "Source-first AI knowledge control tower MCP server for YouTube, Bilibili, RSSHub, and RSS.",
+  "long_description": "SourceHarbor MCP gives agent clients the same source-first, proof-first control-tower surface the web and operator routes use: search, Ask, watchlists, briefings, subscriptions, job traces, and grounded evidence reuse.",
+  "homepage": "https://xiaojiou176-open.github.io/sourceharbor/",
+  "repository": "https://github.com/xiaojiou176-open/sourceharbor",
+  "documentation": "https://github.com/xiaojiou176-open/sourceharbor/tree/main/docs",
+  "issues": "https://github.com/xiaojiou176-open/sourceharbor/issues",
+  "license": "MIT",
+  "keywords": [
+    "sourceharbor",
+    "mcp",
+    "mcp-server",
+    "source-first",
+    "proof-first",
+    "grounded-search",
+    "retrieval",
+    "knowledge-pipeline",
+    "youtube",
+    "bilibili",
+    "rsshub",
+    "rss"
+  ],
+  "transport": "stdio",
+  "entrypoint": {
+    "command": "sourceharbor-mcp",
+    "checkout_install_steps": [
+      "uv build",
+      "python3 -m pip install dist/sourceharbor-*.whl"
+    ],
+    "runtime_env": [
+      "SOURCE_HARBOR_API_BASE_URL"
+    ]
+  },
+  "environment_variables": [
+    {
+      "name": "SOURCE_HARBOR_API_BASE_URL",
+      "required": true,
+      "secret": false,
+      "description": "Base URL for a running SourceHarbor API."
+    }
+  ],
+  "assets": {
+    "social_preview": "docs/assets/sourceharbor-social-preview.png",
+    "square_icon": "docs/assets/sourceharbor-square-icon.png",
+    "directory_screenshot": "docs/assets/sourceharbor-mcp-directory-shot-01.png"
+  },
+  "support": {
+    "security": "SECURITY.md",
+    "support": "SUPPORT.md",
+    "contributing": "CONTRIBUTING.md",
+    "changelog": "CHANGELOG.md"
+  }
+}

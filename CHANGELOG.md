@@ -7,6 +7,21 @@ and this project follows semantic-ish release communication even when the reposi
 
 ## [Unreleased]
 
+## [0.1.17] - 2026-04-10
+
+### Added
+
+- added source-installable GitHub Copilot and VS Code agent plugin bundles under `starter-packs/`
+- added public compatibility docs and prompt templates for GitHub Copilot and VS Code agent workflows
+- added a canonical MCP directory profile plus site-specific submission packets for `MCP.so`, `PulseMCP`, and `mcpservers.org`
+- added a tracked `awesome-opencode` listing packet and a square icon source asset for directory submissions
+
+### Changed
+
+- bumped the root Python package, public CLI, public TypeScript SDK, starter-pack manifests, and plugin bundle version anchors to `0.1.17`
+- aligned outward-facing version anchors across `contracts/source/openapi.yaml`, `apps/api/app/config.py`, `infra/docker/sourceharbor-api.Dockerfile`, and `uv.lock`
+- tightened the public distribution docs so GitHub Copilot / VS Code agent bundles now read as real repo-tracked surfaces instead of future repack work
+
 ## [0.1.14] - 2026-04-08
 
 ### Changed
