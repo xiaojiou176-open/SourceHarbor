@@ -269,7 +269,6 @@ def materialize_consumption_batch(
         navigation_brief=dict(result.get("navigation_brief") or {}),
     )
 
-
 @router.get("/documents", response_model=list[PublishedReaderDocumentResponse])
 def list_published_reader_documents(
     limit: int = Query(default=20, ge=1, le=100),
@@ -281,6 +280,16 @@ def list_published_reader_documents(
         _coerce_document_payload(item)
         for item in service.list_published_documents(limit=limit, window_id=window_id)
     ]
+
+
+@router.get("/navigation-brief")
+def get_navigation_brief(
+    limit: int = Query(default=8, ge=1, le=50),
+    window_id: str | None = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    service = ReaderPipelineService(db)
+    return service.get_navigation_brief(limit=limit, window_id=window_id)
 
 
 @router.get("/documents/slug/{slug}", response_model=PublishedReaderDocumentResponse)
@@ -325,12 +334,3 @@ def repair_published_reader_document(
         raise HTTPException(status_code=code, detail=detail) from exc
     return _coerce_document_payload(result)
 
-
-@router.get("/navigation-brief")
-def get_navigation_brief(
-    window_id: str | None = Query(default=None),
-    limit: int = Query(default=8, ge=1, le=20),
-    db: Session = Depends(get_db),
-):
-    service = ReaderPipelineService(db)
-    return dict(service.build_navigation_brief(window_id=window_id, limit=limit))
