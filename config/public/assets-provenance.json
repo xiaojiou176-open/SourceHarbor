@@ -100,6 +100,54 @@
       "public_distribution_status": "repository-declared-profile-asset",
       "follow_up_required": true,
       "notes": "PNG upload target referenced by the GitHub profile manifest for social preview."
+    },
+    {
+      "path": "docs/assets/sourceharbor-square-icon.svg",
+      "asset_kind": "svg",
+      "surface_role": "directory-square-icon-source",
+      "public_surfaces": [
+        "config/public/mcp-directory-profile.json",
+        "docs/media-kit.md"
+      ],
+      "provenance_status": "repository-tracked-source-file",
+      "rights_basis": "maintainer-assertion-required",
+      "sanitization_status": "non-runtime-illustration",
+      "public_distribution_status": "currently-published-in-repo",
+      "follow_up_required": true,
+      "notes": "Editable source illustration for the directory-friendly square icon asset."
+    },
+    {
+      "path": "docs/assets/sourceharbor-square-icon.png",
+      "asset_kind": "png",
+      "surface_role": "directory-square-icon",
+      "public_surfaces": [
+        "config/public/mcp-directory-profile.json",
+        "docs/media-kit.md"
+      ],
+      "provenance_status": "repository-tracked-derived-file",
+      "rights_basis": "maintainer-assertion-required",
+      "sanitization_status": "non-runtime-illustration",
+      "public_distribution_status": "currently-published-in-repo",
+      "follow_up_required": true,
+      "notes": "PNG square icon derived from the tracked SVG source for MCP directory and listing submissions."
+    },
+    {
+      "path": "docs/assets/sourceharbor-mcp-directory-shot-01.png",
+      "asset_kind": "png",
+      "surface_role": "directory-screenshot",
+      "public_surfaces": [
+        "config/public/mcp-directory-profile.json",
+        "docs/submission/mcp-so.md",
+        "docs/submission/pulsemcp.md",
+        "docs/submission/mcpservers-org.md",
+        "docs/submission/awesome-opencode.md"
+      ],
+      "provenance_status": "repository-tracked-derived-file",
+      "rights_basis": "maintainer-assertion-required",
+      "sanitization_status": "non-runtime-illustration",
+      "public_distribution_status": "currently-published-in-repo",
+      "follow_up_required": true,
+      "notes": "Submission-friendly product shot derived from the tracked studio preview source asset."
     }
   ]
 }
