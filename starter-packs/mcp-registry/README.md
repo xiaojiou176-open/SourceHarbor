@@ -7,6 +7,7 @@ Use it when you want:
 
 - a current `server.json` draft shaped for the official MCP Registry
 - a single place to keep namespace, package, and environment-variable metadata
+- a shared canonical profile you can also reuse for `MCP.so`, `PulseMCP`, and `mcpservers.org`
 - the real Python package lane that produces `sourceharbor-mcp`
 - an honest reminder that MCP Registry publication still depends on a public
   install method and verified namespace ownership
@@ -24,5 +25,6 @@ Current boundary:
 
 - the official MCP Registry exists
 - the repo now has a real Python package + console-script install lane
+- the repo now also tracks `config/public/mcp-directory-profile.json` and `docs/submission/*.md` as the shared non-registry directory packet layer
 - registry publication still requires live PyPI publish/read-back, namespace
   verification, and an actual registry submission receipt

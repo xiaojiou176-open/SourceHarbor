@@ -39,6 +39,9 @@ Current truth:
 | --- | --- | --- |
 | `docs/assets/sourceharbor-social-preview.png` | GitHub social preview upload target | manual repo-settings upload asset |
 | `docs/assets/sourceharbor-social-preview.svg` | tracked source illustration for the preview | editable source file |
+| `docs/assets/sourceharbor-square-icon.png` | square icon for MCP directory submissions and listing tiles | directory-friendly public icon asset |
+| `docs/assets/sourceharbor-square-icon.svg` | tracked source illustration for the square icon | editable source file |
+| `docs/assets/sourceharbor-mcp-directory-shot-01.png` | MCP directory and listing screenshot asset | submission-friendly product shot derived from the tracked studio preview |
 | `docs/assets/sourceharbor-hero.svg` | README/front-door hero | public product-shape asset |
 | `docs/assets/sourceharbor-studio-preview.svg` | README studio preview | public front-door asset |
 | `docs/assets/sourceharbor-developer-flywheel.svg` | builder/product loop visual | README/docs narrative support |

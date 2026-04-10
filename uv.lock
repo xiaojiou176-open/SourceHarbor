@@ -1486,7 +1486,7 @@ wheels = [
 
 [[package]]
 name = "sourceharbor"
-version = "0.1.14"
+version = "0.1.17"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

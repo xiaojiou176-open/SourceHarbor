@@ -177,15 +177,18 @@ This is the short scoreboard for the directions most likely to get overstated.
 
 | Track | Current bucket | Why now |
 | --- | --- | --- |
-| Codex / Claude Code via MCP + HTTP API | **ship-now** | the repo already has real MCP, API, search, ask, and job-trace surfaces |
+| Codex / GitHub Copilot / Claude Code / VS Code agent workflows via MCP + HTTP API | **ship-now** | the repo already has real MCP, API, search, ask, and job-trace surfaces |
 | Repo-local CLI/help facade | **ship-now** | `./bin/sourceharbor` is already a truthful discoverability layer over `bin/*` |
 | Packaged public CLI bridge | **ship-now** | `packages/sourceharbor-cli` is now the installable public bridge, while the fuller repo-local operator CLI remains `./bin/sourceharbor` |
 | Public TypeScript SDK | **ship-now** | `packages/sourceharbor-sdk` now exposes the contract-first builder layer over the existing HTTP contract |
 | Codex-compatible plugin bundle | **ship-now** | `starter-packs/codex/sourceharbor-codex-plugin/` is now the strongest public Codex bundle the repo can ship before official self-serve listing exists |
+| GitHub Copilot plugin bundle | **ship-now** | `starter-packs/github-copilot/sourceharbor-github-copilot-plugin/` now gives GitHub Copilot a real source-installable plugin bundle over the same MCP/API truth |
 | Claude Code plugin bundle | **ship-now** | `starter-packs/claude-code/sourceharbor-claude-plugin/` is now the strongest public submission-ready bundle for Claude Code |
+| VS Code agent plugin bundle | **ship-now** | `starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/` now gives VS Code agent workflows a real source-installable plugin bundle over the same MCP/API truth |
 | OpenClaw via local starter pack + MCP / HTTP substrate | **first-cut** | the repo now ships a public compatibility page plus a first-cut local OpenClaw starter pack, but it still is not a marketplace or primary front-door claim |
 | OpenClaw ClawHub package template | **first-cut** | the repo now ships a publish-ready metadata template, but not a live ClawHub publish receipt |
 | MCP Registry metadata template | **first-cut** | the repo now ships an official-registry-shaped `server.json` template, but registry publication still needs a public install artifact and namespace verification |
+| Site-specific MCP directory packets | **first-cut** | `config/public/mcp-directory-profile.json` plus `docs/submission/*.md` now give the repo a real per-directory submission packet layer, but live submit/read-back is still separate |
 | Public Python SDK | **later** | no public package surface exists yet |
 | Public skills pack / templates | **first-cut** | `docs/public-skills.md`, `docs/compat/*`, `templates/public-skills/*`, and `examples/*` now provide a usable first public starter surface, but not a fully hardened ecosystem product yet |
 | Plugin / extension marketplace as the primary product identity | **no-go now** | plugin-first positioning would still overstate the current repo truth even after the new bundle/template surfaces landed |
