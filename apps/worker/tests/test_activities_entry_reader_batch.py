@@ -5,7 +5,6 @@ import uuid
 from types import SimpleNamespace
 
 import pytest
-
 from worker.temporal import activities_entry
 
 

@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from types import SimpleNamespace
 from zoneinfo import ZoneInfo
-
-import pytest
 
 from worker.state.postgres_store import PostgresBusinessStore
 
