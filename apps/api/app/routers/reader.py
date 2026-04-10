@@ -269,6 +269,7 @@ def materialize_consumption_batch(
         navigation_brief=dict(result.get("navigation_brief") or {}),
     )
 
+
 @router.get("/documents", response_model=list[PublishedReaderDocumentResponse])
 def list_published_reader_documents(
     limit: int = Query(default=20, ge=1, le=100),
