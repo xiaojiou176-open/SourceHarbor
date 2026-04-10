@@ -39,7 +39,9 @@ export default async function ReaderPage() {
 			? navigationBrief.items
 			: [];
 
-	const clearDocuments = documents.filter((document) => !document.published_with_gap);
+	const clearDocuments = documents.filter(
+		(document) => !document.published_with_gap,
+	);
 	const leadDocument = clearDocuments[0] ?? documents[0] ?? null;
 	const leadSources =
 		leadDocument && Array.isArray(leadDocument.source_refs)
@@ -69,8 +71,8 @@ export default async function ReaderPage() {
 							<CardDescription className="max-w-3xl text-base leading-7">
 								A calmer reading deck for the current published-doc layer.
 								Merged stories and singleton polish docs now share one editorial
-								surface, while yellow-warning documents stay honest about missing
-								or degraded source evidence.
+								surface, while yellow-warning documents stay honest about
+								missing or degraded source evidence.
 							</CardDescription>
 						</div>
 					</CardHeader>
@@ -92,10 +94,14 @@ export default async function ReaderPage() {
 									<Badge variant="secondary">Lead document</Badge>
 									<Badge
 										variant={
-											leadDocument.published_with_gap ? "destructive" : "outline"
+											leadDocument.published_with_gap
+												? "destructive"
+												: "outline"
 										}
 									>
-										{leadDocument.published_with_gap ? "Yellow warning" : "Clear"}
+										{leadDocument.published_with_gap
+											? "Yellow warning"
+											: "Clear"}
 									</Badge>
 									{leadDocument.topic_label ? (
 										<Badge variant="outline">{leadDocument.topic_label}</Badge>
@@ -124,7 +130,8 @@ export default async function ReaderPage() {
 													className="rounded-xl border border-border/60 bg-background/90 p-3"
 												>
 													<p className="text-sm font-medium">
-														{typeof source.title === "string" && source.title.trim()
+														{typeof source.title === "string" &&
+														source.title.trim()
 															? source.title
 															: "Untitled source"}
 													</p>
@@ -139,7 +146,9 @@ export default async function ReaderPage() {
 									) : null}
 									<div className="flex flex-wrap gap-3">
 										<Button asChild size="lg">
-											<Link href={`/reader/${leadDocument.id}`}>Open reader detail</Link>
+											<Link href={`/reader/${leadDocument.id}`}>
+												Open reader detail
+											</Link>
 										</Button>
 										<Button asChild variant="outline">
 											<Link href="/search">Search evidence</Link>
@@ -153,8 +162,9 @@ export default async function ReaderPage() {
 									Lead reading deck
 								</p>
 								<p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
-									Run intake, freeze a batch, and materialize the reader pipeline
-									to turn raw source items into readable documents on this frontstage.
+									Run intake, freeze a batch, and materialize the reader
+									pipeline to turn raw source items into readable documents on
+									this frontstage.
 								</p>
 							</div>
 						)}
@@ -165,8 +175,8 @@ export default async function ReaderPage() {
 					<CardHeader>
 						<CardTitle className="text-xl">Navigation brief</CardTitle>
 						<CardDescription>
-							The 30-second guide over the current published-doc layer. Read
-							the brief first, then drop into the document that matters most.
+							The 30-second guide over the current published-doc layer. Read the
+							brief first, then drop into the document that matters most.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-3 text-sm">
@@ -200,8 +210,8 @@ export default async function ReaderPage() {
 							</>
 						) : (
 							<p className="text-muted-foreground">
-								No navigation brief is available yet. Materialize one consumption
-								batch first.
+								No navigation brief is available yet. Materialize one
+								consumption batch first.
 							</p>
 						)}
 					</CardContent>
@@ -216,8 +226,8 @@ export default async function ReaderPage() {
 						</h2>
 						<p className="text-sm text-muted-foreground">
 							These documents stay readable, but they still carry yellow-warning
-							disclosure. Open them when you want the latest story with an explicit
-							caution label.
+							disclosure. Open them when you want the latest story with an
+							explicit caution label.
 						</p>
 					</div>
 					<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -247,7 +257,9 @@ export default async function ReaderPage() {
 										<span>Sources {document.source_item_count}</span>
 									</div>
 									<Button asChild className="w-full">
-										<Link href={`/reader/${document.id}`}>Open reader detail</Link>
+										<Link href={`/reader/${document.id}`}>
+											Open reader detail
+										</Link>
 									</Button>
 								</CardContent>
 							</Card>
@@ -263,8 +275,8 @@ export default async function ReaderPage() {
 							Reader library
 						</h2>
 						<p className="text-sm text-muted-foreground">
-							Every card below is already a published reader document, whether it
-							came from a merge path or a singleton polish path.
+							Every card below is already a published reader document, whether
+							it came from a merge path or a singleton polish path.
 						</p>
 					</div>
 					<p className="text-sm text-muted-foreground">
@@ -303,10 +315,9 @@ export default async function ReaderPage() {
 										<span>Sources {document.source_item_count}</span>
 									</div>
 									<div className="space-y-2">
-										{(
-											Array.isArray(document.source_refs)
-												? document.source_refs
-												: []
+										{(Array.isArray(document.source_refs)
+											? document.source_refs
+											: []
 										)
 											.slice(0, 2)
 											.map((source) => (
@@ -315,7 +326,8 @@ export default async function ReaderPage() {
 													className="rounded-xl border border-border/60 bg-background/90 p-3 text-sm"
 												>
 													<p className="font-medium">
-														{typeof source.title === "string" && source.title.trim()
+														{typeof source.title === "string" &&
+														source.title.trim()
 															? source.title
 															: "Untitled source"}
 													</p>
@@ -328,7 +340,9 @@ export default async function ReaderPage() {
 											))}
 									</div>
 									<Button asChild className="w-full">
-										<Link href={`/reader/${document.id}`}>Open reader detail</Link>
+										<Link href={`/reader/${document.id}`}>
+											Open reader detail
+										</Link>
 									</Button>
 								</CardContent>
 							</Card>
@@ -349,8 +363,9 @@ export default async function ReaderPage() {
 						<CardHeader>
 							<CardTitle>No published reader documents yet</CardTitle>
 							<CardDescription>
-								Run the intake path, freeze a consumption batch, then materialize
-								the reader pipeline so this surface has real output to show.
+								Run the intake path, freeze a consumption batch, then
+								materialize the reader pipeline so this surface has real output
+								to show.
 							</CardDescription>
 						</CardHeader>
 					</Card>

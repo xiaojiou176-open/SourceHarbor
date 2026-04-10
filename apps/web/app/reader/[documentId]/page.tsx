@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 
 import { MarkdownPreview } from "@/components/markdown-preview";
 import { SourceContributionDrawer } from "@/components/source-contribution-drawer";
-import { YellowWarningCard } from "@/components/yellow-warning-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { YellowWarningCard } from "@/components/yellow-warning-card";
 import { apiClient } from "@/lib/api/client";
 import { buildProductMetadata } from "@/lib/seo";
 
@@ -73,7 +73,9 @@ export default async function ReaderDetailPage({
 						<div className="flex flex-wrap items-center gap-2">
 							<Badge variant="secondary">{document.materialization_mode}</Badge>
 							<Badge
-								variant={document.published_with_gap ? "destructive" : "outline"}
+								variant={
+									document.published_with_gap ? "destructive" : "outline"
+								}
 							>
 								{document.published_with_gap ? "Yellow warning" : "Clear"}
 							</Badge>
@@ -81,7 +83,10 @@ export default async function ReaderDetailPage({
 								<Badge variant="outline">{document.topic_label}</Badge>
 							) : null}
 						</div>
-						<h1 data-route-heading className="text-3xl font-semibold tracking-tight">
+						<h1
+							data-route-heading
+							className="text-3xl font-semibold tracking-tight"
+						>
 							{document.title}
 						</h1>
 						<p className="max-w-4xl text-base leading-7 text-muted-foreground">
@@ -135,9 +140,13 @@ export default async function ReaderDetailPage({
 						</CardHeader>
 						<CardContent className="space-y-4 text-sm">
 							<div className="flex flex-wrap gap-2">
-								<Badge variant="secondary">{document.materialization_mode}</Badge>
+								<Badge variant="secondary">
+									{document.materialization_mode}
+								</Badge>
 								<Badge
-									variant={document.published_with_gap ? "destructive" : "outline"}
+									variant={
+										document.published_with_gap ? "destructive" : "outline"
+									}
 								>
 									{document.published_with_gap ? "Yellow warning" : "Clear"}
 								</Badge>
@@ -175,10 +184,12 @@ export default async function ReaderDetailPage({
 
 					<Card className="border-border/70 shadow-sm">
 						<CardHeader>
-							<CardTitle className="text-base">Coverage ledger snapshot</CardTitle>
+							<CardTitle className="text-base">
+								Coverage ledger snapshot
+							</CardTitle>
 							<CardDescription>
-								A quick integrity read before you reuse the document outside this
-								reader surface.
+								A quick integrity read before you reuse the document outside
+								this reader surface.
 							</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-2 text-sm">

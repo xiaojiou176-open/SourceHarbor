@@ -43,7 +43,9 @@ export function SourceContributionDrawer({
 									? source.job_bundle_route
 									: null;
 							const sourceUrl =
-								typeof source.source_url === "string" ? source.source_url : null;
+								typeof source.source_url === "string"
+									? source.source_url
+									: null;
 							const digestPreview =
 								typeof source.digest_preview === "string"
 									? source.digest_preview
