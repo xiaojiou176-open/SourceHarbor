@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">SourceHarbor square icon</title>
+  <desc id="desc">A square icon for SourceHarbor with an editorial green background, a harbor-like frame, and the letters SH.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F2420" />
+      <stop offset="100%" stop-color="#1E4D45" />
+    </linearGradient>
+    <linearGradient id="card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F7F1E8" />
+      <stop offset="100%" stop-color="#DDE8E2" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)" />
+  <rect x="76" y="84" width="360" height="344" rx="40" fill="url(#card)" opacity="0.97" />
+  <path d="M118 170h276" stroke="#17443D" stroke-width="18" stroke-linecap="round" opacity="0.22" />
+  <path d="M118 342h206" stroke="#17443D" stroke-width="18" stroke-linecap="round" opacity="0.18" />
+  <path d="M118 384h136" stroke="#17443D" stroke-width="18" stroke-linecap="round" opacity="0.18" />
+  <path d="M118 222c46 0 74-34 120-34s74 34 120 34 74-34 120-34" stroke="#E1A65F" stroke-width="18" stroke-linecap="round" fill="none" />
+  <path d="M118 258c46 0 74-22 120-22s74 22 120 22 74-22 120-22" stroke="#4B7A72" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.9" />
+  <text x="112" y="328" fill="#17443D" font-family="Arial, Helvetica, sans-serif" font-size="136" font-weight="700">SH</text>
+</svg>

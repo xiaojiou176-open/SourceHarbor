@@ -1,0 +1,9 @@
+{
+  "name": "SourceHarbor GitHub Copilot Plugin",
+  "version": "0.1.17",
+  "description": "GitHub Copilot plugin bundle for grounded SourceHarbor watchlist briefings through MCP and the HTTP API.",
+  "skills": [
+    "./skills/sourceharbor-watchlist-briefing"
+  ],
+  "mcpServers": "./.mcp.json"
+}

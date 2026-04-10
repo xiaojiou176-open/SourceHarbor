@@ -82,8 +82,8 @@ It is strongest when you read it as a control tower for source intake:
 
 - operators use the Web command center
 - system builders use the HTTP API
-- Codex, Claude Code, and other MCP-aware workflows use the MCP surface
-- all three point at the same jobs, artifacts, retrieval index, and operator truth
+- Codex, GitHub Copilot, Claude Code, VS Code agent workflows, and other MCP-aware clients use the MCP surface
+- all of them point at the same jobs, artifacts, retrieval index, and operator truth
 
 SourceHarbor is a **multi-surface product repo, not a single skill package**.
 Public starter packs and plugin-grade skill surfaces are adoption layers inside
@@ -104,7 +104,7 @@ This is the part that makes SourceHarbor more than a pretty README:
 
 | If you are... | What pulls you in | Why it feels different |
 | --- | --- | --- |
-| **A builder chasing Codex / Claude Code workflows** | one repo already exposes MCP, HTTP API, and a shared operator truth | you do not have to invent a fake assistant shell just to reach real jobs, artifacts, and retrieval |
+| **A builder chasing Codex / GitHub Copilot / Claude Code / VS Code agent workflows** | one repo already exposes MCP, HTTP API, and a shared operator truth | you do not have to invent a fake assistant shell just to reach real jobs, artifacts, and retrieval |
 | **An operator who cares about proof** | job trace, ops inbox, watchlists, trends, and bundle exports all point back to the same pipeline | the repo keeps receipts, not just summaries |
 | **A maintainer deciding whether to contribute** | the product story, runtime truth, and testing story now line up | you can tell what is real, what is gated, and what is still a deliberate bet without re-reading the whole archive |
 
@@ -113,7 +113,7 @@ The hook is simple:
 - **Search** gives the evidence surface.
 - **Subscriptions** gives the source-universe intake front door.
 - **Ask** gives the story-aware, briefing-backed answer/change/evidence front door, now pushed toward a server-owned page payload instead of a front-end stitched view model.
-- **MCP** gives Codex / Claude Code / builder reuse.
+- **MCP** gives Codex / GitHub Copilot / Claude Code / VS Code agent / builder reuse.
 - **Watchlists + Trends + Playground** make the system worth coming back to instead of treating it like a one-shot summarizer.
 
 ## Choose Your First Path
@@ -160,15 +160,15 @@ The builder-facing mental map should follow the same product line:
 
 | Entry point | Who it is for | Current truth |
 | --- | --- | --- |
-| **Codex / Claude Code workflows** | local operators who want an AI coding or operations agent to query and drive the same system truth | honest fit today through MCP + HTTP API, documented in [docs/builders.md](./docs/builders.md) |
+| **Codex / GitHub Copilot / Claude Code / VS Code agent workflows** | local operators who want an AI coding or operations agent to query and drive the same system truth | honest fit today through MCP + HTTP API, documented in [docs/builders.md](./docs/builders.md) |
 | **OpenClaw workflows** | builders who want a dedicated OpenClaw first hop instead of only generic MCP theory | first-cut fit today through [docs/compat/openclaw.md](./docs/compat/openclaw.md) plus [starter-packs/openclaw/README.md](./starter-packs/openclaw/README.md) |
-| **Plugin-grade bundles and official-surface templates** | builders who want the strongest public bundles or distribution templates beyond docs-only starters | real today through `starter-packs/codex/sourceharbor-codex-plugin/`, `starter-packs/claude-code/sourceharbor-claude-plugin/`, `starter-packs/openclaw/clawhub.package.template.json`, and `starter-packs/mcp-registry/sourceharbor-server.template.json`; readiness differs by platform |
+| **Plugin-grade bundles and official-surface templates** | builders who want the strongest public bundles or distribution templates beyond docs-only starters | real today through `starter-packs/codex/sourceharbor-codex-plugin/`, `starter-packs/github-copilot/sourceharbor-github-copilot-plugin/`, `starter-packs/claude-code/sourceharbor-claude-plugin/`, `starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/`, `starter-packs/openclaw/clawhub.package.template.json`, `starter-packs/mcp-registry/sourceharbor-server.template.json`, and `config/public/mcp-directory-profile.json`; readiness differs by platform |
 | **Packaged public CLI** | builders who want an installable command surface before memorizing repo entrypoints | real today in [`packages/sourceharbor-cli`](./packages/sourceharbor-cli/README.md); it stays thinner than the repo-local runtime CLI and delegates inside a checkout |
 | **Repo-local CLI substrate** | operators already inside a checkout who want the direct runtime and governance command truth | real today via `./bin/sourceharbor help`, which remains the underlying local command truth |
 | **MCP surface** | agent workflows and assistant clients that need governed access to jobs, artifacts, retrieval, ingest, reports, and notifications | real surface today via [`./bin/dev-mcp`](./docs/mcp-quickstart.md) |
 | **HTTP API contract** | product builders, automation, and SDK consumers | real contract today via [`contracts/source/openapi.yaml`](./contracts/source/openapi.yaml) |
 | **Public TypeScript SDK** | TypeScript builders who want a thin client over the same HTTP contract | real today in [`packages/sourceharbor-sdk`](./packages/sourceharbor-sdk/README.md); it stays contract-first and builder-facing |
-| **Public starter packs** | builders who want reproducible Codex / Claude Code / OpenClaw / SDK starting templates | available today as a first-cut surface in [`starter-packs/`](./starter-packs/README.md); these are public templates, starter skills, and compatibility notes, not raw internal `.agents/skills` exports |
+| **Public starter packs** | builders who want reproducible Codex / GitHub Copilot / Claude Code / VS Code agent / OpenClaw / SDK starting templates | available today as a first-cut surface in [`starter-packs/`](./starter-packs/README.md); these are public templates, starter skills, and compatibility notes, not raw internal `.agents/skills` exports |
 
 The packaging story is intentionally thin: the packaged CLI stays repo-aware and
 delegates to `./bin/sourceharbor` inside a checkout, the TypeScript SDK stays a
@@ -187,7 +187,9 @@ Skill-repo criteria apply only **partially** here:
 Plugin-grade distribution is now one layer stronger than raw docs:
 
 - Codex has a plugin-shaped bundle for repo or personal marketplace distribution, but official Codex directory self-serve publishing is still not open.
+- GitHub Copilot now has a source-installable plugin bundle, but any official marketplace or directory listing is still a separate proof layer.
 - Claude Code has a submission-ready plugin bundle, but official listing still depends on Anthropic review.
+- VS Code agent workflows now have a source-installable plugin bundle, but a live Marketplace listing is still a separate proof layer.
 - OpenClaw has a first-cut local starter pack plus a publish-ready ClawHub package template, but not a live ClawHub publish receipt.
 - MCP now has a real Python package lane plus the official-registry-shaped template; live registry or PyPI read-back still requires submit/publish proof.
 
@@ -202,7 +204,7 @@ These packages are the public box around the same repo-owned logic:
 - **CLI:** install [`packages/sourceharbor-cli`](./packages/sourceharbor-cli/README.md) when you want one thin command surface for the repo-local command substrate.
 - **TypeScript SDK:** install [`packages/sourceharbor-sdk`](./packages/sourceharbor-sdk/README.md) when you want a typed HTTP client instead of inventing a second fetch stack.
 - **MCP server package:** build the root Python package when you want the real `sourceharbor-mcp` console script and the PyPI-shaped install artifact that the MCP Registry template now targets.
-- **Starter packs:** open [`starter-packs/README.md`](./starter-packs/README.md) when you want reproducible Codex / Claude Code / OpenClaw / SDK starting templates rather than raw internal skill files; this surface is available today, but it is still first-cut.
+- **Starter packs:** open [`starter-packs/README.md`](./starter-packs/README.md) when you want reproducible Codex / GitHub Copilot / Claude Code / VS Code agent / OpenClaw / SDK starting templates rather than raw internal skill files; this surface is available today, but it is still first-cut.
 
 Registry ownership marker:
 

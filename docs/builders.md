@@ -5,16 +5,15 @@ SourceHarbor is the builder side of the same control tower.
 It already exposes six real builder-facing layers:
 
 1. **HTTP API contract** for system integrations
-2. **MCP surface** for agent clients such as Codex and Claude Code
+2. **MCP surface** for agent clients such as Codex, GitHub Copilot, Claude Code, and VS Code agent workflows
 3. **Packaged public CLI** for installable command discovery
 4. **Repo-local CLI/help facade** as the underlying direct substrate
 5. **Public TypeScript SDK** for typed HTTP reuse
-6. **Public starter packs** for reproducible Codex / Claude Code / SDK setup, plus a first-cut OpenClaw local pack
+6. **Public starter packs** for reproducible Codex / GitHub Copilot / Claude Code / VS Code agent / SDK setup, plus a first-cut OpenClaw local pack
 
 It now also exposes a seventh adoption layer:
 
-- **Plugin-grade bundles and official-surface templates** for Codex, Claude
-  Code, OpenClaw, and the official MCP Registry path
+- **Plugin-grade bundles and official-surface templates** for Codex, GitHub Copilot, Claude Code, VS Code agent workflows, OpenClaw, and the official MCP Registry path
 
 The safest way to read this page is:
 
@@ -53,7 +52,9 @@ If a newcomer only reads the builder docs, the safe takeaway should be:
 | Surface | Best fit today | Why |
 | --- | --- | --- |
 | **Codex** | Primary fit | SourceHarbor already exposes a real MCP server plus operator-safe HTTP contracts |
+| **GitHub Copilot** | Primary fit | It can reuse the same MCP and HTTP truth, and the repo now ships a real source-installable plugin bundle |
 | **Claude Code** | Primary fit | Same MCP surface, same API-backed state, same retrieval and job evidence |
+| **VS Code agent workflows** | Primary fit | They can reuse the same MCP and HTTP truth, and the repo now ships a real source-installable plugin bundle |
 | **Repo-local CLI users** | Primary fit | `./bin/sourceharbor help` gives one discoverable facade over the real `bin/*` entrypoints without duplicating business logic |
 | **Custom MCP clients** | Primary fit | `./bin/dev-mcp` starts a real FastMCP server over the current pipeline |
 | **Direct HTTP builders** | Primary fit | The repo already carries a public OpenAPI contract and typed client helpers |
@@ -158,17 +159,23 @@ If you want public templates instead of internal raw skills:
 If you need artifacts closer to public distribution than a starter README, open:
 
 - [`starter-packs/codex/sourceharbor-codex-plugin/README.md`](../starter-packs/codex/sourceharbor-codex-plugin/README.md)
+- [`starter-packs/github-copilot/sourceharbor-github-copilot-plugin/README.md`](../starter-packs/github-copilot/sourceharbor-github-copilot-plugin/README.md)
 - [`starter-packs/claude-code/sourceharbor-claude-plugin/README.md`](../starter-packs/claude-code/sourceharbor-claude-plugin/README.md)
+- [`starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/README.md`](../starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/README.md)
 - [`starter-packs/openclaw/clawhub.package.template.json`](../starter-packs/openclaw/clawhub.package.template.json)
 - [`starter-packs/mcp-registry/sourceharbor-server.template.json`](../starter-packs/mcp-registry/sourceharbor-server.template.json)
+- [`config/public/mcp-directory-profile.json`](../config/public/mcp-directory-profile.json)
+- [`docs/submission/awesome-opencode.md`](./submission/awesome-opencode.md)
 - [`docs/public-distribution.md`](./public-distribution.md)
 
 Current truth:
 
 - **Codex**: the bundle is the strongest official-docs-supported distribution artifact today, but public self-serve official listing is still not open.
+- **GitHub Copilot**: the repo now ships a source-installable plugin bundle over the same MCP/API truth, without pretending that a live marketplace listing already exists.
 - **Claude Code**: the bundle is submission-ready for the official marketplace path, but live listing still depends on Anthropic review.
+- **VS Code agent workflows**: the repo now ships a source-installable plugin bundle for agent workflows, but live Marketplace listing still remains a separate proof layer.
 - **OpenClaw**: the local pack remains first-cut, while the ClawHub package template is the strongest publish-ready artifact the repo can ship today.
-- **MCP**: the root Python package now produces the real `sourceharbor-mcp` install artifact and the registry template points at the PyPI identifier `sourceharbor`; live registry/PyPI read-back still needs submit/publish proof.
+- **MCP**: the root Python package now produces the real `sourceharbor-mcp` install artifact, the registry template points at the PyPI identifier `sourceharbor`, and the repo now also tracks per-directory submission packet drafts; live registry/PyPI read-back still needs submit/publish proof.
 
 ## Container Truth For Builders
 
