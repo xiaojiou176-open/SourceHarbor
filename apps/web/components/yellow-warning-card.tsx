@@ -1,7 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 type YellowWarningCardProps = {
 	reasons: string[];
@@ -16,10 +16,10 @@ export function YellowWarningCard({ reasons }: YellowWarningCardProps) {
 						Published with gap
 					</Badge>
 				</div>
-				<CardTitle className="flex items-center gap-2 text-base">
+				<h2 className="flex items-center gap-2 text-base font-semibold">
 					<AlertTriangle className="h-4 w-4" />
 					Yellow warning
-				</CardTitle>
+				</h2>
 			</CardHeader>
 			<CardContent className="space-y-4 text-sm">
 				<div className="space-y-1">

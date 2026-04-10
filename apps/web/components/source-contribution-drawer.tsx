@@ -2,7 +2,7 @@ import type { ReaderDocument } from "@sourceharbor/sdk";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 type SourceContributionDrawerProps = {
 	document: ReaderDocument;
@@ -20,7 +20,7 @@ export function SourceContributionDrawer({
 	return (
 		<Card className="border-border/70 shadow-sm">
 			<CardHeader className="space-y-2 pb-3">
-				<CardTitle className="text-base">Source contribution drawer</CardTitle>
+				<h2 className="text-base font-semibold">Source contribution drawer</h2>
 				<p className="text-sm text-muted-foreground">
 					Keep the main body clean, then open the drawer only when you want to
 					inspect where each claim came from.

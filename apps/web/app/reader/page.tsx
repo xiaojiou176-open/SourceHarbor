@@ -65,9 +65,12 @@ export default async function ReaderPage() {
 							Reader frontstage
 						</Badge>
 						<div className="space-y-3">
-							<CardTitle data-route-heading className="text-3xl md:text-4xl">
+							<h1
+								data-route-heading
+								className="text-3xl font-semibold md:text-4xl"
+							>
 								Start with a finished reading unit
-							</CardTitle>
+							</h1>
 							<CardDescription className="max-w-3xl text-base leading-7">
 								Open the strongest published document first, use the brief to
 								orient yourself, and only leave the reader when you need more
@@ -79,8 +82,16 @@ export default async function ReaderPage() {
 					<CardContent className="space-y-6">
 						<div className="flex flex-wrap gap-3">
 							<Button asChild size="lg">
-								<Link href={leadDocument ? `/reader/${leadDocument.id}` : "/subscriptions"}>
-									{leadDocument ? "Continue reading" : "Create the first reader document"}
+								<Link
+									href={
+										leadDocument
+											? `/reader/${leadDocument.id}`
+											: "/subscriptions"
+									}
+								>
+									{leadDocument
+										? "Continue reading"
+										: "Create the first reader document"}
 								</Link>
 							</Button>
 						</div>
@@ -131,8 +142,8 @@ export default async function ReaderPage() {
 												"Open the current lead document to inspect the merged markdown, warning state, and source contribution ledger in one place."}
 										</p>
 										<p className="text-sm text-muted-foreground">
-											Read the body first. Open source contribution only when you
-											want to inspect provenance or warning detail.
+											Read the body first. Open source contribution only when
+											you want to inspect provenance or warning detail.
 										</p>
 									</div>
 									<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
