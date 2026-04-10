@@ -78,7 +78,10 @@ describe("app loading surfaces", () => {
 		});
 		expect(headingNode).toHaveAttribute("aria-hidden", "true");
 		expect(container.querySelectorAll(".skeleton-line")).toHaveLength(3);
-		const pageHeading = screen.queryByRole("heading", { level: 1, name: heading });
+		const pageHeading = screen.queryByRole("heading", {
+			level: 1,
+			name: heading,
+		});
 		expect(Boolean(pageHeading)).toBe(hasSrOnlyPageHeading);
 		expect(pageHeading?.classList.contains("sr-only") ?? false).toBe(
 			hasSrOnlyPageHeading,

@@ -89,13 +89,13 @@ describe("reader pages", () => {
 			],
 		});
 
-			render(await ReaderPage());
+		render(await ReaderPage());
 
-			expect(
-				screen.getByText(
-					"Read the strongest finished unit before you touch the operator rails",
-				),
-			).toBeInTheDocument();
+		expect(
+			screen.getByText(
+				"Read the strongest finished unit before you touch the operator rails",
+			),
+		).toBeInTheDocument();
 		expect(
 			screen.getByRole("heading", { name: "AI Agents", level: 3 }),
 		).toBeInTheDocument();

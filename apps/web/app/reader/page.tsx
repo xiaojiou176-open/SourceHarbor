@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import {
 	ArrowRight,
 	BookOpenText,
@@ -7,6 +5,8 @@ import {
 	NotebookTabs,
 	Search,
 } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -87,7 +87,8 @@ export default async function ReaderPage() {
 								data-route-heading
 								className="max-w-4xl font-serif text-4xl leading-[0.96] tracking-tight md:text-6xl xl:text-7xl"
 							>
-								Read the strongest finished unit before you touch the operator rails
+								Read the strongest finished unit before you touch the operator
+								rails
 							</h1>
 							<CardDescription className="max-w-3xl text-base leading-8 text-foreground/75">
 								Start where the story is already materialized. The lead deck
@@ -113,8 +114,8 @@ export default async function ReaderPage() {
 									Keep context close
 								</div>
 								<p className="mt-2 text-sm leading-6 text-muted-foreground">
-									Use the brief as a desk note, not as a second stage that steals
-									attention from the reading unit.
+									Use the brief as a desk note, not as a second stage that
+									steals attention from the reading unit.
 								</p>
 							</div>
 							<div className="rounded-2xl border border-border/60 bg-background/80 p-4">
@@ -175,7 +176,9 @@ export default async function ReaderPage() {
 												: "Clear"}
 										</Badge>
 										{leadDocument.topic_label ? (
-											<Badge variant="outline">{leadDocument.topic_label}</Badge>
+											<Badge variant="outline">
+												{leadDocument.topic_label}
+											</Badge>
 										) : null}
 									</div>
 									<div className="space-y-3">
@@ -279,9 +282,9 @@ export default async function ReaderPage() {
 									this frontstage.
 								</p>
 								<p className="mt-3 text-sm text-muted-foreground">
-									If you want to inspect the detail-state layout before the first
-									live deck lands, open the preview detail view from the hero
-									actions above.
+									If you want to inspect the detail-state layout before the
+									first live deck lands, open the preview detail view from the
+									hero actions above.
 								</p>
 							</div>
 						)}
@@ -289,19 +292,19 @@ export default async function ReaderPage() {
 				</Card>
 
 				<Card className="border-border/70 bg-background/95 shadow-sm lg:sticky lg:top-6">
-						<CardHeader>
-							<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
-								Orientation note
-							</p>
-							<h2 className="font-serif text-2xl font-semibold leading-none tracking-tight">
-								30-second brief
-							</h2>
-							<CardDescription>
-								A compact route map over the current published-doc layer. Read it
-								like a margin note, then go back to the strongest deck.
-							</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-3 text-sm">
+					<CardHeader>
+						<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
+							Orientation note
+						</p>
+						<h2 className="font-serif text-2xl font-semibold leading-none tracking-tight">
+							30-second brief
+						</h2>
+						<CardDescription>
+							A compact route map over the current published-doc layer. Read it
+							like a margin note, then go back to the strongest deck.
+						</CardDescription>
+					</CardHeader>
+					<CardContent className="space-y-3 text-sm">
 						{navigationBrief ? (
 							<>
 								<p>{navigationBrief.summary}</p>
@@ -313,15 +316,15 @@ export default async function ReaderPage() {
 										Yellow warnings {navigationBrief.published_with_gap_count}
 									</Badge>
 								</div>
-									<div className="space-y-2">
-										{navigationItems.map((item) => (
-											<Link
-												key={item.document_id}
-												href={item.route}
-												className="block rounded-2xl border border-border/60 p-4 transition hover:bg-muted/40"
-											>
-												<p className="font-medium">{item.title}</p>
-												{item.summary ? (
+								<div className="space-y-2">
+									{navigationItems.map((item) => (
+										<Link
+											key={item.document_id}
+											href={item.route}
+											className="block rounded-2xl border border-border/60 p-4 transition hover:bg-muted/40"
+										>
+											<p className="font-medium">{item.title}</p>
+											{item.summary ? (
 												<p className="mt-1 line-clamp-2 text-muted-foreground">
 													{item.summary}
 												</p>
@@ -340,39 +343,39 @@ export default async function ReaderPage() {
 				</Card>
 			</section>
 
-				{needsAttentionDocuments.length ? (
-					<section className="space-y-4">
-						<div className="space-y-2">
-							<h2 className="font-serif text-3xl tracking-tight">
-								Needs attention
-							</h2>
-							<p className="text-sm text-muted-foreground">
+			{needsAttentionDocuments.length ? (
+				<section className="space-y-4">
+					<div className="space-y-2">
+						<h2 className="font-serif text-3xl tracking-tight">
+							Needs attention
+						</h2>
+						<p className="text-sm text-muted-foreground">
 							These documents stay readable, but they still carry yellow-warning
 							disclosure. Open them when you want the latest story with an
 							explicit caution label.
 						</p>
 					</div>
 					<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-							{needsAttentionDocuments.map((document) => (
-								<Card
-									key={document.id}
-									className="border-amber-300/70 bg-amber-50/40 shadow-sm dark:bg-amber-950/10"
-								>
-									<CardHeader className="space-y-3">
-										<div className="flex flex-wrap items-center gap-2">
-											<Badge variant="destructive">Yellow warning</Badge>
+						{needsAttentionDocuments.map((document) => (
+							<Card
+								key={document.id}
+								className="border-amber-300/70 bg-amber-50/40 shadow-sm dark:bg-amber-950/10"
+							>
+								<CardHeader className="space-y-3">
+									<div className="flex flex-wrap items-center gap-2">
+										<Badge variant="destructive">Yellow warning</Badge>
 										{document.topic_label ? (
 											<Badge variant="outline">{document.topic_label}</Badge>
 										) : null}
 									</div>
-										<div className="space-y-2">
-											<p className="text-xs font-semibold uppercase tracking-[0.26em] text-amber-800/80 dark:text-amber-200/80">
-												Read with caution
-											</p>
-											<CardTitle className="font-serif text-2xl leading-7">
-												{document.title}
-											</CardTitle>
-											<CardDescription className="mt-2 leading-6">
+									<div className="space-y-2">
+										<p className="text-xs font-semibold uppercase tracking-[0.26em] text-amber-800/80 dark:text-amber-200/80">
+											Read with caution
+										</p>
+										<CardTitle className="font-serif text-2xl leading-7">
+											{document.title}
+										</CardTitle>
+										<CardDescription className="mt-2 leading-6">
 											{document.summary ??
 												"Readable now, but still carrying explicit warning disclosure."}
 										</CardDescription>
@@ -396,13 +399,13 @@ export default async function ReaderPage() {
 				</section>
 			) : null}
 
-				<section className="space-y-4">
-					<div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-						<div>
-							<h2 className="font-serif text-3xl tracking-tight">
-								Reader library
-							</h2>
-							<p className="text-sm text-muted-foreground">
+			<section className="space-y-4">
+				<div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+					<div>
+						<h2 className="font-serif text-3xl tracking-tight">
+							Reader library
+						</h2>
+						<p className="text-sm text-muted-foreground">
 							Every card below is already a published reader document, whether
 							it came from a merge path or a singleton polish path.
 						</p>
@@ -414,14 +417,14 @@ export default async function ReaderPage() {
 				</div>
 				{libraryDocuments.length ? (
 					<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-							{libraryDocuments.map((document) => (
-								<Card
-									key={document.id}
-									className="border-border/70 bg-background/95 shadow-sm"
-								>
-									<CardHeader className="space-y-3">
-										<div className="flex flex-wrap items-center gap-2">
-											<Badge variant="secondary">
+						{libraryDocuments.map((document) => (
+							<Card
+								key={document.id}
+								className="border-border/70 bg-background/95 shadow-sm"
+							>
+								<CardHeader className="space-y-3">
+									<div className="flex flex-wrap items-center gap-2">
+										<Badge variant="secondary">
 											{document.materialization_mode}
 										</Badge>
 										<Badge variant="outline">Clear</Badge>
@@ -429,14 +432,14 @@ export default async function ReaderPage() {
 											<Badge variant="outline">{document.topic_label}</Badge>
 										) : null}
 									</div>
-										<div className="space-y-2">
-											<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
-												Published unit
-											</p>
-											<CardTitle className="font-serif text-2xl leading-7">
-												{document.title}
-											</CardTitle>
-											<CardDescription className="mt-2 leading-6">
+									<div className="space-y-2">
+										<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
+											Published unit
+										</p>
+										<CardTitle className="font-serif text-2xl leading-7">
+											{document.title}
+										</CardTitle>
+										<CardDescription className="mt-2 leading-6">
 											{document.summary ??
 												"Open the document to inspect the merged reader markdown and source contributions."}
 										</CardDescription>

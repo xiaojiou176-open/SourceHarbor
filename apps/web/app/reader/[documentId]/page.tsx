@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
 	ArrowUpRight,
 	BookOpenText,
@@ -8,6 +5,9 @@ import {
 	ListTree,
 	NotebookText,
 } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { MarkdownPreview } from "@/components/markdown-preview";
 import { SourceContributionDrawer } from "@/components/source-contribution-drawer";
@@ -40,10 +40,9 @@ export async function generateMetadata({
 		title: isPreviewRoute
 			? "Reader detail preview"
 			: `Reader document ${resolved.documentId}`,
-		description:
-			isPreviewRoute
-				? "Preview the reader detail frontstage with warning and evidence drawer before your first live document lands."
-				: "Published reader document detail with markdown body, yellow warning state, and source contribution drawer.",
+		description: isPreviewRoute
+			? "Preview the reader detail frontstage with warning and evidence drawer before your first live document lands."
+			: "Published reader document detail with markdown body, yellow warning state, and source contribution drawer.",
 		route: "reader",
 	});
 }
@@ -151,8 +150,8 @@ export default async function ReaderDetailPage({
 										02 Evidence pass
 									</p>
 									<p className="mt-2 text-sm leading-6 text-muted-foreground">
-										Move to the right rail only when you need section traceability,
-										warning context, or source lineage.
+										Move to the right rail only when you need section
+										traceability, warning context, or source lineage.
 									</p>
 								</div>
 							</div>
@@ -249,19 +248,19 @@ export default async function ReaderDetailPage({
 								<p>Sections {sections.length}</p>
 							</div>
 							{sections.length ? (
-									<div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
-										<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-											Section outline
-										</p>
+								<div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
+									<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+										Section outline
+									</p>
 									<ul className="mt-3 space-y-2">
 										{sections.map((section) => (
-												<li
-													key={section.section_id}
-													className="rounded-xl bg-background/90 p-3"
-												>
-													<p className="font-medium">{section.title}</p>
-													<p className="mt-1 text-xs text-muted-foreground">
-														Linked source items: {section.source_item_ids.length}
+											<li
+												key={section.section_id}
+												className="rounded-xl bg-background/90 p-3"
+											>
+												<p className="font-medium">{section.title}</p>
+												<p className="mt-1 text-xs text-muted-foreground">
+													Linked source items: {section.source_item_ids.length}
 												</p>
 											</li>
 										))}

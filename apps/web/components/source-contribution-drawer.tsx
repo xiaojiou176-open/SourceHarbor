@@ -49,8 +49,8 @@ export function SourceContributionDrawer({
 							{sourceCount} linked source items
 						</span>
 					</summary>
-						<div className="mt-4 space-y-4">
-							{document.source_refs.map((source) => {
+					<div className="mt-4 space-y-4">
+						{document.source_refs.map((source) => {
 							const title =
 								typeof source.title === "string" && source.title.trim()
 									? source.title
@@ -111,7 +111,7 @@ export function SourceContributionDrawer({
 							);
 						})}
 					</div>
-					</details>
+				</details>
 				<details className="rounded-2xl border border-border/70 bg-background/80 p-4">
 					<summary className="cursor-pointer list-none">
 						<span className="flex items-center gap-2 font-medium text-foreground">
@@ -119,8 +119,8 @@ export function SourceContributionDrawer({
 							Section traceability
 						</span>
 					</summary>
-						<div className="mt-4 space-y-3 text-sm">
-							{document.sections.map((section) => (
+					<div className="mt-4 space-y-3 text-sm">
+						{document.sections.map((section) => (
 							<div
 								key={section.section_id}
 								className="rounded-xl border border-border/60 p-3"
