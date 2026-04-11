@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -175,6 +176,63 @@ def test_feed_service_list_digest_feed_applies_cursor_filters_and_has_more(
     assert result["items"][1]["content_type"] == "video"
     assert result["items"][1]["saved"] is True
     assert result["items"][1]["feedback_label"] == "useful"
+
+
+def test_feed_service_lists_reader_bridge_when_source_item_matches_current_document(
+    tmp_path: Path, monkeypatch
+) -> None:
+    ts = datetime(2026, 2, 25, 10, 0, tzinfo=UTC)
+    digest = tmp_path / "digest.md"
+    digest.write_text("# digest", encoding="utf-8")
+
+    rows = [
+        {
+            "job_id": "11111111-1111-1111-1111-111111111111",
+            "source_url": "https://example.com/v1",
+            "source": "youtube",
+            "content_type": "video",
+            "title": "Video 1",
+            "video_uid": "v-1",
+            "published_at": ts,
+            "created_at": ts,
+            "sort_ts": ts,
+            "category": "tech",
+            "subscription_source_type": "youtube_user",
+            "subscription_source_value": "@demo",
+            "subscription_id": "sub-tech-1",
+            "source_item_id": "source-item-1",
+            "feedback_saved": False,
+            "feedback_label": None,
+            "artifact_digest_md": str(digest),
+            "artifact_root": None,
+        }
+    ]
+    fake_db = _FakeDB(rows)
+    fake_db.scalars = lambda *args, **kwargs: None  # type: ignore[attr-defined]
+    service = FeedService(db=fake_db)  # type: ignore[arg-type]
+
+    class _Doc:
+        id = uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+        slug = "reader-doc-1"
+        title = "Reader Doc 1"
+        published_with_gap = False
+        source_refs_json = [
+            {
+                "source_item_id": "source-item-1",
+                "job_id": "11111111-1111-1111-1111-111111111111",
+            }
+        ]
+
+    monkeypatch.setattr(
+        "apps.api.app.services.feed.PublishedReaderDocumentsRepository.list_current",
+        lambda self, limit: [_Doc()],
+    )
+
+    result = service.list_digest_feed()
+
+    assert result["items"][0]["published_document_id"] == str(_Doc.id)
+    assert result["items"][0]["reader_route"] == f"/reader/{_Doc.id}"
+    assert result["items"][0]["published_document_publish_status"] == "published"
 
 
 def test_feed_service_list_digest_feed_applies_feedback_filter_param(tmp_path: Path) -> None:
