@@ -192,10 +192,9 @@ export function ReadingPane({
 
 	const headings = markdown ? extractHeadings(markdown) : [];
 	const safeVideoUrl = videoUrl ? sanitizeExternalUrl(videoUrl) : null;
-	const safeReaderRoute =
-		identity?.reader_route?.trim().startsWith("/reader/")
-			? identity.reader_route.trim()
-			: null;
+	const safeReaderRoute = identity?.reader_route?.trim().startsWith("/reader/")
+		? identity.reader_route.trim()
+		: null;
 	const sourceLabel = source ? toSourceLabel(source) : null;
 	const identityModel = identity
 		? resolveFeedIdentity({
