@@ -339,9 +339,10 @@ class VideosService:
         }
 
     def get_subscription_match_for_video(self, *, video_db_id: UUID) -> dict[str, str] | None:
-        row = self.db.execute(
-            text(
-                """
+        row = (
+            self.db.execute(
+                text(
+                    """
                 SELECT
                     CAST(s.id AS TEXT) AS subscription_id,
                     s.platform,
@@ -355,9 +356,12 @@ class VideosService:
                 ORDER BY ie.created_at DESC
                 LIMIT 1
                 """
-            ),
-            {"video_id": str(video_db_id)},
-        ).mappings().first()
+                ),
+                {"video_id": str(video_db_id)},
+            )
+            .mappings()
+            .first()
+        )
         if row is None:
             return None
 
