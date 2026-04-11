@@ -9,6 +9,7 @@ import re
 from urllib.parse import parse_qs, urlparse
 from uuid import UUID, uuid4
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ..config import settings
