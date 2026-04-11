@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from apps.api.app.errors import ApiServiceError, ApiTimeoutError, build_error_payload
+from apps.api.app.services import feed as feed_module
 from apps.api.app.services.feed import FeedService
 
 
@@ -16,6 +17,23 @@ class _FakeResult:
 
     def mappings(self) -> list[dict[str, Any]]:
         return list(self._rows)
+
+
+class _FakeDocument:
+    def __init__(
+        self,
+        *,
+        document_id: str,
+        slug: str,
+        title: str,
+        published_with_gap: bool,
+        source_refs_json: list[dict[str, Any]],
+    ) -> None:
+        self.id = uuid.UUID(document_id)
+        self.slug = slug
+        self.title = title
+        self.published_with_gap = published_with_gap
+        self.source_refs_json = source_refs_json
 
 
 class _FakeDB:
@@ -208,31 +226,91 @@ def test_feed_service_lists_reader_bridge_when_source_item_matches_current_docum
         }
     ]
     fake_db = _FakeDB(rows)
-    fake_db.scalars = lambda *args, **kwargs: None  # type: ignore[attr-defined]
     service = FeedService(db=fake_db)  # type: ignore[arg-type]
-
-    class _Doc:
-        id = uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
-        slug = "reader-doc-1"
-        title = "Reader Doc 1"
-        published_with_gap = False
-        source_refs_json = [
-            {
-                "source_item_id": "source-item-1",
-                "job_id": "11111111-1111-1111-1111-111111111111",
-            }
-        ]
-
+    published_document_id = uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
     monkeypatch.setattr(
-        "apps.api.app.services.feed.PublishedReaderDocumentsRepository.list_current",
-        lambda self, limit: [_Doc()],
+        service,
+        "_build_reader_bridge_index",
+        lambda *, limit: (
+            {
+                "source-item-1": {
+                    "id": str(published_document_id),
+                    "slug": "reader-doc-1",
+                    "title": "Reader Doc 1",
+                    "publish_status": "published",
+                    "published_with_gap": False,
+                    "reader_route": f"/reader/{published_document_id}",
+                }
+            },
+            {},
+        ),
     )
 
     result = service.list_digest_feed()
 
-    assert result["items"][0]["published_document_id"] == str(_Doc.id)
-    assert result["items"][0]["reader_route"] == f"/reader/{_Doc.id}"
+    assert result["items"][0]["published_document_id"] == str(published_document_id)
+    assert result["items"][0]["reader_route"] == f"/reader/{published_document_id}"
     assert result["items"][0]["published_document_publish_status"] == "published"
+
+
+def test_feed_service_build_reader_bridge_index_maps_source_item_and_job_ids(
+    monkeypatch,
+) -> None:
+    service = FeedService(db=object())  # type: ignore[arg-type]
+    documents = [
+        _FakeDocument(
+            document_id="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            slug="reader-doc-1",
+            title="Reader Doc 1",
+            published_with_gap=False,
+            source_refs_json=[
+                {"source_item_id": "source-item-1", "job_id": "job-1"},
+                {"source_item_id": "source-item-2", "job_id": "job-2"},
+            ],
+        ),
+        _FakeDocument(
+            document_id="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+            slug="reader-doc-2",
+            title="Reader Doc 2",
+            published_with_gap=True,
+            source_refs_json=[{"source_item_id": "source-item-3", "job_id": "job-3"}],
+        ),
+    ]
+
+    class _Repo:
+        def __init__(self, db) -> None:
+            self.db = db
+
+        def list_current(self, *, limit: int):
+            return documents
+
+    monkeypatch.setattr(feed_module, "PublishedReaderDocumentsRepository", _Repo)
+
+    by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+
+    assert by_source_item["source-item-1"]["reader_route"] == (
+        "/reader/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    )
+    assert by_job_id["job-2"]["title"] == "Reader Doc 1"
+    assert by_source_item["source-item-3"]["publish_status"] == "published_with_gap"
+
+
+def test_feed_service_build_reader_bridge_index_handles_reader_repo_failure(monkeypatch) -> None:
+    service = FeedService(db=object())  # type: ignore[arg-type]
+
+    class _Repo:
+        def __init__(self, db) -> None:
+            self.db = db
+
+        def list_current(self, *, limit: int):
+            raise RuntimeError("boom")
+
+    monkeypatch.setattr(feed_module, "PublishedReaderDocumentsRepository", _Repo)
+
+    by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+
+    assert by_source_item == {}
+    assert by_job_id == {}
 
 
 def test_feed_service_list_digest_feed_applies_feedback_filter_param(tmp_path: Path) -> None:

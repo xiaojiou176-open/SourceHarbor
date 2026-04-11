@@ -327,7 +327,7 @@ class FeedService:
         *,
         limit: int,
     ) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
-        if self.db is None or not hasattr(self.db, "scalars"):
+        if self.db is None:
             return {}, {}
 
         repo = PublishedReaderDocumentsRepository(self.db)
