@@ -269,7 +269,9 @@ def _raw_stage_policy(state: dict[str, Any]) -> dict[str, Any]:
     llm_policy = dict(state.get("llm_policy") or {})
     raw_stage = dict(llm_policy.get("raw_stage") or {})
     content_type = _content_type(state)
-    analysis_mode = str(raw_stage.get("analysis_mode") or llm_policy.get("analysis_mode") or "advanced")
+    analysis_mode = str(
+        raw_stage.get("analysis_mode") or llm_policy.get("analysis_mode") or "advanced"
+    )
     analysis_mode = analysis_mode.strip().lower().replace("-", "_")
     if analysis_mode not in {"advanced", "economy"}:
         analysis_mode = "advanced" if content_type == "video" else "economy"
@@ -531,21 +533,21 @@ async def step_llm_outline(
             thinking_level=_thinking_level_from_policy(llm_policy),
         )
         if not isinstance(translated_payload, dict):
-                return _llm_failure(
-                    runtime,
-                    reason="llm_translation_failed",
-                    error="llm_translation_failed:outline",
-                    contract_fail_close=_contract_fail_close_enabled(state, raw_stage),
-                )
+            return _llm_failure(
+                runtime,
+                reason="llm_translation_failed",
+                error="llm_translation_failed:outline",
+                contract_fail_close=_contract_fail_close_enabled(state, raw_stage),
+            )
         try:
             parsed = OutlinePayload.model_validate(translated_payload).model_dump()
         except ValidationError as exc:
-                return _llm_failure(
-                    runtime,
-                    reason="llm_translation_failed",
-                    error=f"llm_translation_failed:outline:{exc}",
-                    contract_fail_close=_contract_fail_close_enabled(state, raw_stage),
-                )
+            return _llm_failure(
+                runtime,
+                reason="llm_translation_failed",
+                error=f"llm_translation_failed:outline:{exc}",
+                contract_fail_close=_contract_fail_close_enabled(state, raw_stage),
+            )
         if not outline_is_chinese(parsed):
             return _llm_failure(
                 runtime,
@@ -926,16 +928,16 @@ async def step_llm_digest(
         primary_model=llm_model,
         primary_input_mode=llm_input_mode,
         primary_media_input=media_input,
-        review_model=raw_stage["review_model"] or llm_model if raw_stage["review_required"] else None,
+        review_model=raw_stage["review_model"] or llm_model
+        if raw_stage["review_required"]
+        else None,
         review_input_mode=raw_stage["review_input_mode"] if raw_stage["review_required"] else None,
         review_media_input=review_media_input,
         video_contract_satisfied=(
             not _contract_fail_close_enabled(state, raw_stage)
             or (
                 media_input == "video_text"
-                and (
-                    not raw_stage["review_required"] or review_media_input == "video_text"
-                )
+                and (not raw_stage["review_required"] or review_media_input == "video_text")
             )
         ),
     )

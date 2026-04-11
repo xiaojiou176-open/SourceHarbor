@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { getFlashMessage, toErrorCode } from "@/app/flash-message";
+import { SourceIdentityCard } from "@/components/source-identity-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,13 +23,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { apiClient } from "@/lib/api/client";
-import { editorialSans, editorialMono } from "@/lib/editorial-fonts";
-import { resolveManualIntakeIdentity } from "@/lib/source-identity";
 import type {
 	ManualSourceIntakeResponse,
 	SubscriptionCategory,
 } from "@/lib/api/types";
-import { SourceIdentityCard } from "@/components/source-identity-card";
+import { editorialMono, editorialSans } from "@/lib/editorial-fonts";
+import { resolveManualIntakeIdentity } from "@/lib/source-identity";
 
 const CATEGORY_OPTIONS: Array<{
 	value: SubscriptionCategory;
@@ -140,7 +140,9 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 	const [isPending, startTransition] = useTransition();
 
 	return (
-		<Card className={`folo-surface border-border/70 ${editorialSans.className}`}>
+		<Card
+			className={`folo-surface border-border/70 ${editorialSans.className}`}
+		>
 			<CardHeader className="gap-2">
 				<CardTitle className="text-xl font-semibold">{copy.title}</CardTitle>
 				<CardDescription>{copy.description}</CardDescription>
@@ -274,14 +276,23 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 										className="space-y-2 rounded-[1.2rem] border border-border/60 bg-background/70 p-3"
 									>
 										<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-											<Badge variant="outline" className={badgeClass("secondary")}>
+											<Badge
+												variant="outline"
+												className={badgeClass("secondary")}
+											>
 												Line {item.line_number}
 											</Badge>
 											<Badge variant="outline" className={badgeClass(tone)}>
 												{statusLabel(copy, item.status)}
 											</Badge>
-											<Badge variant="outline" className={badgeClass("secondary")}>
-												{actionLabel(copy, item.applied_action ?? item.recommended_action)}
+											<Badge
+												variant="outline"
+												className={badgeClass("secondary")}
+											>
+												{actionLabel(
+													copy,
+													item.applied_action ?? item.recommended_action,
+												)}
 											</Badge>
 										</div>
 										<SourceIdentityCard
@@ -289,11 +300,7 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 												...identity,
 												description:
 													identity.description ||
-													[
-														item.platform,
-														item.source_type,
-														item.rsshub_route,
-													]
+													[item.platform, item.source_type, item.rsshub_route]
 														.filter(Boolean)
 														.join(" · ") ||
 													copy.emptyState,

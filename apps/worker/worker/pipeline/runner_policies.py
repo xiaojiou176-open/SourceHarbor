@@ -236,8 +236,7 @@ def build_llm_policy(
         default="advanced" if is_video_content else "economy",
     )
     video_first = bool(
-        is_video_content
-        and coerce_bool(raw_stage_section.get("video_first"), default=True)
+        is_video_content and coerce_bool(raw_stage_section.get("video_first"), default=True)
     )
     video_input_required = bool(
         is_video_content

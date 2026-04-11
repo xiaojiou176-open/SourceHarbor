@@ -269,8 +269,12 @@ class ManualSourceIntakeService:
                     )
                     relation_kind = "matched_subscription" if not created else "new_source_universe"
                     result["relation_kind"] = relation_kind
-                    result["matched_subscription_id"] = result["subscription_id"] if not created else None
-                    result["matched_subscription_name"] = result["display_name"] if not created else None
+                    result["matched_subscription_id"] = (
+                        result["subscription_id"] if not created else None
+                    )
+                    result["matched_subscription_name"] = (
+                        result["display_name"] if not created else None
+                    )
                     result["matched_by"] = self._match_basis(
                         source_type=getattr(row, "source_type", plan.source_type or ""),
                         source_url=getattr(row, "source_url", plan.source_url),

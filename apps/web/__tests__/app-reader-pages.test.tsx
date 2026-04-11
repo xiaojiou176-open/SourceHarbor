@@ -148,7 +148,9 @@ describe("reader pages", () => {
 			screen.getByRole("heading", { name: "AI Agents", level: 1 }),
 		).toBeInTheDocument();
 		expect(screen.getByText("Source universe")).toBeInTheDocument();
-		expect(screen.getAllByText("Agents recap").length).toBeGreaterThanOrEqual(1);
+		expect(screen.getAllByText("Agents recap").length).toBeGreaterThanOrEqual(
+			1,
+		);
 		expect(screen.getByTestId("reader-source-drawer")).toHaveTextContent(
 			"AI Agents",
 		);

@@ -28,7 +28,10 @@ export type SourceIdentityModel = {
 	meta: string[];
 };
 
-const PLATFORM_META: Record<string, { label: string; accent: string; wash: string }> = {
+const PLATFORM_META: Record<
+	string,
+	{ label: string; accent: string; wash: string }
+> = {
 	youtube: { label: "YouTube", accent: "#ff0033", wash: "#fff1f2" },
 	bilibili: { label: "Bilibili", accent: "#0ea5e9", wash: "#e0f2fe" },
 	rsshub: { label: "RSSHub", accent: "#7c3aed", wash: "#f5f3ff" },
@@ -37,7 +40,9 @@ const PLATFORM_META: Record<string, { label: string; accent: string; wash: strin
 };
 
 function normalizePlatform(platform: string | null | undefined): string {
-	const normalized = String(platform || "").trim().toLowerCase();
+	const normalized = String(platform || "")
+		.trim()
+		.toLowerCase();
 	if (normalized === "rss_generic") return "rss";
 	return normalized || "generic";
 }
@@ -81,7 +86,9 @@ function svgDataUrl({
 	return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-function extractYouTubeVideoId(rawUrl: string | null | undefined): string | null {
+function extractYouTubeVideoId(
+	rawUrl: string | null | undefined,
+): string | null {
 	try {
 		const parsed = new URL(String(rawUrl || ""));
 		if (parsed.hostname === "youtu.be") {
@@ -130,7 +137,10 @@ function fallbackAvatarUrl(label: string, platform: string | null | undefined) {
 	});
 }
 
-function relationLabel(kind: SourceRelationKind, fallback: string | null | undefined): string {
+function relationLabel(
+	kind: SourceRelationKind,
+	fallback: string | null | undefined,
+): string {
 	if (fallback) return fallback;
 	if (kind === "matched_subscription") return "Matched tracked universe";
 	if (kind === "new_source_universe") return "New tracked universe";
@@ -145,7 +155,9 @@ function safeList(items: Array<string | null | undefined>) {
 	return items.map((item) => String(item || "").trim()).filter(Boolean);
 }
 
-export function resolveSubscriptionIdentity(subscription: Subscription): SourceIdentityModel {
+export function resolveSubscriptionIdentity(
+	subscription: Subscription,
+): SourceIdentityModel {
 	const title =
 		subscription.creator_display_name?.trim() ||
 		subscription.source_name?.trim() ||
@@ -160,7 +172,10 @@ export function resolveSubscriptionIdentity(subscription: Subscription): SourceI
 			subscription.source_homepage_url?.trim() ||
 			subscription.source_url?.trim() ||
 			subscription.rsshub_route,
-		eyebrow: subscription.support_tier === "strong_supported" ? "Strong lane" : "General lane",
+		eyebrow:
+			subscription.support_tier === "strong_supported"
+				? "Strong lane"
+				: "General lane",
 		thumbnailUrl:
 			subscription.thumbnail_url ||
 			buildThumbnailUrl({
@@ -171,7 +186,10 @@ export function resolveSubscriptionIdentity(subscription: Subscription): SourceI
 		avatarUrl: subscription.avatar_url || fallbackAvatarUrl(title, platform),
 		avatarLabel: subscription.avatar_label || initials(title),
 		relationKind: "matched_subscription",
-		relationLabel: subscription.identity_status === "derived_identity" ? "Tracked universe" : "Canonical universe",
+		relationLabel:
+			subscription.identity_status === "derived_identity"
+				? "Tracked universe"
+				: "Canonical universe",
 		meta: safeList([
 			platformMeta(platform).label,
 			subscription.content_profile,
@@ -181,7 +199,9 @@ export function resolveSubscriptionIdentity(subscription: Subscription): SourceI
 	};
 }
 
-export function resolveManualIntakeIdentity(result: ManualSourceIntakeResult): SourceIdentityModel {
+export function resolveManualIntakeIdentity(
+	result: ManualSourceIntakeResult,
+): SourceIdentityModel {
 	const platform = normalizePlatform(result.platform);
 	const title =
 		result.creator_display_name?.trim() ||
@@ -214,7 +234,10 @@ export function resolveManualIntakeIdentity(result: ManualSourceIntakeResult): S
 		avatarUrl: result.avatar_url || fallbackAvatarUrl(title, platform),
 		avatarLabel: result.avatar_label || initials(title),
 		relationKind,
-		relationLabel: relationLabel(relationKind, result.matched_subscription_name || result.source_universe_label),
+		relationLabel: relationLabel(
+			relationKind,
+			result.matched_subscription_name || result.source_universe_label,
+		),
 		meta: safeList([
 			platformMeta(platform).label,
 			result.content_profile,
@@ -232,7 +255,10 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 		item.canonical_source_name?.trim() ||
 		item.source_name.trim() ||
 		item.title.trim();
-	const relationKind = String(item.relation_kind || (item.subscription_id ? "matched_subscription" : "unmatched_source"));
+	const relationKind = String(
+		item.relation_kind ||
+			(item.subscription_id ? "matched_subscription" : "unmatched_source"),
+	);
 	return {
 		title,
 		subtitle: item.affiliation_label?.trim() || platformMeta(platform).label,
@@ -259,7 +285,9 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 	};
 }
 
-export function resolveReaderSourceIdentity(source: SourceIdentityRef): SourceIdentityModel {
+export function resolveReaderSourceIdentity(
+	source: SourceIdentityRef,
+): SourceIdentityModel {
 	const platform = normalizePlatform(source.platform);
 	const title =
 		source.canonical_author_name?.trim() ||
@@ -281,7 +309,10 @@ export function resolveReaderSourceIdentity(source: SourceIdentityRef): SourceId
 			source.matched_subscription_name?.trim() ||
 			platformMeta(platform).label,
 		description: source.digest_preview,
-		eyebrow: source.source_origin === "manual_injected" ? "Manual evidence" : "Tracked evidence",
+		eyebrow:
+			source.source_origin === "manual_injected"
+				? "Manual evidence"
+				: "Tracked evidence",
 		thumbnailUrl:
 			source.thumbnail_url ||
 			buildThumbnailUrl({
@@ -305,7 +336,9 @@ export function resolveReaderSourceIdentity(source: SourceIdentityRef): SourceId
 					? "Video contract gap"
 					: null,
 			source.identity_status === "derived_identity" ? "Derived identity" : null,
-			source.claim_kinds?.length ? `${source.claim_kinds.length} claim kinds` : null,
+			source.claim_kinds?.length
+				? `${source.claim_kinds.length} claim kinds`
+				: null,
 		]),
 	};
 }

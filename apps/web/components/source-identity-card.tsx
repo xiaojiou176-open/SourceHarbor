@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import type { SourceIdentityModel } from "@/lib/source-identity";
+import { cn } from "@/lib/utils";
 
 type SourceIdentityCardProps = {
 	identity: SourceIdentityModel;
@@ -39,7 +39,14 @@ export function SourceIdentityCard({
 				className,
 			)}
 		>
-			<div className={cn("grid gap-3", compact ? "grid-cols-[84px_minmax(0,1fr)]" : "grid-cols-[120px_minmax(0,1fr)]")}>
+			<div
+				className={cn(
+					"grid gap-3",
+					compact
+						? "grid-cols-[84px_minmax(0,1fr)]"
+						: "grid-cols-[120px_minmax(0,1fr)]",
+				)}
+			>
 				<div className="relative overflow-hidden rounded-[1.1rem] border border-border/60 bg-muted/15">
 					{identity.thumbnailUrl ? (
 						<Image
@@ -94,31 +101,56 @@ export function SourceIdentityCard({
 				</div>
 				<div className="min-w-0 space-y-2">
 					<div className="flex flex-wrap items-center gap-2">
-						<Badge variant="outline" className={relationBadgeTone(identity.relationKind)}>
+						<Badge
+							variant="outline"
+							className={relationBadgeTone(identity.relationKind)}
+						>
 							{identity.relationLabel}
 						</Badge>
 						{identity.eyebrow ? (
-							<Badge variant="outline" className="border-border/60 bg-muted/20 text-muted-foreground">
+							<Badge
+								variant="outline"
+								className="border-border/60 bg-muted/20 text-muted-foreground"
+							>
 								{identity.eyebrow}
 							</Badge>
 						) : null}
 					</div>
 					<div className="space-y-1">
-						<p className={cn("line-clamp-2 font-semibold text-foreground", compact ? "text-sm" : "text-base")}>
+						<p
+							className={cn(
+								"line-clamp-2 font-semibold text-foreground",
+								compact ? "text-sm" : "text-base",
+							)}
+						>
 							{identity.title}
 						</p>
-						<p className={cn("text-muted-foreground", compact ? "text-xs" : "text-sm")}>
+						<p
+							className={cn(
+								"text-muted-foreground",
+								compact ? "text-xs" : "text-sm",
+							)}
+						>
 							{identity.subtitle}
 						</p>
 					</div>
 					{identity.description ? (
-						<p className={cn("line-clamp-2 text-muted-foreground", compact ? "text-xs" : "text-sm leading-6")}>
+						<p
+							className={cn(
+								"line-clamp-2 text-muted-foreground",
+								compact ? "text-xs" : "text-sm leading-6",
+							)}
+						>
 							{identity.description}
 						</p>
 					) : null}
 					<div className="flex flex-wrap gap-2">
 						{identity.meta.map((item) => (
-							<Badge key={item} variant="outline" className="border-border/50 bg-background/60 text-[11px] text-muted-foreground">
+							<Badge
+								key={item}
+								variant="outline"
+								className="border-border/50 bg-background/60 text-[11px] text-muted-foreground"
+							>
 								{item}
 							</Badge>
 						))}

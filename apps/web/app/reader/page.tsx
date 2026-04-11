@@ -66,7 +66,9 @@ export default async function ReaderPage() {
 	);
 
 	return (
-		<div className={`mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 py-8 md:px-6 ${editorialSans.className}`}>
+		<div
+			className={`mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 py-8 md:px-6 ${editorialSans.className}`}
+		>
 			<section className="grid gap-6 xl:grid-cols-[minmax(0,1.52fr)_minmax(280px,0.72fr)]">
 				<Card className="overflow-hidden border-border/70 bg-gradient-to-br from-background via-background to-rose-50/60 shadow-sm dark:to-rose-950/10">
 					<CardHeader className="space-y-7 pb-4">

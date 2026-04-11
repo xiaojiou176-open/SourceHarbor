@@ -10,8 +10,8 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from ..repositories import FeedFeedbackRepository, JobsRepository
-from .source_names import resolve_source_name
 from .source_identity import build_identity_payload
+from .source_names import resolve_source_name
 
 
 class FeedService:
@@ -246,7 +246,9 @@ class FeedService:
                     "canonical_author_name": source_name,
                     "subscription_id": subscription_id,
                     "affiliation_label": source_name if subscription_id else "Unmatched source",
-                    "relation_kind": "matched_subscription" if subscription_id else "unmatched_source",
+                    "relation_kind": "matched_subscription"
+                    if subscription_id
+                    else "unmatched_source",
                     "thumbnail_url": identity.thumbnail_url,
                     "avatar_url": identity.avatar_url,
                     "avatar_label": identity.avatar_label,

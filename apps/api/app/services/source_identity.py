@@ -39,7 +39,9 @@ def _build_initials(label: str | None) -> str:
     return (trimmed[:2] or "SH").upper()
 
 
-def _build_svg_data_url(*, primary_text: str, secondary_text: str, platform: str, square: bool) -> str:
+def _build_svg_data_url(
+    *, primary_text: str, secondary_text: str, platform: str, square: bool
+) -> str:
     foreground, background = _platform_palette(platform)
     radius = "24" if square else "48"
     svg = f"""

@@ -621,13 +621,17 @@ class ReaderPipelineService:
         pipeline_final_status = None
         job_payload = evidence_bundle.get("job")
         if isinstance(job_payload, dict):
-            pipeline_final_status = str(job_payload.get("pipeline_final_status") or "").strip() or None
+            pipeline_final_status = (
+                str(job_payload.get("pipeline_final_status") or "").strip() or None
+            )
         degradation_flags = [
             str(item).strip()
             for item in (trace_summary.get("degradations") or [])
             if str(item).strip()
         ]
-        source_origin = str(getattr(item, "source_origin", "") or "").strip() or "subscription_tracked"
+        source_origin = (
+            str(getattr(item, "source_origin", "") or "").strip() or "subscription_tracked"
+        )
         subscription_id = getattr(item, "subscription_id", None)
         subscription_row = (
             self.db.get(Subscription, subscription_id)
@@ -659,14 +663,18 @@ class ReaderPipelineService:
             relation_kind = "matched_subscription"
             affiliation_label = source_name
         identity = build_identity_payload(
-            platform=str(getattr(subscription_row, "platform", resolved_platform) or resolved_platform),
+            platform=str(
+                getattr(subscription_row, "platform", resolved_platform) or resolved_platform
+            ),
             display_name=source_name,
             creator_handle=creator_handle,
             source_homepage_url=getattr(subscription_row, "source_url", None)
             or getattr(subscription_row, "rsshub_route", None)
             or resolved_source_url,
             source_url=resolved_source_url,
-            source_universe_label=source_name if subscription_row is not None else affiliation_label or title,
+            source_universe_label=source_name
+            if subscription_row is not None
+            else affiliation_label or title,
             identity_status=identity_status,
         )
         judge_gap_flags = []
@@ -712,7 +720,9 @@ class ReaderPipelineService:
             "degradation_flags": degradation_flags,
             "degraded_extraction": bool(degradation_flags),
             "raw_stage_contract": raw_stage_contract,
-            "subscription_id": str(subscription_id) if isinstance(subscription_id, uuid.UUID) else None,
+            "subscription_id": str(subscription_id)
+            if isinstance(subscription_id, uuid.UUID)
+            else None,
             "matched_subscription_name": source_name if subscription_row is not None else None,
             "relation_kind": relation_kind,
             "affiliation_label": affiliation_label,
@@ -1007,8 +1017,12 @@ class ReaderPipelineService:
         all_source_item_ids = [str(item["source_item_id"]) for item in source_refs]
         merged_markdown = "\n".join(
             [
-                f"- Theme focus: {', '.join(topic_items[:4])}" if topic_items else "- Theme focus: mixed sources",
-                f"- Cross-source signals: {', '.join(claim_items[:4])}" if claim_items else "- Cross-source signals: editorial synthesis",
+                f"- Theme focus: {', '.join(topic_items[:4])}"
+                if topic_items
+                else "- Theme focus: mixed sources",
+                f"- Cross-source signals: {', '.join(claim_items[:4])}"
+                if claim_items
+                else "- Cross-source signals: editorial synthesis",
                 f"- Source count: {len(source_refs)}",
             ]
         )
@@ -1054,7 +1068,9 @@ class ReaderPipelineService:
                             f"- Topics: {', '.join(self._source_topic_refs(source_ref)) or 'none captured'}",
                             f"- Claim kinds: {', '.join(self._source_claim_refs(source_ref)) or 'none captured'}",
                             f"- Preview: {self._source_preview(source_ref)}",
-                            f"- Source: {source_ref.get('source_url')}" if source_ref.get("source_url") else "- Source: unavailable",
+                            f"- Source: {source_ref.get('source_url')}"
+                            if source_ref.get("source_url")
+                            else "- Source: unavailable",
                         ]
                     ),
                     source_item_ids=[source_item_id],
@@ -1127,7 +1143,9 @@ class ReaderPipelineService:
             sections = []
             replaced = set()
             for section in existing_sections:
-                section_id = str(section.get("section_id") or section.get("section_key") or "").strip()
+                section_id = str(
+                    section.get("section_id") or section.get("section_key") or ""
+                ).strip()
                 if section_id in target_section_ids and section_id in rebuilt_map:
                     sections.append(rebuilt_map[section_id])
                     replaced.add(section_id)
@@ -1214,7 +1232,9 @@ class ReaderPipelineService:
     ) -> dict[str, Any]:
         section_index = [
             {
-                "section_id": str(section.get("section_id") or section.get("section_key") or "").strip(),
+                "section_id": str(
+                    section.get("section_id") or section.get("section_key") or ""
+                ).strip(),
                 "title": str(section.get("title") or "").strip(),
                 "source_item_ids": [
                     str(source_item_id).strip()
@@ -1251,9 +1271,7 @@ class ReaderPipelineService:
             required_topics = self._source_topic_refs(source_ref)
             required_claim_kinds = self._source_claim_refs(source_ref)
             coverage_sections = [
-                section
-                for section in section_index
-                if source_item_id in section["source_item_ids"]
+                section for section in section_index if source_item_id in section["source_item_ids"]
             ]
             covered_topics = sorted(
                 {
@@ -1301,7 +1319,9 @@ class ReaderPipelineService:
                 gap_flags.append("video_contract_gap")
             entry_status = "pass"
             if gap_flags:
-                entry_status = "repair_exhausted" if repair_attempts >= repair_budget else "gap_detected"
+                entry_status = (
+                    "repair_exhausted" if repair_attempts >= repair_budget else "gap_detected"
+                )
                 affected_source_item_ids.append(source_item_id)
             if entry_status != "pass":
                 gap_count += 1
@@ -1497,9 +1517,9 @@ class ReaderPipelineService:
             for key, value in available_routes.items():
                 if value:
                     evidence_routes[key].append(value)
-        has_gap = any(
-            item.get("status") != "ready" for item in section_contributions
-        ) or any(item.get("status") != "ready" for item in source_item_map)
+        has_gap = any(item.get("status") != "ready" for item in section_contributions) or any(
+            item.get("status") != "ready" for item in source_item_map
+        )
         return {
             "pack_kind": "sourceharbor_traceability_pack_v1",
             "generated_at": datetime.now(UTC).isoformat(),
@@ -1570,7 +1590,9 @@ class ReaderPipelineService:
             if "missing_claim_kinds" in set(coverage_ledger.get("gap_reasons") or []):
                 reasons.append("coverage ledger reported uncovered source claim kinds")
             if "video_contract_gap" in set(coverage_ledger.get("gap_reasons") or []):
-                reasons.append("video raw-stage contract failed to satisfy video-first requirements")
+                reasons.append(
+                    "video raw-stage contract failed to satisfy video-first requirements"
+                )
         if traceability_status != "ready":
             reasons.append("traceability pack reported incomplete section contributions")
         if "degraded_extraction" in warning_kinds:
@@ -1682,8 +1704,14 @@ class ReaderPipelineService:
             "version": int(getattr(document, "version", 0) or 0),
             "published_with_gap": bool(getattr(document, "published_with_gap", False)),
             "summary": str(getattr(document, "summary", "") or "").strip() or None,
-            "coverage_status": str((getattr(document, "coverage_ledger_json", {}) or {}).get("status") or "").strip() or None,
-            "traceability_status": str((getattr(document, "traceability_pack_json", {}) or {}).get("status") or "").strip() or None,
+            "coverage_status": str(
+                (getattr(document, "coverage_ledger_json", {}) or {}).get("status") or ""
+            ).strip()
+            or None,
+            "traceability_status": str(
+                (getattr(document, "traceability_pack_json", {}) or {}).get("status") or ""
+            ).strip()
+            or None,
         }
 
     @staticmethod
@@ -1745,10 +1773,14 @@ class ReaderPipelineService:
         )
 
     def _all_topic_refs(self, source_refs: list[dict[str, Any]]) -> list[str]:
-        return sorted({topic for source_ref in source_refs for topic in self._source_topic_refs(source_ref)})
+        return sorted(
+            {topic for source_ref in source_refs for topic in self._source_topic_refs(source_ref)}
+        )
 
     def _all_claim_refs(self, source_refs: list[dict[str, Any]]) -> list[str]:
-        return sorted({claim for source_ref in source_refs for claim in self._source_claim_refs(source_ref)})
+        return sorted(
+            {claim for source_ref in source_refs for claim in self._source_claim_refs(source_ref)}
+        )
 
     def _all_evidence_anchor_refs(self, source_refs: list[dict[str, Any]]) -> list[str]:
         return sorted(

@@ -4,8 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { MarkdownPreview } from "@/components/markdown-preview";
-import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SourceContributionDrawer } from "@/components/source-contribution-drawer";
+import { SourceIdentityCard } from "@/components/source-identity-card";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { YellowWarningCard } from "@/components/yellow-warning-card";
@@ -66,7 +66,9 @@ export default async function ReaderDetailPage({
 		: [];
 
 	return (
-		<div className={`mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-8 md:px-6 ${editorialSans.className}`}>
+		<div
+			className={`mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-8 md:px-6 ${editorialSans.className}`}
+		>
 			<section className="space-y-6">
 				<div className="flex flex-wrap items-center gap-3 text-sm text-foreground/80">
 					<Link

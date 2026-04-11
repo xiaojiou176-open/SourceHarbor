@@ -10,7 +10,9 @@ type YellowWarningCardProps = {
 
 export function YellowWarningCard({ reasons }: YellowWarningCardProps) {
 	return (
-		<Card className={`border-amber-300 bg-amber-50/90 text-amber-950 shadow-sm dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100 ${editorialSans.className}`}>
+		<Card
+			className={`border-amber-300 bg-amber-50/90 text-amber-950 shadow-sm dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100 ${editorialSans.className}`}
+		>
 			<CardHeader className="space-y-4 pb-3">
 				<div className="flex flex-wrap items-center gap-2">
 					<Badge className="border-amber-400/80 bg-amber-100 text-amber-950 hover:bg-amber-100">
@@ -23,7 +25,9 @@ export function YellowWarningCard({ reasons }: YellowWarningCardProps) {
 						Reading contract
 					</Badge>
 				</div>
-				<h2 className={`flex items-center gap-2 text-lg font-semibold ${editorialSerif.className}`}>
+				<h2
+					className={`flex items-center gap-2 text-lg font-semibold ${editorialSerif.className}`}
+				>
 					<AlertTriangle className="h-4 w-4 shrink-0" />
 					Yellow warning
 				</h2>

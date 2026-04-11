@@ -17,10 +17,14 @@ import {
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { apiClient } from "@/lib/api/client";
-import { sanitizeExternalUrl } from "@/lib/api/url";
-import { editorialMono, editorialSans, editorialSerif } from "@/lib/editorial-fonts";
-import { resolveFeedIdentity } from "@/lib/source-identity";
 import type { DigestFeedItem } from "@/lib/api/types";
+import { sanitizeExternalUrl } from "@/lib/api/url";
+import {
+	editorialMono,
+	editorialSans,
+	editorialSerif,
+} from "@/lib/editorial-fonts";
+import { resolveFeedIdentity } from "@/lib/source-identity";
 
 function extractHeadings(
 	markdown: string,
@@ -197,7 +201,10 @@ export function ReadingPane({
 		: null;
 
 	return (
-		<div className={`feed-reading-pane-shell ${editorialSans.className}`} data-reading-state="content">
+		<div
+			className={`feed-reading-pane-shell ${editorialSans.className}`}
+			data-reading-state="content"
+		>
 			<ScrollArea className="flex-1">
 				<article className="prose prose-sm dark:prose-invert reading-pane-prose feed-reading-article">
 					<header className="feed-reading-header">

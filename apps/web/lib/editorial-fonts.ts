@@ -7,5 +7,6 @@ export const editorialSans = {
 };
 
 export const editorialMono = {
-	className: "[font-family:'IBM_Plex_Mono',ui-monospace,SFMono-Regular,monospace]",
+	className:
+		"[font-family:'IBM_Plex_Mono',ui-monospace,SFMono-Regular,monospace]",
 };

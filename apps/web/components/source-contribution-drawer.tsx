@@ -22,14 +22,18 @@ export function SourceContributionDrawer({
 		: "Clear provenance map";
 
 	return (
-		<Card className={`border-border/70 bg-background/95 shadow-sm ${editorialSans.className}`}>
+		<Card
+			className={`border-border/70 bg-background/95 shadow-sm ${editorialSans.className}`}
+		>
 			<CardHeader className="space-y-3 pb-3">
 				<div className="flex flex-wrap items-center gap-2">
 					<Badge variant="secondary">Backstage footnotes</Badge>
 					<Badge variant="outline">{warningContext}</Badge>
 				</div>
 				<div className="space-y-2">
-					<h2 className={`text-base font-semibold ${editorialSerif.className}`}>Evidence drawer</h2>
+					<h2 className={`text-base font-semibold ${editorialSerif.className}`}>
+						Evidence drawer
+					</h2>
 					<p className="text-sm leading-6 text-muted-foreground">
 						Read the body first. Keep the warning in mind. Then open this drawer
 						like a footnote rail only when you want to inspect where a claim,

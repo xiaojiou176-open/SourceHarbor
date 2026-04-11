@@ -515,7 +515,9 @@ def test_step_llm_outline_advanced_video_preprocess_uses_fast_text_mode(
     )
     ctx = _ctx(tmp_path, gemini_api_key="k")
 
-    execution = asyncio.run(llm_steps.step_llm_outline(ctx, state, gemini_generate_fn=_fake_generate))
+    execution = asyncio.run(
+        llm_steps.step_llm_outline(ctx, state, gemini_generate_fn=_fake_generate)
+    )
 
     assert execution.status == "succeeded"
     assert calls[0]["llm_input_mode"] == "text"
@@ -582,7 +584,9 @@ def test_step_llm_digest_video_contract_runs_advanced_review_and_records_receipt
     )
     ctx = _ctx(tmp_path, gemini_api_key="k")
 
-    execution = asyncio.run(llm_steps.step_llm_digest(ctx, state, gemini_generate_fn=_fake_generate))
+    execution = asyncio.run(
+        llm_steps.step_llm_digest(ctx, state, gemini_generate_fn=_fake_generate)
+    )
 
     assert execution.status == "succeeded"
     assert len(calls) == 2

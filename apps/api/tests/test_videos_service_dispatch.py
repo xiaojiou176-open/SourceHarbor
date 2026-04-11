@@ -645,7 +645,10 @@ def test_process_video_normalizes_analysis_mode_aliases_into_llm_overrides(
         )
     )
 
-    assert result["overrides"] == {"llm": {"analysis_mode": "advanced"}, "raw_stage": {"mode": "advanced"}}
+    assert result["overrides"] == {
+        "llm": {"analysis_mode": "advanced"},
+        "raw_stage": {"mode": "advanced"},
+    }
     assert repo.created_calls[0]["overrides_json"] == result["overrides"]
 
 
