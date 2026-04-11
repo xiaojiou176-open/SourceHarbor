@@ -23,9 +23,12 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { apiClient } from "@/lib/api/client";
+import { editorialMono, editorialSans } from "@/lib/editorial-fonts";
+import { resolveSubscriptionIdentity } from "@/lib/source-identity";
 import type { Subscription, SubscriptionCategory } from "@/lib/api/types";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SourceIdentityCard } from "@/components/source-identity-card";
 
 const CATEGORIES: SubscriptionCategory[] = [
 	"tech",
@@ -413,7 +416,7 @@ export function SubscriptionBatchPanel({ subscriptions, sessionToken }: Props) {
 	}
 
 	return (
-		<Card>
+		<Card className={editorialSans.className}>
 			<CardHeader className="gap-2">
 				<CardTitle className="text-base">Bulk subscription actions</CardTitle>
 				<CardDescription>
@@ -476,15 +479,16 @@ export function SubscriptionBatchPanel({ subscriptions, sessionToken }: Props) {
 										</td>
 										<td className="px-3 py-3">
 											<div className="font-medium leading-5">
-												{getSubscriptionDisplayName(item)}
-											</div>
-											<div className="text-xs text-muted-foreground">
-												{item.adapter_type}
-												{item.source_url
-													? ` · ${item.source_url}`
-													: item.rsshub_route
-														? ` · ${item.rsshub_route}`
-														: ""}
+												<SourceIdentityCard
+													identity={{
+														...resolveSubscriptionIdentity(item),
+														description:
+															item.source_homepage_url ||
+															item.source_url ||
+															item.rsshub_route,
+													}}
+													compact
+												/>
 											</div>
 										</td>
 										<td className="px-3 py-3">
@@ -517,7 +521,8 @@ export function SubscriptionBatchPanel({ subscriptions, sessionToken }: Props) {
 											/>
 										</td>
 										<td className="px-3 py-3 text-xs text-muted-foreground">
-											{formatDateTime(item.updated_at)}
+											<div>{formatDateTime(item.updated_at)}</div>
+											<div className={editorialMono.className}>{item.id.slice(0, 8)}…</div>
 										</td>
 										<td className="px-3 py-3">
 											{pendingDeleteId === item.id ? (

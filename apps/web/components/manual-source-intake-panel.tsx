@@ -22,10 +22,13 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { apiClient } from "@/lib/api/client";
+import { editorialSans, editorialMono } from "@/lib/editorial-fonts";
+import { resolveManualIntakeIdentity } from "@/lib/source-identity";
 import type {
 	ManualSourceIntakeResponse,
 	SubscriptionCategory,
 } from "@/lib/api/types";
+import { SourceIdentityCard } from "@/components/source-identity-card";
 
 const CATEGORY_OPTIONS: Array<{
 	value: SubscriptionCategory;
@@ -137,7 +140,7 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 	const [isPending, startTransition] = useTransition();
 
 	return (
-		<Card className="folo-surface border-border/70">
+		<Card className={`folo-surface border-border/70 ${editorialSans.className}`}>
 			<CardHeader className="gap-2">
 				<CardTitle className="text-xl font-semibold">{copy.title}</CardTitle>
 				<CardDescription>{copy.description}</CardDescription>
@@ -153,7 +156,7 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 							value={rawInput}
 							onChange={(event) => setRawInput(event.target.value)}
 							placeholder={copy.placeholder}
-							className="min-h-48 font-mono text-sm"
+							className={`min-h-48 text-sm ${editorialMono.className}`}
 						/>
 						<p className="text-sm text-muted-foreground">{copy.hint}</p>
 					</div>
@@ -248,7 +251,7 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 				) : null}
 
 				{result ? (
-					<div className="space-y-3 rounded-xl border border-border/60 bg-muted/15 p-4">
+					<div className="space-y-4 rounded-[1.4rem] border border-border/60 bg-muted/15 p-4">
 						<div className="space-y-1">
 							<p className="font-medium">{copy.resultsTitle}</p>
 							<p className="text-sm text-muted-foreground">
@@ -261,73 +264,51 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 								{copy.resultsDescription}
 							</p>
 						</div>
-						<div className="overflow-x-auto rounded-lg border">
-							<table className="min-w-[960px] w-full text-sm">
-								<thead className="bg-muted/40">
-									<tr className="[&_th]:px-3 [&_th]:py-2.5 [&_th]:text-left [&_th]:text-xs [&_th]:font-medium [&_th]:text-muted-foreground">
-										<th scope="col">Line</th>
-										<th scope="col">Input</th>
-										<th scope="col">Resolution</th>
-										<th scope="col">Action</th>
-										<th scope="col">Status</th>
-										<th scope="col">Message</th>
-									</tr>
-								</thead>
-								<tbody>
-									{result.results.map((item) => {
-										const tone = statusTone(item.status);
-										return (
-											<tr
-												key={`${item.line_number}-${item.raw_input}`}
-												className="border-b align-top"
-											>
-												<td className="px-3 py-3 text-xs text-muted-foreground">
-													{item.line_number}
-												</td>
-												<td className="px-3 py-3 font-mono text-xs">
-													{item.raw_input}
-												</td>
-												<td className="px-3 py-3">
-													<div className="font-medium">
-														{item.display_name ||
-															item.source_value ||
-															item.source_url ||
-															copy.emptyState}
-													</div>
-													<div className="text-xs text-muted-foreground">
-														{[
-															item.platform,
-															item.source_type,
-															item.rsshub_route,
-														]
-															.filter(Boolean)
-															.join(" · ") || copy.emptyState}
-													</div>
-												</td>
-												<td className="px-3 py-3">
-													<Badge
-														variant="outline"
-														className={badgeClass("secondary")}
-													>
-														{actionLabel(
-															copy,
-															item.applied_action ?? item.recommended_action,
-														)}
-													</Badge>
-												</td>
-												<td className="px-3 py-3">
-													<Badge variant="outline" className={badgeClass(tone)}>
-														{statusLabel(copy, item.status)}
-													</Badge>
-												</td>
-												<td className="px-3 py-3 text-muted-foreground">
-													{item.message}
-												</td>
-											</tr>
-										);
-									})}
-								</tbody>
-							</table>
+						<div className="grid gap-3 lg:grid-cols-2">
+							{result.results.map((item) => {
+								const tone = statusTone(item.status);
+								const identity = resolveManualIntakeIdentity(item);
+								return (
+									<div
+										key={`${item.line_number}-${item.raw_input}`}
+										className="space-y-2 rounded-[1.2rem] border border-border/60 bg-background/70 p-3"
+									>
+										<div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+											<Badge variant="outline" className={badgeClass("secondary")}>
+												Line {item.line_number}
+											</Badge>
+											<Badge variant="outline" className={badgeClass(tone)}>
+												{statusLabel(copy, item.status)}
+											</Badge>
+											<Badge variant="outline" className={badgeClass("secondary")}>
+												{actionLabel(copy, item.applied_action ?? item.recommended_action)}
+											</Badge>
+										</div>
+										<SourceIdentityCard
+											identity={{
+												...identity,
+												description:
+													identity.description ||
+													[
+														item.platform,
+														item.source_type,
+														item.rsshub_route,
+													]
+														.filter(Boolean)
+														.join(" · ") ||
+													copy.emptyState,
+											}}
+											compact
+										/>
+										<div className="rounded-xl border border-border/50 bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
+											<p className={`break-all ${editorialMono.className}`}>
+												{item.raw_input}
+											</p>
+											<p className="mt-2">{item.message}</p>
+										</div>
+									</div>
+								);
+							})}
 						</div>
 					</div>
 				) : null}
