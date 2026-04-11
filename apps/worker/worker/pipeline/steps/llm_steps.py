@@ -791,16 +791,6 @@ async def step_llm_digest(
             source_url=source_url,
             include_frame_context=include_frame_context,
         )
-        review_runtime = _LlmStepRuntime(
-            include_frame_context=include_frame_context,
-            media_input="none",
-            llm_input_mode=review_input_mode,
-            llm_model=review_model,
-            llm_temperature=llm_temperature,
-            llm_max_output_tokens=llm_max_output_tokens,
-            llm_required=llm_required,
-            llm_meta={"analysis_mode": raw_stage["analysis_mode"]},
-        )
         review_result = await asyncio.to_thread(
             gemini_generate_fn,
             ctx.settings,
