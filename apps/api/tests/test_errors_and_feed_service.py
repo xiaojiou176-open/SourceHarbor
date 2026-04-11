@@ -254,7 +254,6 @@ def test_feed_service_lists_reader_bridge_when_source_item_matches_current_docum
 
 
 def test_feed_service_build_reader_bridge_index_maps_source_item_and_job_ids(
-    monkeypatch,
 ) -> None:
     service = FeedService(db=object())  # type: ignore[arg-type]
     documents = [
@@ -284,9 +283,12 @@ def test_feed_service_build_reader_bridge_index_maps_source_item_and_job_ids(
         def list_current(self, *, limit: int):
             return documents
 
-    monkeypatch.setattr(feed_module, "PublishedReaderDocumentsRepository", _Repo)
-
-    by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+    original_repo = feed_module.PublishedReaderDocumentsRepository
+    feed_module.PublishedReaderDocumentsRepository = _Repo
+    try:
+        by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+    finally:
+        feed_module.PublishedReaderDocumentsRepository = original_repo
 
     assert by_source_item["source-item-1"]["reader_route"] == (
         "/reader/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
@@ -295,7 +297,7 @@ def test_feed_service_build_reader_bridge_index_maps_source_item_and_job_ids(
     assert by_source_item["source-item-3"]["publish_status"] == "published_with_gap"
 
 
-def test_feed_service_build_reader_bridge_index_handles_reader_repo_failure(monkeypatch) -> None:
+def test_feed_service_build_reader_bridge_index_handles_reader_repo_failure() -> None:
     service = FeedService(db=object())  # type: ignore[arg-type]
 
     class _Repo:
@@ -305,9 +307,12 @@ def test_feed_service_build_reader_bridge_index_handles_reader_repo_failure(monk
         def list_current(self, *, limit: int):
             raise RuntimeError("boom")
 
-    monkeypatch.setattr(feed_module, "PublishedReaderDocumentsRepository", _Repo)
-
-    by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+    original_repo = feed_module.PublishedReaderDocumentsRepository
+    feed_module.PublishedReaderDocumentsRepository = _Repo
+    try:
+        by_source_item, by_job_id = service._build_reader_bridge_index(limit=20)
+    finally:
+        feed_module.PublishedReaderDocumentsRepository = original_repo
 
     assert by_source_item == {}
     assert by_job_id == {}
