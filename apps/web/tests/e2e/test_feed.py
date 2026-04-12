@@ -173,10 +173,14 @@ def test_feed_reading_links_and_retry_button_click_with_mock_api(
                 "title": "Reading Pane Coverage",
                 "source": "youtube",
                 "source_name": "E2E Channel",
+                "subscription_id": "00000000-0000-4000-8000-000000000101",
                 "category": "tech",
                 "published_at": "2026-03-01T00:00:00Z",
                 "summary_md": "## reading",
                 "artifact_type": "digest",
+                "published_document_title": "Reader edition one",
+                "published_document_publish_status": "published",
+                "reader_route": "/reader/doc-1",
             }
         ]
         mock_api_state.feed_has_more = False
@@ -191,6 +195,17 @@ def test_feed_reading_links_and_retry_button_click_with_mock_api(
     popup = popup_info.value
     expect(popup).to_have_url(re.compile(r"youtube\.com/watch\?v=e2e001"))
     popup.close()
+
+    reader_link = page.get_by_role("link", name="Open reader edition")
+    expect(reader_link).to_be_visible()
+    reader_link.click()
+    expect(page).to_have_url(re.compile(r"/reader/doc-1$"))
+
+    page.goto(f"/feed?item={mock_api_state.job_id}", wait_until="domcontentloaded")
+    tracked_universe_link = page.get_by_role("link", name="Open tracked universe")
+    expect(tracked_universe_link).to_be_visible()
+    tracked_universe_link.click()
+    expect(page).to_have_url(re.compile(r"/feed\?sub=00000000-0000-4000-8000-000000000101$"))
 
     page.goto("/feed?item=not-a-uuid", wait_until="domcontentloaded")
     retry_button = page.get_by_role("button", name="Retry")

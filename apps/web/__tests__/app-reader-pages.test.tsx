@@ -72,6 +72,20 @@ describe("reader pages", () => {
 					},
 				],
 			},
+			{
+				id: "doc-2",
+				slug: "ai-agents-2026-04-09-v2",
+				window_id: "2026-04-09@America/Los_Angeles",
+				title: "AI Agents follow-up",
+				summary: "Singleton reader doc",
+				materialization_mode: "singleton_polish",
+				version: 1,
+				published_with_gap: false,
+				source_item_count: 1,
+				topic_label: "AI Agents",
+				consumption_batch_id: "batch-2",
+				source_refs: [],
+			},
 		]);
 		mockGetNavigationBrief.mockResolvedValue({
 			brief_kind: "sourceharbor_navigation_brief_v1",
@@ -109,6 +123,14 @@ describe("reader pages", () => {
 		expect(
 			screen.getByRole("link", { name: "Continue reading" }),
 		).toHaveAttribute("href", "/reader/doc-1");
+		expect(screen.getByRole("link", { name: "Source intake" })).toHaveAttribute(
+			"href",
+			"/subscriptions",
+		);
+		expect(screen.getByRole("link", { name: "Open reader detail" })).toHaveAttribute(
+			"href",
+			"/reader/doc-2",
+		);
 	});
 
 	it("renders reader detail with warning banner and source drawer", async () => {

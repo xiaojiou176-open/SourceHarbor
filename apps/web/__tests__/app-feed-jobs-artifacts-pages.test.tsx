@@ -316,6 +316,7 @@ describe("feed/jobs/artifacts pages", () => {
 						title: "Digest One",
 						source: "youtube",
 						source_name: "Creator One",
+						subscription_id: "sub-reader-1",
 						category: "creator",
 						published_at: "2026-02-10T00:00:00Z",
 						summary_md: "## summary 1",
@@ -395,6 +396,9 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(
 				screen.getByRole("link", { name: "Open reader edition" }),
 			).toHaveAttribute("href", "/reader/doc-1");
+			expect(
+				screen.getByRole("link", { name: "Open tracked universe" }),
+			).toHaveAttribute("href", "/feed?sub=sub-reader-1");
 			expect(
 				screen.getByText("Published unit · Reader edition one · published"),
 			).toBeInTheDocument();
