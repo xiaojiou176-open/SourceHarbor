@@ -11,7 +11,9 @@ def _repo_root() -> Path:
 
 def _load_module():
     module_path = _repo_root() / "scripts" / "governance" / "check_run_manifest_completeness.py"
-    spec = importlib.util.spec_from_file_location("check_run_manifest_completeness_test", module_path)
+    spec = importlib.util.spec_from_file_location(
+        "check_run_manifest_completeness_test", module_path
+    )
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -52,16 +54,20 @@ def test_run_manifest_completeness_ignores_shared_multirun_logs_outside_manifest
 
     manifest_log = logs_root / f"{run_id}.jsonl"
     manifest_log.write_text(
-        json.dumps({"run_id": run_id, "event": "entrypoint_bootstrap"}) + "\n"
-        + json.dumps({"run_id": run_id, "event": "complete"}) + "\n",
+        json.dumps({"run_id": run_id, "event": "entrypoint_bootstrap"})
+        + "\n"
+        + json.dumps({"run_id": run_id, "event": "complete"})
+        + "\n",
         encoding="utf-8",
     )
     _write_metadata(manifest_log, run_id=run_id)
 
     shared_log = logs_root / "strict-ci-entry.jsonl"
     shared_log.write_text(
-        json.dumps({"run_id": run_id, "event": "strict_ci_entry_start"}) + "\n"
-        + json.dumps({"run_id": other_run_id, "event": "strict_ci_entry_start"}) + "\n",
+        json.dumps({"run_id": run_id, "event": "strict_ci_entry_start"})
+        + "\n"
+        + json.dumps({"run_id": other_run_id, "event": "strict_ci_entry_start"})
+        + "\n",
         encoding="utf-8",
     )
     _write_metadata(shared_log, run_id=run_id)

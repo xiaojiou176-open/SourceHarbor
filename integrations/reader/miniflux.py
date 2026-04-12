@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import base64
 import json
+from collections.abc import Callable
 from datetime import UTC, datetime
-from typing import Any, Callable
+from typing import Any
 from urllib import error, parse, request
 
 DEFAULT_IMPORT_FEED_URL = "https://miniflux.app/feed.xml"

@@ -39,14 +39,16 @@ STATUS_KEYS = (
 )
 
 
-def summarize_mutants(mutants_dir: Path, output_path: Path, run_exit: int | None = None) -> dict[str, int]:
+def summarize_mutants(
+    mutants_dir: Path, output_path: Path, run_exit: int | None = None
+) -> dict[str, int]:
     meta_paths = sorted(mutants_dir.glob("**/*.meta"))
     if not meta_paths:
         raise SystemExit(
             f"[quality-gate] mutation gate failed: no mutmut meta files found under {mutants_dir.as_posix()}."
         )
 
-    stats = {key: 0 for key in STATUS_KEYS}
+    stats = dict.fromkeys(STATUS_KEYS, 0)
     total = 0
     for meta_path in meta_paths:
         meta = json.loads(meta_path.read_text(encoding="utf-8"))

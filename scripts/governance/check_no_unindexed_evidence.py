@@ -62,16 +62,12 @@ def main() -> int:
 
     if evidence_root.exists():
         for artifact in sorted(
-            item
-            for item in evidence_root.rglob("*")
-            if is_runtime_metadata_managed_artifact(item)
+            item for item in evidence_root.rglob("*") if is_runtime_metadata_managed_artifact(item)
         ):
             _check_artifact(artifact)
     if reports_root.exists():
         for artifact in sorted(
-            item
-            for item in reports_root.rglob("*")
-            if is_runtime_metadata_managed_artifact(item)
+            item for item in reports_root.rglob("*") if is_runtime_metadata_managed_artifact(item)
         ):
             _check_artifact(artifact)
 

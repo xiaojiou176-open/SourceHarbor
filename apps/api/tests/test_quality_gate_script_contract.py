@@ -114,6 +114,12 @@ def test_quality_gate_reuses_fresh_current_commit_mutation_stats_before_rerun() 
         encoding="utf-8"
     )
 
-    assert 'echo "[quality-gate] mutation gate reusing fresh current-commit stats at $stats_file"' in script
+    assert (
+        'echo "[quality-gate] mutation gate reusing fresh current-commit stats at $stats_file"'
+        in script
+    )
     assert 'if "mutmut_run_exit" not in stats:' in script
-    assert 'if str(meta.get("source_entrypoint") or "").strip() != "scripts/ci/run_mutmut.sh":' in script
+    assert (
+        'if str(meta.get("source_entrypoint") or "").strip() != "scripts/ci/run_mutmut.sh":'
+        in script
+    )

@@ -32,11 +32,7 @@ def _candidate_artifacts() -> list[Path]:
         if not base.exists():
             continue
         candidates.extend(
-            sorted(
-                item
-                for item in base.rglob("*")
-                if is_runtime_metadata_managed_artifact(item)
-            )
+            sorted(item for item in base.rglob("*") if is_runtime_metadata_managed_artifact(item))
         )
     return candidates
 

@@ -43,9 +43,7 @@ def main() -> int:
             continue
 
         for artifact in sorted(
-            item
-            for item in base.rglob("*")
-            if is_runtime_metadata_managed_artifact(item)
+            item for item in base.rglob("*") if is_runtime_metadata_managed_artifact(item)
         ):
             metadata = read_runtime_metadata(artifact)
             if metadata is None:
