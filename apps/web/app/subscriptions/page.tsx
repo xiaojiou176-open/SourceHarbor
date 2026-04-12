@@ -13,6 +13,7 @@ import { ManualSourceIntakePanel } from "@/components/manual-source-intake-panel
 import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SubmitButton } from "@/components/submit-button";
 import { SubscriptionBatchPanel } from "@/components/subscription-batch-panel";
+import { WebActionSessionHiddenInput } from "@/components/web-action-session-hidden-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -643,12 +644,7 @@ export default async function SubscriptionsPage({
 								className="grid gap-5 md:grid-cols-2"
 								data-auto-disable-required="true"
 							>
-								<input
-									type="hidden"
-									name="session_token"
-									value={sessionToken}
-									suppressHydrationWarning
-								/>
+								<WebActionSessionHiddenInput sessionToken={sessionToken} />
 								<FormSelectField
 									id="platform"
 									name="platform"
