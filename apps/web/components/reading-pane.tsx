@@ -195,6 +195,9 @@ export function ReadingPane({
 	const safeReaderRoute = identity?.reader_route?.trim().startsWith("/reader/")
 		? identity.reader_route.trim()
 		: null;
+	const safeUniverseRoute = identity?.subscription_id?.trim()
+		? `/feed?sub=${encodeURIComponent(identity.subscription_id.trim())}`
+		: null;
 	const sourceLabel = source ? toSourceLabel(source) : null;
 	const identityModel = identity
 		? resolveFeedIdentity({
@@ -257,6 +260,15 @@ export function ReadingPane({
 									data-interaction="link-primary"
 								>
 									Open reader edition
+								</Link>
+							) : null}
+							{safeUniverseRoute ? (
+								<Link
+									href={safeUniverseRoute}
+									className={`feed-reading-link ${editorialMono.className}`}
+									data-interaction="link-muted"
+								>
+									Open tracked universe
 								</Link>
 							) : null}
 						</div>

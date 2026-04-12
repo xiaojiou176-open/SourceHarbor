@@ -15,9 +15,24 @@ def _prefix_to_path(prefix: str) -> Path | None:
     if not normalized:
         return None
     if normalized.startswith("@/"):
-        return repo_root() / "apps" / "web" / normalized[2:].replace("/", "/")
+        candidate = repo_root() / "apps" / "web" / normalized[2:].replace("/", "/")
+        if candidate.exists():
+            return candidate
+        file_candidate = candidate.with_suffix(".ts")
+        if file_candidate.exists():
+            return file_candidate
+        tsx_candidate = candidate.with_suffix(".tsx")
+        if tsx_candidate.exists():
+            return tsx_candidate
+        return candidate
     if normalized.startswith(("apps.", "integrations.", "contracts.")):
-        return repo_root() / normalized.replace(".", "/")
+        candidate = repo_root() / normalized.replace(".", "/")
+        if candidate.exists():
+            return candidate
+        file_candidate = candidate.with_suffix(".py")
+        if file_candidate.exists():
+            return file_candidate
+        return candidate
     return None
 
 
