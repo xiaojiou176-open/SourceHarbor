@@ -122,14 +122,14 @@ describe("reader pages", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", { name: "Continue reading" }),
-		).toHaveAttribute("href", "/reader/doc-1");
+		).toHaveAttribute("href", "/reader/doc-2");
 		expect(screen.getByRole("link", { name: "Source intake" })).toHaveAttribute(
 			"href",
 			"/subscriptions",
 		);
 		expect(screen.getByRole("link", { name: "Open reader detail" })).toHaveAttribute(
 			"href",
-			"/reader/doc-2",
+			"/reader/doc-1",
 		);
 	});
 

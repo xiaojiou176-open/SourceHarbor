@@ -288,7 +288,7 @@ describe("dashboard/settings/subscriptions pages", () => {
 				screen.getAllByRole("link", { name: "Open Briefings" }).length,
 			).toBeGreaterThanOrEqual(2);
 			expect(
-				screen.getByRole("link", { name: "Open Briefings" }),
+				screen.getAllByRole("link", { name: "Open Briefings" })[0],
 			).toHaveAttribute("href", "/briefings");
 			expect(
 				screen.getByRole("link", { name: "Open Reader" }),
@@ -344,7 +344,7 @@ describe("dashboard/settings/subscriptions pages", () => {
 				screen.getByText("Live listed at 0.1.14, repo packet is ahead"),
 			).toBeInTheDocument();
 			expect(
-				screen.getByRole("link", { name: "Open distribution ledger" }),
+				screen.getAllByRole("link", { name: "Open distribution ledger" })[0],
 			).toHaveAttribute(
 				"href",
 				"https://github.com/xiaojiou176-open/sourceharbor/blob/main/docs/public-distribution.md",
