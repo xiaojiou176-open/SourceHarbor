@@ -22,15 +22,13 @@ export function ThemeToggle() {
 
 	if (!mounted) {
 		return (
-			<Button
-				variant="ghost"
-				size="icon"
-				aria-label="Theme menu loading"
-				className="relative"
-				disabled
+			<div
+				className="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground"
+				aria-hidden="true"
 			>
 				<SunIcon className="size-4 opacity-70" />
-			</Button>
+				<span className="sr-only">Theme menu loading</span>
+			</div>
 		);
 	}
 

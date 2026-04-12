@@ -616,6 +616,14 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getByRole("link", { name: "Open merged stories" }),
 			).toHaveAttribute("href", "/trends");
+			expect(screen.getByRole("link", { name: "Feed" })).toHaveAttribute(
+				"href",
+				"/feed",
+			);
+			expect(screen.getByRole("link", { name: "Reader" })).toHaveAttribute(
+				"href",
+				"/reader",
+			);
 			expect(
 				screen.getByRole("button", { name: "Save subscription" }),
 			).toBeInTheDocument();
