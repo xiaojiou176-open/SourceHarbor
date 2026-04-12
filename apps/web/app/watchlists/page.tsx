@@ -147,7 +147,7 @@ export default async function WatchlistsPage({
 					</CardHeader>
 					<CardContent>
 						<form action={upsertWatchlistAction} className="grid gap-4">
-								<WebActionSessionHiddenInput sessionToken={sessionToken} />
+							<WebActionSessionHiddenInput sessionToken={sessionToken} />
 							<input
 								type="hidden"
 								name="id"
@@ -378,9 +378,9 @@ export default async function WatchlistsPage({
 												</Link>
 											</Button>
 											<form action={deleteWatchlistAction}>
-													<WebActionSessionHiddenInput
-														sessionToken={sessionToken}
-													/>
+												<WebActionSessionHiddenInput
+													sessionToken={sessionToken}
+												/>
 												<input
 													type="hidden"
 													name="watchlist_id"

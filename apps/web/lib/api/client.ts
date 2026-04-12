@@ -1,6 +1,6 @@
 import {
-	apiClient as sdkApiClient,
 	createSourceHarborClient,
+	apiClient as sdkApiClient,
 } from "@sourceharbor/sdk";
 
 import { resolveApiBaseUrl } from "@/lib/api/url";

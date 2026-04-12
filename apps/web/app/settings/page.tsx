@@ -131,7 +131,7 @@ export default async function SettingsPage({
 				</CardHeader>
 				<CardContent>
 					<form action={updateNotificationConfigAction} className="grid gap-4">
-							<WebActionSessionHiddenInput sessionToken={sessionToken} />
+						<WebActionSessionHiddenInput sessionToken={sessionToken} />
 						<FormCheckboxField
 							name="enabled"
 							label={copy.enabledLabel}
@@ -195,7 +195,7 @@ export default async function SettingsPage({
 				</CardHeader>
 				<CardContent>
 					<form action={sendTestNotificationAction} className="grid gap-4">
-							<WebActionSessionHiddenInput sessionToken={sessionToken} />
+						<WebActionSessionHiddenInput sessionToken={sessionToken} />
 						<FormInputField
 							id="test_to_email"
 							name="to_email"
