@@ -2,6 +2,7 @@
 
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +14,25 @@ import {
 
 export function ThemeToggle() {
 	const { setTheme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) {
+		return (
+			<Button
+				variant="ghost"
+				size="icon"
+				aria-label="Theme menu loading"
+				className="relative"
+				disabled
+			>
+				<SunIcon className="size-4 opacity-70" />
+			</Button>
+		);
+	}
 
 	return (
 		<DropdownMenu>

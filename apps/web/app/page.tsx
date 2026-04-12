@@ -256,8 +256,8 @@ export default async function DashboardPage({
 	const subscriptionsUnavailable = subscriptionsResult.errorCode !== null;
 	const videosUnavailable = videosResult.errorCode !== null;
 	const ingestRunsUnavailable = ingestRunsResult.errorCode !== null;
-	const runningJobs = videos.filter(
-		(video) => video.status === "running" || video.status === "queued",
+	const activeIngestRuns = ingestRuns.filter((run) =>
+		["queued", "running", "in_progress"].includes(run.status),
 	).length;
 	const failedJobs = videos.filter((video) => video.status === "failed").length;
 
@@ -265,7 +265,7 @@ export default async function DashboardPage({
 		<div className="folo-page-shell folo-unified-shell">
 			<div className="folo-page-header">
 				<p className="folo-page-kicker">{copy.kicker}</p>
-				<h1 className="folo-page-title" data-route-heading>
+				<h1 className="folo-page-title" data-route-heading tabIndex={-1}>
 					{copy.heroTitle}
 				</h1>
 				<p className="folo-page-subtitle">{copy.heroSubtitle}</p>
@@ -754,26 +754,26 @@ export default async function DashboardPage({
 					</CardContent>
 				</Card>
 				<Card
-					className={
-						!videosUnavailable && runningJobs > 0
-							? "folo-surface overflow-hidden border-amber-300/70 bg-amber-50/40 dark:border-amber-900 dark:bg-amber-950/15"
-							: "folo-surface overflow-hidden border-border/70"
-					}
-				>
-					<CardHeader className="gap-2">
-						<CardDescription>{copy.metrics.runningJobs.title}</CardDescription>
-						{renderMetricValue(
-							runningJobs,
-							videosUnavailable
-								? copy.metrics.runningJobs.unavailable
-								: undefined,
-						)}
-					</CardHeader>
-					<CardContent className="pt-0">
-						{videosUnavailable ? (
-							<output
-								className="text-sm text-muted-foreground"
-								aria-live="polite"
+						className={
+							!ingestRunsUnavailable && activeIngestRuns > 0
+								? "folo-surface overflow-hidden border-amber-300/70 bg-amber-50/40 dark:border-amber-900 dark:bg-amber-950/15"
+								: "folo-surface overflow-hidden border-border/70"
+						}
+					>
+						<CardHeader className="gap-2">
+							<CardDescription>{copy.metrics.runningJobs.title}</CardDescription>
+							{renderMetricValue(
+								activeIngestRuns,
+								ingestRunsUnavailable
+									? copy.metrics.runningJobs.unavailable
+									: undefined,
+							)}
+						</CardHeader>
+						<CardContent className="pt-0">
+							{ingestRunsUnavailable ? (
+								<output
+									className="text-sm text-muted-foreground"
+									aria-live="polite"
 								aria-atomic="true"
 							>
 								{copy.metrics.unavailableOutput}
