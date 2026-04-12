@@ -181,6 +181,7 @@ def _load_openapi(
     original_cwd = Path.cwd()
     os.chdir(repo_root)
     sys.path.insert(0, str(repo_root))
+    sys.path.insert(0, str(repo_root / "apps" / "worker"))
     importlib.invalidate_caches()
     _apply_default_env()
 

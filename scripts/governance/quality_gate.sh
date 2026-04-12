@@ -781,12 +781,16 @@ run_contract_diff_local_gate() {
 
   git worktree add --detach "$base_tree" "$base_sha" >/dev/null
 
-  if ! DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
+  if ! PYTHONPATH="$ROOT_DIR:$ROOT_DIR/apps/worker" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
     uv run python scripts/governance/export_api_contract.py --repo-root "$ROOT_DIR" --output "$head_json"; then
     git worktree remove --force "$base_tree" >/dev/null 2>&1 || true
     return 1
   fi
-  if ! DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
+  if ! PYTHONPATH="$ROOT_DIR:$ROOT_DIR/apps/worker" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
     uv run python scripts/governance/export_api_contract.py --repo-root "$base_tree" --output "$base_json"; then
     git worktree remove --force "$base_tree" >/dev/null 2>&1 || true
     return 1
