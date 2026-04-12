@@ -15,8 +15,10 @@ sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_PATH = ROOT / "artifacts" / "licenses" / "third-party-license-inventory.json"
 NOTICE_PATH = ROOT / "THIRD_PARTY_NOTICES.md"
+CANONICAL_PYTHON_PLATFORM = "aarch64-unknown-linux-gnu"
 PYTHON_RUNTIME_SCOPE_NOTE = (
-    "the canonical `uv run --extra dev python` environment, using a throwaway temp uv "
+    "the canonical `uv sync --frozen --extra dev --python-platform "
+    f"{CANONICAL_PYTHON_PLATFORM}` environment, using a throwaway temp uv "
     "environment instead of root `.venv` or repo-owned runtime roots"
 )
 
@@ -72,8 +74,24 @@ print(json.dumps(rows, ensure_ascii=False))
     env["UV_PROJECT_ENVIRONMENT"] = str(uv_env_path)
     env.setdefault("UV_LINK_MODE", "copy")
     try:
+        subprocess.run(
+            [
+                "uv",
+                "sync",
+                "--frozen",
+                "--extra",
+                "dev",
+                "--python-platform",
+                CANONICAL_PYTHON_PLATFORM,
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+            env=env,
+        )
         result = subprocess.run(
-            _python_inventory_command(code),
+            ["uv", "run", "python", "-c", code],
             cwd=ROOT,
             check=True,
             capture_output=True,

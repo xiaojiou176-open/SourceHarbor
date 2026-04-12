@@ -18,7 +18,7 @@ ALLOWED_ROOTS = {
     ROOT / ".runtime-cache",
     ROOT / ".git",
 }
-DIR_MARKERS = {"__pycache__", ".pytest_cache", ".ruff_cache"}
+DIR_MARKERS = {"__pycache__", ".pytest_cache", ".ruff_cache", ".venv", "venv"}
 FILE_SUFFIXES = {".pyc", ".pyo"}
 FILE_MARKERS = {".DS_Store"}
 
