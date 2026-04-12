@@ -9,25 +9,29 @@
       "scope": "apps/api/app",
       "allow_internal_prefixes": [
         "apps.api.app.",
+        "apps.runtime_paths",
         "integrations."
       ],
-      "reason": "API may depend only on its own implementation namespace and explicit integration adapters."
+      "reason": "API may depend only on its own implementation namespace, the shared runtime-path helper, and explicit integration adapters."
     },
     {
       "scope": "apps/worker/worker",
       "allow_internal_prefixes": [
         "apps.worker.worker.",
+        "apps.api.app.db",
+        "apps.api.app.services.reader_pipeline",
         "integrations."
       ],
-      "reason": "Worker may depend only on its own implementation namespace and explicit integration adapters."
+      "reason": "Worker may depend on its own implementation namespace, the API-side DB/session + reader materialization bridge used by Temporal activities, and explicit integration adapters."
     },
     {
       "scope": "apps/mcp",
       "allow_internal_prefixes": [
         "apps.mcp.",
+        "apps.runtime_paths",
         "integrations."
       ],
-      "reason": "MCP must stay inside its own namespace or explicit integration adapters; runtime crossings happen over HTTP/contracts."
+      "reason": "MCP must stay inside its own namespace, the shared runtime-path helper, or explicit integration adapters; runtime crossings happen over HTTP/contracts."
     }
   ],
   "frontend_rules": [

@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ReaderDocumentPage from "@/app/reader/[documentId]/page";
 import ReaderPage from "@/app/reader/page";
+import { DEMO_READER_DOCUMENT_ID } from "@/lib/reader/demo-document";
 
 const mockListPublishedReaderDocuments = vi.fn();
 const mockGetNavigationBrief = vi.fn();
@@ -71,6 +72,20 @@ describe("reader pages", () => {
 					},
 				],
 			},
+			{
+				id: "doc-2",
+				slug: "ai-agents-2026-04-09-v2",
+				window_id: "2026-04-09@America/Los_Angeles",
+				title: "AI Agents follow-up",
+				summary: "Singleton reader doc",
+				materialization_mode: "singleton_polish",
+				version: 1,
+				published_with_gap: false,
+				source_item_count: 1,
+				topic_label: "AI Agents",
+				consumption_batch_id: "batch-2",
+				source_refs: [],
+			},
 		]);
 		mockGetNavigationBrief.mockResolvedValue({
 			brief_kind: "sourceharbor_navigation_brief_v1",
@@ -107,6 +122,13 @@ describe("reader pages", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", { name: "Continue reading" }),
+		).toHaveAttribute("href", "/reader/doc-2");
+		expect(screen.getByRole("link", { name: "Source intake" })).toHaveAttribute(
+			"href",
+			"/subscriptions",
+		);
+		expect(
+			screen.getByRole("link", { name: "Open reader detail" }),
 		).toHaveAttribute("href", "/reader/doc-1");
 	});
 
@@ -181,5 +203,32 @@ describe("reader pages", () => {
 		expect(screen.getByTestId("reader-source-drawer")).toHaveTextContent(
 			"Reader specimen edition",
 		);
+	});
+
+	it("renders an honest shelf error instead of pretending the shelf is empty", async () => {
+		mockListPublishedReaderDocuments.mockRejectedValue(
+			new Error("network failed"),
+		);
+		mockGetNavigationBrief.mockRejectedValue(new Error("network failed"));
+
+		render(await ReaderPage());
+
+		expect(
+			screen.getByRole("heading", {
+				name: "Reader shelf is temporarily unavailable",
+				level: 1,
+			}),
+		).toBeInTheDocument();
+		const alert = screen.getByRole("alert");
+		expect(alert).toHaveTextContent("Reader shelf is temporarily unavailable");
+		expect(
+			within(alert).getByRole("link", { name: "Open specimen detail" }),
+		).toHaveAttribute("href", `/reader/${DEMO_READER_DOCUMENT_ID}`);
+		expect(
+			within(alert).getByRole("link", { name: "Open ops desk" }),
+		).toHaveAttribute("href", "/ops");
+		expect(
+			screen.queryByText("No published reader documents yet"),
+		).not.toBeInTheDocument();
 	});
 });

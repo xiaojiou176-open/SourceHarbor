@@ -90,6 +90,11 @@ export function SourceContributionDrawer({
 								typeof source.job_bundle_route === "string"
 									? source.job_bundle_route
 									: null;
+							const subscriptionRoute =
+								typeof source.subscription_id === "string" &&
+								source.subscription_id.trim()
+									? `/feed?sub=${encodeURIComponent(source.subscription_id.trim())}`
+									: null;
 							const sourceUrl =
 								typeof source.source_url === "string"
 									? source.source_url
@@ -126,6 +131,14 @@ export function SourceContributionDrawer({
 													className="underline underline-offset-4"
 												>
 													Open job bundle
+												</Link>
+											) : null}
+											{subscriptionRoute ? (
+												<Link
+													href={subscriptionRoute}
+													className="underline underline-offset-4"
+												>
+													Open tracked universe
 												</Link>
 											) : null}
 										</div>

@@ -7,6 +7,7 @@ import KnowledgePage from "@/app/knowledge/page";
 
 const mockGetDigestFeed = vi.fn();
 const mockGetFeedFeedback = vi.fn();
+const mockListSubscriptions = vi.fn();
 const mockGetJob = vi.fn();
 const mockGetJobCompare = vi.fn();
 const mockGetJobKnowledgeCards = vi.fn();
@@ -50,6 +51,7 @@ vi.mock("@/lib/api/client", () => ({
 	apiClient: {
 		getDigestFeed: (...args: unknown[]) => mockGetDigestFeed(...args),
 		getFeedFeedback: (...args: unknown[]) => mockGetFeedFeedback(...args),
+		listSubscriptions: (...args: unknown[]) => mockListSubscriptions(...args),
 		getJob: (...args: unknown[]) => mockGetJob(...args),
 		getJobCompare: (...args: unknown[]) => mockGetJobCompare(...args),
 		getJobKnowledgeCards: (...args: unknown[]) =>
@@ -67,6 +69,7 @@ describe("feed/jobs/artifacts pages", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockListSubscriptions.mockResolvedValue([]);
 	});
 
 	it(
@@ -316,6 +319,7 @@ describe("feed/jobs/artifacts pages", () => {
 						title: "Digest One",
 						source: "youtube",
 						source_name: "Creator One",
+						subscription_id: "sub-reader-1",
 						category: "creator",
 						published_at: "2026-02-10T00:00:00Z",
 						summary_md: "## summary 1",
@@ -396,6 +400,9 @@ describe("feed/jobs/artifacts pages", () => {
 				screen.getByRole("link", { name: "Open reader edition" }),
 			).toHaveAttribute("href", "/reader/doc-1");
 			expect(
+				screen.getByRole("link", { name: "Open tracked universe" }),
+			).toHaveAttribute("href", "/feed?sub=sub-reader-1");
+			expect(
 				screen.getByText("Published unit · Reader edition one · published"),
 			).toBeInTheDocument();
 		},
@@ -405,6 +412,28 @@ describe("feed/jobs/artifacts pages", () => {
 	it(
 		"passes subscription filter through feed query and preserves it in pagination urls",
 		async () => {
+			mockListSubscriptions.mockResolvedValue([
+				{
+					id: "sub-123",
+					platform: "rss_generic",
+					source_type: "url",
+					source_value: "https://example.com/feed.xml",
+					source_url: "https://example.com/feed.xml",
+					rsshub_route: null,
+					source_name: "Macro Universe",
+					source_universe_label: "Macro Universe",
+					creator_display_name: "Macro Universe",
+					content_profile: "article",
+					category: "macro",
+					priority: 50,
+					support_tier: "general_supported",
+					identity_status: "derived_identity",
+					thumbnail_url: null,
+					avatar_url: null,
+					avatar_label: "MU",
+					source_homepage_url: "https://example.com",
+				},
+			]);
 			mockGetDigestFeed.mockResolvedValue({
 				items: [
 					{
@@ -438,7 +467,17 @@ describe("feed/jobs/artifacts pages", () => {
 				limit: 20,
 				cursor: "cursor-1",
 			});
+			expect(mockListSubscriptions).toHaveBeenCalledWith({
+				enabled_only: false,
+			});
 			expect(screen.getByText("Article")).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "You are reading one tracked universe",
+				}),
+			).toBeInTheDocument();
+			expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
+			expect(screen.getAllByText("Tracked universe").length).toBeGreaterThan(0);
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
 			).toHaveAttribute("href", "/feed?sub=sub-123");

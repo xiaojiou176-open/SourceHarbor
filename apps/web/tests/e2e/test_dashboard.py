@@ -27,9 +27,7 @@ def _select_option(page: Page, label: str, option_name: str) -> None:
     page.get_by_role("option", name=option_name).click()
 
 
-def _require_mock_api_state(
-    pytestconfig: pytest.Config, request: pytest.FixtureRequest
-):
+def _require_mock_api_state(pytestconfig: pytest.Config, request: pytest.FixtureRequest):
     option_value = pytestconfig.getoption("--web-e2e-use-mock-api")
     env_value = os.environ.get("WEB_E2E_USE_MOCK_API")
     enabled = any(
@@ -129,6 +127,33 @@ def test_dashboard_navigation_links_and_skip_link(page: Page) -> None:
     expect(page.get_by_role("link", name="查看任务详情 →")).to_have_attribute("href", "/jobs")
     page.get_by_role("link", name="查看任务详情 →").click()
     expect(page).to_have_url(re.compile(r"/jobs(?:\?.*)?$"))
+
+    page.goto("/", wait_until="domcontentloaded")
+    open_reader_link = page.get_by_role("link", name="Open Reader")
+    expect(open_reader_link).to_be_visible()
+    open_reader_link.click()
+    expect(page).to_have_url(re.compile(r"/reader(?:\?.*)?$"))
+
+    page.goto("/", wait_until="domcontentloaded")
+    open_briefings_link = page.get_by_role("link", name="Open Briefings").first
+    expect(open_briefings_link).to_be_visible()
+    open_briefings_link.click()
+    expect(page).to_have_url(re.compile(r"/briefings(?:\?.*)?$"))
+
+    page.goto("/", wait_until="domcontentloaded")
+    builders_guide_link = page.get_by_role("link", name="Open builders guide").first
+    expect(builders_guide_link).to_be_visible()
+    builders_guide_link.click()
+    expect(page).to_have_url(re.compile(r"/builders(?:\?.*)?$"))
+
+    page.goto("/", wait_until="domcontentloaded")
+    distribution_link = page.get_by_role("link", name="Open distribution ledger").first
+    expect(distribution_link).to_be_visible()
+    with page.expect_popup() as popup_info:
+        distribution_link.click()
+    popup = popup_info.value
+    expect(popup).to_have_url(re.compile(r"github\.com/.*/docs/public-distribution\.md"))
+    popup.close()
 
 
 def test_dashboard_empty_subscription_and_tasks_links_with_mock_api(

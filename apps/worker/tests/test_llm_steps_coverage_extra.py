@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from typing import Any
 
 from worker.config import Settings
-from worker.pipeline.steps import llm_steps
+from worker.pipeline.steps import llm_step_runtime, llm_steps
 
 
 def _settings(tmp_path: Path, **kwargs: Any) -> Settings:
@@ -204,6 +204,74 @@ def test_computer_use_options_injects_default_handler(monkeypatch: Any, tmp_path
         lambda **_: sentinel,
     )
     options = llm_steps._computer_use_options(_ctx(tmp_path), _base_state(), {}, {})
+    assert options["computer_use_handler"] is sentinel
+
+
+def test_llm_step_runtime_fail_close_and_handler_paths(monkeypatch: Any, tmp_path: Path) -> None:
+    video_state = {
+        "content_type": "video",
+        "llm_policy": {
+            "raw_stage": {
+                "analysis_mode": "unexpected-mode",
+                "video_input_required": True,
+                "review_required": True,
+            }
+        },
+    }
+    article_state = {
+        "content_type": "article",
+        "llm_policy": {"raw_stage": {"analysis_mode": "unexpected-mode"}},
+    }
+
+    video_policy = llm_step_runtime._raw_stage_policy(video_state)
+    article_policy = llm_step_runtime._raw_stage_policy(article_state)
+
+    assert video_policy["analysis_mode"] == "advanced"
+    assert article_policy["analysis_mode"] == "economy"
+
+    runtime = llm_step_runtime._LlmStepRuntime(
+        include_frame_context=False,
+        media_input="text",
+        llm_input_mode="text",
+        llm_model="gemini-3.1-pro",
+        llm_temperature=None,
+        llm_max_output_tokens=128,
+        llm_required=True,
+        llm_meta={},
+    )
+    missing_media = llm_step_runtime._require_video_media_path(
+        runtime,
+        media_path="",
+        state=video_state,
+        raw_stage=video_policy,
+        phase="outline",
+    )
+    assert missing_media is not None
+    assert missing_media.reason == "video_body_required_missing"
+    assert missing_media.output["contract_fail_close"] is True
+
+    missing_input = llm_step_runtime._require_video_media_input(
+        runtime,
+        state=video_state,
+        raw_stage=video_policy,
+        phase="review",
+    )
+    assert missing_input is not None
+    assert missing_input.reason == "video_body_input_required"
+    assert missing_input.output["contract_fail_close"] is True
+
+    sentinel = {"handler": "runtime"}
+    monkeypatch.setattr(
+        llm_step_runtime,
+        "build_computer_use_options",
+        lambda *_: {"enable_computer_use": True},
+    )
+    monkeypatch.setattr(
+        llm_step_runtime,
+        "build_default_computer_use_handler",
+        lambda **_: sentinel,
+    )
+    options = llm_step_runtime._computer_use_options(_ctx(tmp_path), _base_state(), {}, {})
     assert options["computer_use_handler"] is sentinel
 
 

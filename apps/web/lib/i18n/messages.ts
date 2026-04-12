@@ -560,7 +560,14 @@ const MESSAGES = {
 				ops: "Ops",
 				misc: "Misc",
 			},
-			subscriptionFilterLabel: "Subscription",
+			subscriptionFilterLabel: "Tracked universe",
+			activeTrackedUniverseLabel: "Active tracked universe",
+			activeTrackedUniverseEyebrow: "Tracked universe",
+			activeTrackedUniverseTitle: "You are reading one tracked universe",
+			activeTrackedUniverseDescription:
+				"This feed is pinned to the same source universe that manual intake and reader footnotes point back to.",
+			activeTrackedUniverseFallback:
+				"This feed is pinned to one tracked universe, but the identity card could not be loaded right now.",
 		},
 		subscriptionsPage: {
 			metadataTitle: "Subscriptions",
@@ -674,10 +681,10 @@ const MESSAGES = {
 			manualIntake: {
 				title: "Manual source intake",
 				description:
-					"Paste URLs, handles, creator pages, or RSSHub routes. Creator-level inputs become subscriptions; direct YouTube/Bilibili video URLs go into today through the current one-off lane.",
+					"Paste URLs, handles, creator pages, or RSSHub routes. Creator-level inputs become subscriptions; direct YouTube/Bilibili video URLs enter today and, when historical ingest evidence already exists, can match back to a tracked universe instead of staying one-off.",
 				placeholder:
 					"https://space.bilibili.com/13416784\nhttps://www.youtube.com/@MindAmend\nhttps://www.youtube.com/watch?v=dQw4w9WgXcQ\n/36kr/newsflashes\nhttps://example.com/feed.xml",
-				hint: "One line per input. Bilibili creator pages and YouTube handles save subscriptions; direct video URLs add to today; direct article URLs still return an honest unsupported result.",
+				hint: "One line per input. Bilibili creator pages and YouTube handles save subscriptions; direct video URLs add to today and may reconnect to an existing tracked universe after queueing; direct article URLs still return an honest unsupported result.",
 				categoryLabel: "Default category",
 				tagsLabel: "Tags for new subscriptions (comma-separated, optional)",
 				enabledLabel: "Enable created subscriptions immediately",
@@ -685,7 +692,7 @@ const MESSAGES = {
 				submitPending: "Running intake...",
 				resultsTitle: "Manual intake results",
 				resultsDescription:
-					"Each row shows whether the input became a recurring subscription, went into today through the current video lane, or was rejected with an explicit reason.",
+					"Each row shows whether the input became a recurring subscription, entered today and matched back to a tracked universe, stayed in the one-off lane, or was rejected with an explicit reason.",
 				summaryPrefix: "Processed",
 				legend: {
 					saveSubscription: "Save subscription",
@@ -1806,7 +1813,14 @@ const MESSAGES = {
 				ops: "Ops",
 				misc: "Misc",
 			},
-			subscriptionFilterLabel: "Subscription",
+			subscriptionFilterLabel: "Tracked universe",
+			activeTrackedUniverseLabel: "Active tracked universe",
+			activeTrackedUniverseEyebrow: "Tracked universe",
+			activeTrackedUniverseTitle: "你当前正在阅读一个 tracked universe",
+			activeTrackedUniverseDescription:
+				"这个 feed 已经固定在和 manual intake、reader footnotes 回跳一致的 source universe 上。",
+			activeTrackedUniverseFallback:
+				"这个 feed 已固定到一个 tracked universe，但当前没有读到对应的身份卡。",
 		},
 		subscriptionsPage: {
 			metadataTitle: "Subscriptions",
@@ -1919,10 +1933,10 @@ const MESSAGES = {
 			manualIntake: {
 				title: "手动 source intake",
 				description:
-					"把 URL、handle、创作者空间页或 RSSHub route 直接贴进来。创作者级输入会落成订阅；YouTube/Bilibili 的直链视频会通过当前 one-off lane 进入 today。",
+					"把 URL、handle、创作者空间页或 RSSHub route 直接贴进来。创作者级输入会落成订阅；YouTube/Bilibili 的直链视频会先进入 today，如果历史 intake 证据已经存在，还会尽量认回已追踪的 source universe，而不是永远停在 one-off。",
 				placeholder:
 					"https://space.bilibili.com/13416784\nhttps://www.youtube.com/@MindAmend\nhttps://www.youtube.com/watch?v=dQw4w9WgXcQ\n/36kr/newsflashes\nhttps://example.com/feed.xml",
-				hint: "一行一个输入。Bilibili 空间页和 YouTube handle 会保存成订阅；直链视频会直接进今天；直链文章 URL 目前会诚实返回 unsupported。",
+				hint: "一行一个输入。Bilibili 空间页和 YouTube handle 会保存成订阅；直链视频会先进入今天，排队后也可能重新认回现有 tracked universe；直链文章 URL 目前会诚实返回 unsupported。",
 				categoryLabel: "新订阅默认分类",
 				tagsLabel: "新订阅标签（逗号分隔，可选）",
 				enabledLabel: "新建订阅后立即启用",
@@ -1930,7 +1944,7 @@ const MESSAGES = {
 				submitPending: "正在 intake...",
 				resultsTitle: "手动 intake 结果",
 				resultsDescription:
-					"每一行都会明确告诉你：这条输入最后是落成长期订阅、进入 today，还是因为当前运行时边界被拒绝。",
+					"每一行都会明确告诉你：这条输入最后是落成长期订阅、进入 today 后认回 tracked universe、停在 one-off lane，还是因为当前运行时边界被拒绝。",
 				summaryPrefix: "已处理",
 				legend: {
 					saveSubscription: "保存订阅",

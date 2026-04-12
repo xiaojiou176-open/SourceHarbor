@@ -30,6 +30,7 @@ class _VideosStub:
     def __init__(self) -> None:
         self.calls: list[dict[str, object]] = []
         self.matches: dict[str, dict[str, str]] = {}
+        self.reader_bridges: dict[str, dict[str, str | bool]] = {}
 
     async def process_video(self, **kwargs):
         job_suffix = kwargs["url"].replace("https://", "").replace("/", "-")
@@ -43,6 +44,9 @@ class _VideosStub:
 
     def get_subscription_match_for_video(self, *, video_db_id: uuid.UUID):
         return self.matches.get(str(video_db_id))
+
+    def get_reader_bridge_for_job(self, *, job_id: str):
+        return self.reader_bridges.get(str(job_id))
 
 
 def _build_service() -> ManualSourceIntakeService:
@@ -134,6 +138,50 @@ def test_manual_source_plan_handles_empty_invalid_and_unsupported_urls() -> None
     assert "Unsupported Bilibili URL" in bilibili_plan.message
 
 
+def test_manual_source_plan_covers_raw_ids_short_urls_and_helper_paths() -> None:
+    service = _build_service()
+
+    assert service.iter_non_empty_lines(" \nalpha\n\n beta \n") == [(2, "alpha"), (4, "beta")]
+
+    channel_id_plan = service.plan("UCabc12345")
+    assert channel_id_plan.recommended_action == "save_subscription"
+    assert channel_id_plan.source_type == "youtube_channel_id"
+
+    bilibili_uid_plan = service.plan("13416784")
+    assert bilibili_uid_plan.recommended_action == "save_subscription"
+    assert bilibili_uid_plan.source_type == "bilibili_uid"
+
+    youtube_short_url = service.plan("https://youtu.be/demo123")
+    assert youtube_short_url.recommended_action == "add_to_today"
+
+    youtube_shorts_url = service.plan("https://www.youtube.com/shorts/demo123")
+    assert youtube_shorts_url.recommended_action == "add_to_today"
+
+    youtube_channel_url = service.plan("https://www.youtube.com/channel/UCabc12345")
+    assert youtube_channel_url.recommended_action == "save_subscription"
+    assert youtube_channel_url.source_type == "youtube_channel_id"
+
+    youtube_user_url = service.plan("https://www.youtube.com/user/sourceharbor")
+    assert youtube_user_url.recommended_action == "save_subscription"
+    assert youtube_user_url.source_value == "sourceharbor"
+
+    bilibili_short_url = service.plan("https://b23.tv/demo123")
+    assert bilibili_short_url.recommended_action == "add_to_today"
+
+    bilibili_video_url = service.plan("https://www.bilibili.com/video/BV1xx411c7mD")
+    assert bilibili_video_url.recommended_action == "add_to_today"
+
+    assert service._creator_handle(source_type="youtube_user", source_value="sourceharbor") == (
+        "sourceharbor"
+    )
+    assert service._match_basis(
+        source_type="", source_url="https://example.com", rsshub_route=None
+    ) == ("source_url")
+    assert service._match_basis(source_type="", source_url=None, rsshub_route=None) == (
+        "source_value"
+    )
+
+
 def test_manual_source_submit_tracks_updates_and_reused_items() -> None:
     service = _build_service()
 
@@ -171,6 +219,14 @@ def test_manual_source_submit_matches_manual_video_back_to_existing_subscription
         "display_name": "@existing-channel",
         "creator_handle": "@existing-channel",
     }
+    job_id = match_video_url.replace("https://", "").replace("/", "-")
+    service.videos_service.reader_bridges[job_id] = {
+        "id": "reader-doc-1",
+        "title": "Reader edition one",
+        "publish_status": "published",
+        "reader_route": "/reader/reader-doc-1",
+        "published_with_gap": False,
+    }
 
     result = asyncio.run(
         service.submit(
@@ -187,3 +243,73 @@ def test_manual_source_submit_matches_manual_video_back_to_existing_subscription
     assert item["matched_subscription_id"] == "sub-existing-1"
     assert item["matched_subscription_name"] == "@existing-channel"
     assert item["match_confidence"] == "inferred_from_existing_ingest_event"
+    assert item["published_document_id"] == "reader-doc-1"
+    assert item["published_document_title"] == "Reader edition one"
+    assert item["published_document_publish_status"] == "published"
+    assert item["reader_route"] == "/reader/reader-doc-1"
+
+
+def test_manual_source_submit_accepts_uuid_video_db_id_matches() -> None:
+    service = _build_service()
+    match_video_url = "https://www.youtube.com/watch?v=uuidmatch"
+    video_db_id = uuid.uuid5(uuid.NAMESPACE_URL, match_video_url)
+    service.videos_service.matches[str(video_db_id)] = {
+        "subscription_id": "sub-existing-uuid",
+        "platform": "youtube",
+        "source_type": "youtube_user",
+        "source_value": "@uuid-channel",
+        "source_url": "https://www.youtube.com/@uuid-channel",
+        "rsshub_route": "/youtube/user/@uuid-channel",
+        "display_name": "@uuid-channel",
+        "creator_handle": "@uuid-channel",
+    }
+
+    async def process_video_with_uuid(**kwargs):
+        return {
+            "job_id": "uuid-job",
+            "video_db_id": video_db_id,
+            "reused": False,
+        }
+
+    service.videos_service.process_video = process_video_with_uuid
+
+    result = asyncio.run(
+        service.submit(
+            raw_input=match_video_url,
+            category="creator",
+            tags=[],
+            priority=10,
+            enabled=True,
+        )
+    )
+
+    item = result["results"][0]
+    assert item["relation_kind"] == "matched_subscription"
+    assert item["matched_subscription_id"] == "sub-existing-uuid"
+    assert item["matched_subscription_name"] == "@uuid-channel"
+    assert result["queued_manual_items"] == 1
+
+
+def test_manual_source_submit_rejects_value_and_runtime_errors() -> None:
+    service = _build_service()
+
+    async def process_video_with_errors(**kwargs):
+        url = kwargs["url"]
+        if url.endswith("value-error"):
+            raise ValueError("value boom")
+        raise RuntimeError("runtime boom")
+
+    service.videos_service.process_video = process_video_with_errors
+
+    result = asyncio.run(
+        service.submit(
+            raw_input="https://youtu.be/value-error\nhttps://youtu.be/runtime-error",
+            category="creator",
+            tags=[],
+            priority=10,
+            enabled=True,
+        )
+    )
+
+    assert result["rejected_count"] == 2
+    assert [item["message"] for item in result["results"]] == ["value boom", "runtime boom"]
