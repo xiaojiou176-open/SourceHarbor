@@ -173,7 +173,9 @@ def test_require_write_access_rejects_invalid_web_session_header(
 
 
 def test_sanitize_exception_detail_uses_fallback_and_truncates() -> None:
-    assert sanitize_exception_detail(Exception("   "), fallback="fallback-value") == "fallback-value"
+    assert (
+        sanitize_exception_detail(Exception("   "), fallback="fallback-value") == "fallback-value"
+    )
 
     sanitized_secret = sanitize_exception_detail(Exception("Bearer " + ("a" * 600)), max_chars=40)
     assert sanitized_secret == "Bearer ***REDACTED***"
