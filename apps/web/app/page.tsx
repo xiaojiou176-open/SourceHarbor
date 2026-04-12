@@ -147,7 +147,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.firstHop.evaluateTitle}</CardTitle>
-						<CardDescription>{copy.firstHop.evaluateDescription}</CardDescription>
+						<CardDescription>
+							{copy.firstHop.evaluateDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
@@ -163,11 +165,15 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.firstHop.operateTitle}</CardTitle>
-						<CardDescription>{copy.firstHop.operateDescription}</CardDescription>
+						<CardDescription>
+							{copy.firstHop.operateDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
-							<Link href="/subscriptions">{copy.firstHop.operatePrimaryCta}</Link>
+							<Link href="/subscriptions">
+								{copy.firstHop.operatePrimaryCta}
+							</Link>
 						</Button>
 						<Button asChild variant="outline">
 							<Link href="/feed">{copy.firstHop.operateSecondaryCta}</Link>
@@ -253,7 +259,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.frontDoors.searchTitle}</CardTitle>
-						<CardDescription>{copy.frontDoors.searchDescription}</CardDescription>
+						<CardDescription>
+							{copy.frontDoors.searchDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
@@ -310,7 +318,11 @@ export default function DashboardPage() {
 						<CardContent className="space-y-4 pt-0">
 							<div className="flex flex-wrap gap-2">
 								{builderCopy.highlightPills.map((pill) => (
-									<Badge key={pill} variant="outline" className="border-primary/20">
+									<Badge
+										key={pill}
+										variant="outline"
+										className="border-primary/20"
+									>
 										{pill}
 									</Badge>
 								))}
@@ -366,8 +378,8 @@ export default function DashboardPage() {
 									</p>
 									<p className="text-sm text-muted-foreground">
 										Use this quick board when you want the one-minute answer to
-										&quot;what already exists&quot; versus &quot;what still needs
-										a real submit or read-back proof&quot;.
+										&quot;what already exists&quot; versus &quot;what still
+										needs a real submit or read-back proof&quot;.
 									</p>
 								</div>
 								<ul className="space-y-2 text-sm text-muted-foreground">
@@ -387,8 +399,8 @@ export default function DashboardPage() {
 										<Link href="/builders">Open builders guide</Link>
 									</Button>
 									<Button asChild variant="outline" size="sm">
-											<a
-												href={BUILDER_RESOURCE_LINKS.distribution}
+										<a
+											href={BUILDER_RESOURCE_LINKS.distribution}
 											target="_blank"
 											rel="noreferrer"
 										>
@@ -430,7 +442,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.compounders.watchlistsTitle}</CardTitle>
-						<CardDescription>{copy.compounders.watchlistsDescription}</CardDescription>
+						<CardDescription>
+							{copy.compounders.watchlistsDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
@@ -444,7 +458,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.compounders.trendsTitle}</CardTitle>
-						<CardDescription>{copy.compounders.trendsDescription}</CardDescription>
+						<CardDescription>
+							{copy.compounders.trendsDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
@@ -458,7 +474,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.compounders.briefingsTitle}</CardTitle>
-						<CardDescription>{copy.compounders.briefingsDescription}</CardDescription>
+						<CardDescription>
+							{copy.compounders.briefingsDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>
@@ -472,7 +490,9 @@ export default function DashboardPage() {
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
 						<CardTitle>{copy.compounders.playgroundTitle}</CardTitle>
-						<CardDescription>{copy.compounders.playgroundDescription}</CardDescription>
+						<CardDescription>
+							{copy.compounders.playgroundDescription}
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="flex flex-wrap items-center gap-3 pt-0">
 						<Button asChild>

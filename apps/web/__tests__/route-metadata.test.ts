@@ -33,8 +33,8 @@ describe("route metadata", () => {
 		const metadata = buildAppShellMetadata();
 
 		expect(metadata.title).toMatchObject({
-				default: "SourceHarbor Front Door",
-			});
+			default: "SourceHarbor Front Door",
+		});
 		expect(metadata.description).toMatch(/Reader-first front door/i);
 		expect(toKeywordList(metadata.keywords)).toEqual(
 			expect.arrayContaining([

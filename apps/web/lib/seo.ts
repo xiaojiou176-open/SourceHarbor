@@ -206,7 +206,7 @@ export function buildAppShellMetadata(): Metadata {
 	const socialPreviewImage = resolveSocialPreviewImage();
 	return {
 		title: {
-				default: "SourceHarbor Front Door",
+			default: "SourceHarbor Front Door",
 			template: "%s | SourceHarbor",
 		},
 		metadataBase: siteUrl,

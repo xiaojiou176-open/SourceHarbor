@@ -114,13 +114,13 @@ const MESSAGES = {
 			absoluteLocale: "en-US",
 		},
 		dashboard: {
-				metadataTitle: "Front Door",
+			metadataTitle: "Front Door",
 			metadataDescription:
-					"Reader-first front door for source-universe intake, digest curation, published reader documents, and builder entry through MCP and HTTP API.",
-				kicker: "SourceHarbor front door",
-				heroTitle: "From source intake to finished reading",
+				"Reader-first front door for source-universe intake, digest curation, published reader documents, and builder entry through MCP and HTTP API.",
+			kicker: "SourceHarbor front door",
+			heroTitle: "From source intake to finished reading",
 			heroSubtitle:
-					"Choose one first path: attach a source universe, browse the digest feed, or open the reader when the story is ready. Builder and ops rails stay one click away.",
+				"Choose one first path: attach a source universe, browse the digest feed, or open the reader when the story is ready. Builder and ops rails stay one click away.",
 			frontDoors: {
 				subscriptionsTitle: "Source-universe intake",
 				subscriptionsDescription:
@@ -147,42 +147,42 @@ const MESSAGES = {
 				jobCta: "Inspect job evidence",
 			},
 			sectionHeadings: {
-					whyNow: "Why this front door works",
-					firstHop: "Choose your first route",
+				whyNow: "Why this front door works",
+				firstHop: "Choose your first route",
 				primaryFrontDoors: "Primary front doors",
 				builderEntryPoints: "Builder entry points",
 				compounderSurfaces: "Compounder surfaces",
 				keyMetrics: "Command center metrics",
 			},
 			whyNow: {
-					sharedTruthTitle: "One reading product across Web, API, and MCP",
+				sharedTruthTitle: "One reading product across Web, API, and MCP",
 				sharedTruthDescription:
-						"Reader, feed, search, and MCP all point to the same jobs, artifacts, and story state instead of sending newcomers into parallel product shells.",
-					proofFirstTitle: "Proof sits next to every route",
+					"Reader, feed, search, and MCP all point to the same jobs, artifacts, and story state instead of sending newcomers into parallel product shells.",
+				proofFirstTitle: "Proof sits next to every route",
 				proofFirstDescription:
-						"Every path stays honest about what is already real, what is preview-only, and what still needs a stronger receipt before you lean on it.",
-					returnLoopTitle: "Worth returning to after the first read",
+					"Every path stays honest about what is already real, what is preview-only, and what still needs a stronger receipt before you lean on it.",
+				returnLoopTitle: "Worth returning to after the first read",
 				returnLoopDescription:
-						"Watchlists, trends, briefings, bundles, and the playground make SourceHarbor feel like a reusable reading system instead of a one-shot summarizer.",
+					"Watchlists, trends, briefings, bundles, and the playground make SourceHarbor feel like a reusable reading system instead of a one-shot summarizer.",
 			},
 			firstHop: {
-					evaluateTitle: "Read the finished surface first",
+				evaluateTitle: "Read the finished surface first",
 				evaluateDescription:
-						"Start from the reader frontstage or the specimen detail when you want to understand the product before you decode the operator rails.",
-					evaluatePrimaryCta: "Open Reader",
-					evaluateSecondaryCta: "Open specimen detail",
-					operateTitle: "Attach a source universe",
+					"Start from the reader frontstage or the specimen detail when you want to understand the product before you decode the operator rails.",
+				evaluatePrimaryCta: "Open Reader",
+				evaluateSecondaryCta: "Open specimen detail",
+				operateTitle: "Attach a source universe",
 				operateDescription:
-						"Start with tracked universes and manual intake, then move into the digest feed once the source is in motion.",
-					operatePrimaryCta: "Open Subscriptions",
-					operateSecondaryCta: "Open Feed",
-					operateTertiaryCta: "Open Trends",
-					buildTitle: "Build or inspect the system",
+					"Start with tracked universes and manual intake, then move into the digest feed once the source is in motion.",
+				operatePrimaryCta: "Open Subscriptions",
+				operateSecondaryCta: "Open Feed",
+				operateTertiaryCta: "Open Trends",
+				buildTitle: "Build or inspect the system",
 				buildDescription:
-						"When you are here as a builder or operator, jump into MCP, builders docs, or ops after you already understand the reading path.",
+					"When you are here as a builder or operator, jump into MCP, builders docs, or ops after you already understand the reading path.",
 				buildPrimaryCta: "Open MCP quickstart",
 				buildSecondaryCta: "Open builders guide",
-					buildTertiaryCta: "Open Ops inbox",
+				buildTertiaryCta: "Open Ops inbox",
 			},
 			compounders: {
 				watchlistsTitle: "Watchlists are tracking objects",
@@ -209,7 +209,7 @@ const MESSAGES = {
 				proofCta: "Open Proof",
 				useCasesCta: "Open use case pages",
 			},
-				loadErrorTitle: "Unable to load the front door",
+			loadErrorTitle: "Unable to load the front door",
 			retryCurrentPage: "Retry this page",
 			metricsRegionLabel: "Key metrics",
 			metrics: {
@@ -1375,10 +1375,10 @@ const MESSAGES = {
 			metadataTitle: "首页",
 			metadataDescription:
 				"Reader-first front door，先带你进入 source-universe intake、digest curation、published reader docs，再进入 builder / MCP / ops。",
-				kicker: "SourceHarbor front door",
-				heroTitle: "从 source intake 走到 finished reading",
+			kicker: "SourceHarbor front door",
+			heroTitle: "从 source intake 走到 finished reading",
 			heroSubtitle:
-					"先选一条第一路径：挂接 source universe、进入 digest feed，或在故事成形后直接打开 reader。builder 和 ops rail 保持一跳可达。",
+				"先选一条第一路径：挂接 source universe、进入 digest feed，或在故事成形后直接打开 reader。builder 和 ops rail 保持一跳可达。",
 			frontDoors: {
 				subscriptionsTitle: "Source-universe intake",
 				subscriptionsDescription:
@@ -1413,34 +1413,34 @@ const MESSAGES = {
 				keyMetrics: "控制塔指标",
 			},
 			whyNow: {
-					sharedTruthTitle: "One reading product across Web, API, and MCP",
+				sharedTruthTitle: "One reading product across Web, API, and MCP",
 				sharedTruthDescription:
-						"Reader、feed、search 和 MCP 都指向同一套 jobs、artifacts 和 story state，而不是把新人推到三套平行壳子里。",
-					proofFirstTitle: "Proof sits next to every route",
+					"Reader、feed、search 和 MCP 都指向同一套 jobs、artifacts 和 story state，而不是把新人推到三套平行壳子里。",
+				proofFirstTitle: "Proof sits next to every route",
 				proofFirstDescription:
-						"每条路径都会诚实说明什么已经成立、什么只是 preview、什么还需要更强 receipt。",
-					returnLoopTitle: "Worth returning to after the first read",
+					"每条路径都会诚实说明什么已经成立、什么只是 preview、什么还需要更强 receipt。",
+				returnLoopTitle: "Worth returning to after the first read",
 				returnLoopDescription:
-						"Watchlists、trends、briefings、bundles 和 playground 让 SourceHarbor 更像可反复回来的阅读系统，而不是一次性 summarizer。",
+					"Watchlists、trends、briefings、bundles 和 playground 让 SourceHarbor 更像可反复回来的阅读系统，而不是一次性 summarizer。",
 			},
 			firstHop: {
-					evaluateTitle: "Read the finished surface first",
+				evaluateTitle: "Read the finished surface first",
 				evaluateDescription:
-						"先从 reader frontstage 或 specimen detail 理解产品，不要一上来就去解码 operator rails。",
-					evaluatePrimaryCta: "Open Reader",
-					evaluateSecondaryCta: "Open specimen detail",
-					operateTitle: "Attach a source universe",
+					"先从 reader frontstage 或 specimen detail 理解产品，不要一上来就去解码 operator rails。",
+				evaluatePrimaryCta: "Open Reader",
+				evaluateSecondaryCta: "Open specimen detail",
+				operateTitle: "Attach a source universe",
 				operateDescription:
-						"先从 tracked universes 和 manual intake 开始，再在 source 动起来之后进入 digest feed。",
-					operatePrimaryCta: "Open Subscriptions",
-					operateSecondaryCta: "Open Feed",
-					operateTertiaryCta: "Open Trends",
-					buildTitle: "Build or inspect the system",
+					"先从 tracked universes 和 manual intake 开始，再在 source 动起来之后进入 digest feed。",
+				operatePrimaryCta: "Open Subscriptions",
+				operateSecondaryCta: "Open Feed",
+				operateTertiaryCta: "Open Trends",
+				buildTitle: "Build or inspect the system",
 				buildDescription:
-						"如果你是作为 builder 或 operator 进来，先理解 reading path，再进入 MCP、builders docs 或 ops。",
+					"如果你是作为 builder 或 operator 进来，先理解 reading path，再进入 MCP、builders docs 或 ops。",
 				buildPrimaryCta: "打开 MCP quickstart",
 				buildSecondaryCta: "打开 builders 指南",
-					buildTertiaryCta: "打开 Ops inbox",
+				buildTertiaryCta: "打开 Ops inbox",
 			},
 			compounders: {
 				watchlistsTitle: "Watchlists 是 tracking object",
@@ -1467,7 +1467,7 @@ const MESSAGES = {
 				proofCta: "打开 Proof",
 				useCasesCta: "打开 use case 页面",
 			},
-				loadErrorTitle: "当前无法加载 front door",
+			loadErrorTitle: "当前无法加载 front door",
 			retryCurrentPage: "重试当前页面",
 			metricsRegionLabel: "关键指标",
 			metrics: {

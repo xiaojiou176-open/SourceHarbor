@@ -164,61 +164,63 @@ describe("dashboard/settings/subscriptions pages", () => {
 		});
 	});
 
-		it(
-			"renders the reader-first front door without operator-console modules",
-			async () => {
-				render(await DashboardPage());
-				expect(document.querySelector(".folo-page-shell")).not.toBeNull();
-				expect(
-					document.querySelectorAll('[data-slot="card"]').length,
-				).toBeGreaterThanOrEqual(7);
-				expect(
-					screen.getByRole("heading", {
-						name: "From source intake to finished reading",
-					}),
-				).toBeInTheDocument();
-				expect(
-					screen.getByText("Build with Codex, Claude Code, and MCP clients"),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("heading", {
-						name: "Why this front door works",
-					}),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("heading", {
-						name: "One reading product across Web, API, and MCP",
-					}),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("heading", {
-						name: "Proof sits next to every route",
-					}),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("heading", {
-						name: "Worth returning to after the first read",
-					}),
-				).toBeInTheDocument();
-				expect(
-					screen.getByRole("heading", { name: "Read the finished surface first" }),
-				).toBeInTheDocument();
-				expect(
-					screen.getAllByRole("link", { name: "Open Reader" })[0],
-				).toHaveAttribute("href", "/reader");
-				expect(
-					screen.getByRole("link", { name: "Open specimen detail" }),
-				).toHaveAttribute("href", "/reader/demo");
-				expect(
-					screen.getByRole("heading", { name: "Attach a source universe" }),
-				).toBeInTheDocument();
-				expect(screen.getByRole("link", { name: "Open Feed" })).toHaveAttribute(
-					"href",
-					"/feed",
-				);
-				expect(
-					screen.getByRole("heading", { name: "Source-universe intake" }),
-				).toBeInTheDocument();
+	it(
+		"renders the reader-first front door without operator-console modules",
+		async () => {
+			render(await DashboardPage());
+			expect(document.querySelector(".folo-page-shell")).not.toBeNull();
+			expect(
+				document.querySelectorAll('[data-slot="card"]').length,
+			).toBeGreaterThanOrEqual(7);
+			expect(
+				screen.getByRole("heading", {
+					name: "From source intake to finished reading",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getByText("Build with Codex, Claude Code, and MCP clients"),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "Why this front door works",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "One reading product across Web, API, and MCP",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "Proof sits next to every route",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "Worth returning to after the first read",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("heading", {
+					name: "Read the finished surface first",
+				}),
+			).toBeInTheDocument();
+			expect(
+				screen.getAllByRole("link", { name: "Open Reader" })[0],
+			).toHaveAttribute("href", "/reader");
+			expect(
+				screen.getByRole("link", { name: "Open specimen detail" }),
+			).toHaveAttribute("href", "/reader/demo");
+			expect(
+				screen.getByRole("heading", { name: "Attach a source universe" }),
+			).toBeInTheDocument();
+			expect(screen.getByRole("link", { name: "Open Feed" })).toHaveAttribute(
+				"href",
+				"/feed",
+			);
+			expect(
+				screen.getByRole("heading", { name: "Source-universe intake" }),
+			).toBeInTheDocument();
 			expect(
 				screen.getByRole("heading", {
 					name: "Watchlists are tracking objects",
@@ -237,18 +239,18 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getByRole("heading", { name: "Playground stays sample-proof" }),
 			).toBeInTheDocument();
-				expect(
-					screen.getAllByRole("link", { name: "Open Subscriptions" })[0],
-				).toHaveAttribute("href", "/subscriptions");
+			expect(
+				screen.getAllByRole("link", { name: "Open Subscriptions" })[0],
+			).toHaveAttribute("href", "/subscriptions");
 			expect(
 				screen.getAllByRole("link", { name: "Open Briefings" }).length,
 			).toBeGreaterThanOrEqual(2);
 			expect(
 				screen.getAllByRole("link", { name: "Open Briefings" })[0],
 			).toHaveAttribute("href", "/briefings");
-				expect(
-					screen.getAllByRole("link", { name: "Open Reader" })[0],
-				).toHaveAttribute("href", "/reader");
+			expect(
+				screen.getAllByRole("link", { name: "Open Reader" })[0],
+			).toHaveAttribute("href", "/reader");
 			for (const link of screen.getAllByRole("link", {
 				name: "Open Briefings",
 			})) {
@@ -309,46 +311,46 @@ describe("dashboard/settings/subscriptions pages", () => {
 				name: "Open distribution ledger",
 			});
 			expect(distributionLedgerLinks.length).toBeGreaterThanOrEqual(1);
-				for (const link of distributionLedgerLinks) {
-					expect(link).toHaveAttribute(
-						"href",
-						"https://github.com/xiaojiou176-open/sourceharbor/blob/main/docs/public-distribution.md",
-					);
-				}
-				expect(
-					screen.queryByRole("heading", { name: "Command center metrics" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("heading", { name: "Poll subscriptions" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("heading", { name: "Process a single source" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("heading", { name: "Recent ingest runs" }),
-				).not.toBeInTheDocument();
-			},
-			PAGE_TEST_TIMEOUT_MS,
-		);
+			for (const link of distributionLedgerLinks) {
+				expect(link).toHaveAttribute(
+					"href",
+					"https://github.com/xiaojiou176-open/sourceharbor/blob/main/docs/public-distribution.md",
+				);
+			}
+			expect(
+				screen.queryByRole("heading", { name: "Command center metrics" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("heading", { name: "Poll subscriptions" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("heading", { name: "Process a single source" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("heading", { name: "Recent ingest runs" }),
+			).not.toBeInTheDocument();
+		},
+		PAGE_TEST_TIMEOUT_MS,
+	);
 
-		it(
-			"still renders the front door when live data calls fail",
-			async () => {
-				mockListSubscriptions.mockRejectedValue(new Error("network failed"));
-				mockListVideos.mockRejectedValue(new Error("network failed"));
-				mockListIngestRuns.mockRejectedValue(new Error("network failed"));
+	it(
+		"still renders the front door when live data calls fail",
+		async () => {
+			mockListSubscriptions.mockRejectedValue(new Error("network failed"));
+			mockListVideos.mockRejectedValue(new Error("network failed"));
+			mockListIngestRuns.mockRejectedValue(new Error("network failed"));
 
-				render(await DashboardPage());
+			render(await DashboardPage());
 
-				expect(
-					screen.getByRole("heading", {
-						name: "From source intake to finished reading",
-					}),
-				).toBeInTheDocument();
-				expect(screen.queryByRole("alert")).not.toBeInTheDocument();
-			},
-			PAGE_TEST_TIMEOUT_MS,
-		);
+			expect(
+				screen.getByRole("heading", {
+					name: "From source intake to finished reading",
+				}),
+			).toBeInTheDocument();
+			expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+		},
+		PAGE_TEST_TIMEOUT_MS,
+	);
 
 	it(
 		"keeps the front door static even if old dashboard flash params are passed",
@@ -364,7 +366,9 @@ describe("dashboard/settings/subscriptions pages", () => {
 					name: "From source intake to finished reading",
 				}),
 			).toBeInTheDocument();
-			expect(screen.queryByText("Ingestion job queued.")).not.toBeInTheDocument();
+			expect(
+				screen.queryByText("Ingestion job queued."),
+			).not.toBeInTheDocument();
 			expect(screen.queryByRole("alert")).not.toBeInTheDocument();
 		},
 		PAGE_TEST_TIMEOUT_MS,
