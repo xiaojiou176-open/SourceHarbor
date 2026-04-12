@@ -138,29 +138,34 @@ export function ReadingPane({
 
 	if (!jobId) {
 		return (
-			<div
+			<output
 				className="feed-reading-pane-shell feed-reading-state"
 				data-reading-state="empty"
+				aria-live="polite"
+				aria-atomic="true"
 			>
-				<p className="feed-reading-state-title">
+				<span className="feed-reading-state-title block">
 					Select an entry to read the digest and body
-				</p>
-				<p className="feed-reading-state-meta">
+				</span>
+				<span className="feed-reading-state-meta block">
 					Video and article items both support AI digest and outline views
-				</p>
-			</div>
+				</span>
+			</output>
 		);
 	}
 
 	if (loading) {
 		return (
-			<div
+			<output
 				className="feed-reading-pane-shell feed-reading-state"
 				data-reading-state="loading"
+				aria-live="polite"
+				aria-atomic="true"
+				aria-busy="true"
 			>
-				<div className="feed-reading-spinner" aria-hidden="true" />
-				<p className="feed-reading-state-meta">Loading...</p>
-			</div>
+				<span className="feed-reading-spinner" aria-hidden="true" />
+				<span className="feed-reading-state-meta block">Loading...</span>
+			</output>
 		);
 	}
 
@@ -169,6 +174,9 @@ export function ReadingPane({
 			<div
 				className="feed-reading-pane-shell feed-reading-state"
 				data-reading-state="error"
+				role="alert"
+				aria-live="assertive"
+				aria-atomic="true"
 			>
 				<p className="feed-reading-error">
 					Body content is temporarily unavailable. Please try again later.
@@ -194,6 +202,9 @@ export function ReadingPane({
 	const safeVideoUrl = videoUrl ? sanitizeExternalUrl(videoUrl) : null;
 	const safeReaderRoute = identity?.reader_route?.trim().startsWith("/reader/")
 		? identity.reader_route.trim()
+		: null;
+	const safeUniverseRoute = identity?.subscription_id?.trim()
+		? `/feed?sub=${encodeURIComponent(identity.subscription_id.trim())}`
 		: null;
 	const sourceLabel = source ? toSourceLabel(source) : null;
 	const identityModel = identity
@@ -257,6 +268,15 @@ export function ReadingPane({
 									data-interaction="link-primary"
 								>
 									Open reader edition
+								</Link>
+							) : null}
+							{safeUniverseRoute ? (
+								<Link
+									href={safeUniverseRoute}
+									className={`feed-reading-link ${editorialMono.className}`}
+									data-interaction="link-muted"
+								>
+									Open tracked universe
 								</Link>
 							) : null}
 						</div>

@@ -6,7 +6,7 @@ This file is the machine-generated third-party rights ledger for the tracked pub
 
 ## Scope
 
-- Python runtime inventory comes from the canonical `uv run --extra dev python` environment, using a throwaway temp uv environment instead of root `.venv` or repo-owned runtime roots.
+- Python runtime inventory comes from the canonical `uv sync --frozen --extra dev --python-platform aarch64-unknown-linux-gnu` environment, using a throwaway temp uv environment instead of root `.venv` or repo-owned runtime roots.
 - Web runtime inventory comes from `apps/web/package-lock.json` and excludes `dev=true` packages.
 - `UNKNOWN` means the package metadata did not expose a machine-readable license field/classifier in this inventory pass; it is a follow-up item, not a silent pass.
 
@@ -14,7 +14,7 @@ This file is the machine-generated third-party rights ledger for the tracked pub
 
 | Ecosystem | Packages | UNKNOWN license declarations |
 | --- | ---: | ---: |
-| Python runtime | 95 | 0 |
+| Python runtime | 96 | 0 |
 | Web runtime | 287 | 0 |
 
 ## Python Runtime Packages
@@ -35,7 +35,7 @@ This file is the machine-generated third-party rights ledger for the tracked pub
 | `click` | `8.3.1` | `BSD-3-Clause` | `license-expression` |
 | `courlan` | `1.3.2` | `Apache 2.0` | `license-field` |
 | `coverage` | `7.13.4` | `Apache-2.0` | `license-field` |
-| `cryptography` | `46.0.6` | `Apache-2.0 OR BSD-3-Clause` | `license-expression` |
+| `cryptography` | `46.0.7` | `Apache-2.0 OR BSD-3-Clause` | `license-expression` |
 | `dateparser` | `1.3.0` | `BSD` | `license-field` |
 | `distro` | `1.9.0` | `Apache License, Version 2.0` | `license-field` |
 | `execnet` | `2.1.2` | `MIT` | `license-expression` |
@@ -43,6 +43,7 @@ This file is the machine-generated third-party rights ledger for the tracked pub
 | `frozenlist` | `1.8.0` | `Apache-2.0` | `license-field` |
 | `google-auth` | `2.48.0` | `Apache 2.0` | `license-field` |
 | `google-genai` | `1.64.0` | `Apache-2.0` | `license-expression` |
+| `greenlet` | `3.3.2` | `MIT AND PSF-2.0` | `license-expression` |
 | `h11` | `0.16.0` | `MIT` | `license-field` |
 | `htmldate` | `1.9.4` | `Apache 2.0` | `license-field` |
 | `httpcore` | `1.0.9` | `BSD-3-Clause` | `license-expression` |
@@ -331,7 +332,7 @@ http://www.apache.org/licenses/LICENSE-2.0` | `license-field` |
 | `@radix-ui/react-use-size` | `1.1.1` | `MIT` | `package-lock` |
 | `@radix-ui/react-visually-hidden` | `1.2.3` | `MIT` | `package-lock` |
 | `@radix-ui/rect` | `1.1.1` | `MIT` | `package-lock` |
-| `@sourceharbor/sdk` | `0.1.13` | `MIT` | `package-lock` |
+| `@sourceharbor/sdk` | `0.1.14` | `MIT` | `package-lock` |
 | `@swc/helpers` | `0.5.15` | `Apache-2.0` | `package-lock` |
 | `@tailwindcss/node` | `4.2.2` | `MIT` | `package-lock` |
 | `@tailwindcss/oxide` | `4.2.2` | `MIT` | `package-lock` |

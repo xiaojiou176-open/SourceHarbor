@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from html import escape
-from typing import Any, Callable
+from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import httpx

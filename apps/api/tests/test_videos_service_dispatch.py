@@ -804,3 +804,66 @@ def test_validate_video_source_url_accepts_whitelisted_hosts(url: str, expected:
 def test_validate_video_source_url_rejects_disallowed_hosts(url: str, error_code: str) -> None:
     with pytest.raises(ValueError, match=rf"^{re.escape(error_code)}$"):
         _validate_video_source_url(url)
+
+
+def test_get_reader_bridge_for_job_returns_current_reader_document() -> None:
+    service = VideosService(db=object())
+
+    class _ReaderRepo:
+        def __init__(self, _db: object) -> None:
+            self.db = _db
+
+        def list_current(self, limit: int = 64) -> list[object]:
+            assert limit == 64
+            return [
+                types.SimpleNamespace(
+                    id=uuid.uuid4(),
+                    title="Ignored",
+                    published_with_gap=False,
+                    source_refs_json=["not-a-dict"],
+                ),
+                types.SimpleNamespace(
+                    id=uuid.uuid4(),
+                    title="Reader edition",
+                    published_with_gap=True,
+                    source_refs_json=[
+                        {"job_id": "different-job"},
+                        {"job_id": "job-reader-match"},
+                    ],
+                ),
+            ]
+
+    original_repo = videos_module.PublishedReaderDocumentsRepository
+    videos_module.PublishedReaderDocumentsRepository = _ReaderRepo
+    try:
+        result = service.get_reader_bridge_for_job(job_id="job-reader-match")
+    finally:
+        videos_module.PublishedReaderDocumentsRepository = original_repo
+
+    assert result == {
+        "id": result["id"],
+        "title": "Reader edition",
+        "publish_status": "published_with_gap",
+        "reader_route": f"/reader/{result['id']}",
+        "published_with_gap": True,
+    }
+
+
+def test_get_reader_bridge_for_job_handles_empty_ids_and_repo_errors() -> None:
+    service = VideosService(db=object())
+    assert service.get_reader_bridge_for_job(job_id="   ") is None
+
+    class _ExplodingReaderRepo:
+        def __init__(self, _db: object) -> None:
+            self.db = _db
+
+        def list_current(self, limit: int = 64) -> list[object]:
+            assert limit == 64
+            raise RuntimeError("reader repo unavailable")
+
+    original_repo = videos_module.PublishedReaderDocumentsRepository
+    videos_module.PublishedReaderDocumentsRepository = _ExplodingReaderRepo
+    try:
+        assert service.get_reader_bridge_for_job(job_id="job-reader-match") is None
+    finally:
+        videos_module.PublishedReaderDocumentsRepository = original_repo

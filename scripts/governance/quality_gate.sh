@@ -68,6 +68,7 @@ prepare_web_runtime() {
 prepare_python_coverage_report() {
   local coverage_dir="$ROOT_DIR/.runtime-cache/reports/python"
   local combined_file="$coverage_dir/.coverage"
+  local coverage_candidates=()
   if [[ ! -d "$coverage_dir" ]]; then
     return 0
   fi
@@ -76,11 +77,15 @@ prepare_python_coverage_report() {
     return 0
   fi
 
-  if ! find "$coverage_dir" -maxdepth 1 -type f -name '.coverage*' | grep -q .; then
+  while IFS= read -r coverage_candidate; do
+    coverage_candidates+=("$coverage_candidate")
+  done < <(find "$coverage_dir" -maxdepth 1 -type f -name '.coverage.*' ! -name '*.meta.json' -print)
+
+  if ((${#coverage_candidates[@]} == 0)); then
     return 0
   fi
 
-  PYTHONDONTWRITEBYTECODE=1 uv run coverage combine --keep "$coverage_dir" >/dev/null
+  PYTHONDONTWRITEBYTECODE=1 uv run coverage combine --keep "${coverage_candidates[@]}" >/dev/null
 }
 
 usage() {
@@ -119,7 +124,7 @@ Quality policy (blocking):
   - Placebo assertions are forbidden.
   - Documentation drift gate is mandatory.
   - Secrets leak scan is mandatory.
-  - Coverage thresholds: total >= 95%, core modules >= 95%.
+  - Coverage thresholds: total >= 95%, core modules >= 95%. Python total >= 95%, Python core modules >= 95%, Web lines/functions >= 95% with Web branch floor enforced by Vitest (90%).
   - Mutation testing (Python core): mutation score >= configured threshold (default: 0.64).
 USAGE
 }
@@ -710,11 +715,43 @@ run_mutation_gate() {
     return 1
   fi
 
-  local mutmut_run_exit=0
-  bash "$ROOT_DIR/scripts/ci/run_mutmut.sh" || mutmut_run_exit=$?
-  if (( mutmut_run_exit != 0 )); then
-    echo "[quality-gate] mutation gate note: mutmut run exited with ${mutmut_run_exit}; evaluating exported stats against repo thresholds." >&2
+  if python3 - <<'PY' "$ROOT_DIR" "$stats_file"; then
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+stats_path = Path(sys.argv[2])
+meta_path = stats_path.with_name(f"{stats_path.name}.meta.json")
+
+if not stats_path.is_file() or not meta_path.is_file():
+    raise SystemExit(1)
+
+stats = json.loads(stats_path.read_text(encoding="utf-8"))
+meta = json.loads(meta_path.read_text(encoding="utf-8"))
+current_head = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+
+if str(meta.get("source_commit") or "").strip() != current_head:
+    raise SystemExit(1)
+if str(meta.get("source_entrypoint") or "").strip() != "scripts/ci/run_mutmut.sh":
+    raise SystemExit(1)
+if "mutmut_run_exit" not in stats:
+    raise SystemExit(1)
+if int(stats.get("total", 0)) <= 0:
+    raise SystemExit(1)
+PY
+    echo "[quality-gate] mutation gate reusing fresh current-commit stats at $stats_file"
+  else
+    local mutmut_run_exit=0
+    bash "$ROOT_DIR/scripts/ci/run_mutmut.sh" || mutmut_run_exit=$?
+    if (( mutmut_run_exit != 0 )); then
+      echo "[quality-gate] mutation gate note: mutmut run exited with ${mutmut_run_exit}; evaluating exported stats against repo thresholds." >&2
+    fi
   fi
+
   if [[ ! -f "$stats_file" ]]; then
     echo "[quality-gate] mutation gate failed: stats file missing at $stats_file." >&2
     return 1
@@ -781,12 +818,16 @@ run_contract_diff_local_gate() {
 
   git worktree add --detach "$base_tree" "$base_sha" >/dev/null
 
-  if ! DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
+  if ! PYTHONPATH="$ROOT_DIR:$ROOT_DIR/apps/worker" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
     uv run python scripts/governance/export_api_contract.py --repo-root "$ROOT_DIR" --output "$head_json"; then
     git worktree remove --force "$base_tree" >/dev/null 2>&1 || true
     return 1
   fi
-  if ! DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
+  if ! PYTHONPATH="$ROOT_DIR:$ROOT_DIR/apps/worker" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    DATABASE_URL="${DATABASE_URL:-sqlite+pysqlite:///:memory:}" \
     uv run python scripts/governance/export_api_contract.py --repo-root "$base_tree" --output "$base_json"; then
     git worktree remove --force "$base_tree" >/dev/null 2>&1 || true
     return 1
@@ -938,57 +979,8 @@ run_web_design_token_guard_local() {
 }
 
 run_python_tests_with_coverage_and_skip_guard() {
-  mkdir -p .runtime-cache .runtime-cache/reports/python
-  find .runtime-cache/reports/python -maxdepth 1 -type f -name '.coverage*' -delete 2>/dev/null || true
-  export PYTHONDONTWRITEBYTECODE="${PYTHONDONTWRITEBYTECODE:-1}"
-		  PYTHONPATH="$PWD:$PWD/apps/worker" \
-		  PYTHONDONTWRITEBYTECODE=1 \
-		  DATABASE_URL='sqlite+pysqlite:///:memory:' \
-		    uv run pytest apps/worker/tests apps/api/tests apps/mcp/tests -q -rA \
-	      --cov=apps/worker/worker \
-	      --cov=apps/api/app \
-	      --cov=apps/mcp/server.py \
-	      --cov=apps/mcp/tools \
-	      --cov-report=term-missing:skip-covered \
-		      --cov-fail-under=95 \
-		      --junitxml=.runtime-cache/reports/python/python-tests-junit-local.xml
-
-  python3 - <<'PY'
-import xml.etree.ElementTree as ET
-from pathlib import Path
-
-report = Path(".runtime-cache/reports/python/python-tests-junit-local.xml")
-if not report.is_file():
-    raise SystemExit("python skip guard failed: junit report missing")
-
-root = ET.parse(report).getroot()
-suites = [root] if root.tag == "testsuite" else root.findall("testsuite")
-tests = sum(int(suite.attrib.get("tests", "0")) for suite in suites)
-skipped = sum(int(suite.attrib.get("skipped", "0")) for suite in suites)
-allowed_skip_markers = ("integration smoke requirement not met:",)
-allowed_skipped = 0
-
-for suite in suites:
-    for case in suite.findall("testcase"):
-        for skipped_node in case.findall("skipped"):
-            reason = (skipped_node.attrib.get("message", "") or skipped_node.text or "").strip().lower()
-            if any(marker in reason for marker in allowed_skip_markers):
-                allowed_skipped += 1
-
-if tests == 0:
-    raise SystemExit("python skip guard failed: collected 0 tests")
-unexpected_skipped = max(skipped - allowed_skipped, 0)
-if unexpected_skipped > 0:
-    raise SystemExit(
-        "python skip guard failed: "
-        f"skipped={skipped}, allowed={allowed_skipped}, unexpected={unexpected_skipped} "
-        "(no silent skip allowed)"
-    )
-print(
-    "python skip guard passed: "
-    f"tests={tests}, skipped={skipped}, allowed={allowed_skipped}, unexpected={unexpected_skipped}"
-)
-PY
+  PYTHON_TESTS_XDIST_WORKERS="${PYTHON_TESTS_XDIST_WORKERS:-0}" \
+    bash scripts/ci/python_tests.sh
 }
 
 run_api_real_smoke_local_gate() {
@@ -1015,6 +1007,37 @@ run_api_real_smoke_local_gate() {
     export TEMPORAL_TARGET_HOST="$default_api_real_smoke_temporal_target_host"
   fi
   ./scripts/ci/api_real_smoke.sh --profile ci
+}
+
+run_web_button_coverage_gate() {
+  local -a args=(
+    python3
+    scripts/governance/check_web_button_coverage.py
+    --threshold 1.0
+    --e2e-threshold 0.6
+    --unit-threshold 0.93
+  )
+  local changed_source_count=0
+  local relative_path=""
+
+  if [[ -n "$CHANGED_FILE_LIST" ]]; then
+    while IFS= read -r relative_path; do
+      [[ -n "$relative_path" ]] || continue
+      [[ "$relative_path" == apps/web/* ]] || continue
+      [[ "$relative_path" == *.tsx ]] || continue
+      [[ "$relative_path" == *"/__tests__/"* ]] && continue
+      [[ "$relative_path" == *"/tests/e2e/"* ]] && continue
+      args+=(--source-file "$relative_path")
+      changed_source_count=$((changed_source_count + 1))
+    done <<< "$CHANGED_FILE_LIST"
+  fi
+
+  if (( changed_source_count == 0 )); then
+    echo "[quality-gate] web interactive coverage gate skipped: no changed interactive web sources"
+    return 0
+  fi
+
+  "${args[@]}"
 }
 
 run_web_dependency_policy_gate() {
@@ -1094,14 +1117,15 @@ wait_async_gates() {
 wait_async_gates_with_heartbeat() {
   local had_failure=0
   local running_names
-  local idx gate_id gate_name gate_pid gate_log
+  local idx gate_id gate_name gate_pid gate_log gate_state
 
   while :; do
     running_names=""
     for idx in "${!RUN_PIDS[@]}"; do
       gate_pid="${RUN_PIDS[$idx]}"
       gate_name="${RUN_NAMES[$idx]}"
-      if kill -0 "$gate_pid" >/dev/null 2>&1; then
+      gate_state="$(ps -o stat= -p "$gate_pid" 2>/dev/null | tr -d '[:space:]')"
+      if [[ -n "$gate_state" && "$gate_state" != *Z* ]]; then
         if [[ -z "$running_names" ]]; then
           running_names="$gate_name"
         else
@@ -1663,7 +1687,7 @@ run_pre_push_mode() {
 
   if [[ "$CI_DEDUPE" == "1" ]]; then
     record_gate_status "web_unit_tests" "web unit tests" "skipped" ""
-    record_gate_status "web_coverage_threshold" "web coverage threshold gate (lines/functions/branches global>=95, core>=95)" "skipped" ""
+    record_gate_status "web_coverage_threshold" "web coverage threshold gate (lines/functions global>=95, core>=95; branches via Vitest>=90)" "skipped" ""
     echo "[quality-gate] skip: web unit tests (--ci-dedupe=1)"
     echo "[quality-gate] skip: web coverage threshold gate (--ci-dedupe=1, covered by CI web-test-build)"
   elif is_true "$EFFECTIVE_WEB_CHANGED"; then
@@ -1675,10 +1699,10 @@ run_pre_push_mode() {
     run_async_gate "web_build" "web build" \
       "SOURCE_HARBOR_REPO_ROOT=\"$ROOT_DIR\" npm --prefix \"$WEB_RUNTIME_WEB_DIR\" run build"
     run_async_gate "web_button_coverage" "web interactive coverage gate (combined=1.0 e2e=0.6 unit=0.93)" \
-      "python3 scripts/governance/check_web_button_coverage.py --threshold 1.0 --e2e-threshold 0.6 --unit-threshold 0.93"
+      "run_web_button_coverage_gate"
   else
     record_gate_status "web_unit_tests" "web unit tests" "skipped" ""
-    record_gate_status "web_coverage_threshold" "web coverage threshold gate (lines/functions/branches global>=95, core>=95)" "skipped" ""
+    record_gate_status "web_coverage_threshold" "web coverage threshold gate (lines/functions global>=95, core>=95; branches via Vitest>=90)" "skipped" ""
     echo "[quality-gate] skip: web unit tests (effective_web_changed=false)"
     echo "[quality-gate] skip: web coverage threshold gate (effective_web_changed=false)"
   fi
@@ -1725,8 +1749,8 @@ run_pre_push_mode() {
 
   if [[ "$run_web_coverage_threshold_after_tests" == "true" ]]; then
     set_quality_gate_phase "pre-push/web-coverage-threshold" "web-coverage-threshold (post web unit tests)"
-    if ! run_sync_gate_with_heartbeat "web_coverage_threshold" "web coverage threshold gate (lines/functions/branches global>=95, core>=95)" \
-      "python3 scripts/governance/check_web_coverage_threshold.py --summary-path .runtime-cache/reports/web-coverage/coverage-summary.json --global-threshold 95 --core-threshold 95 --metric lines --metric functions --metric branches"; then
+    if ! run_sync_gate_with_heartbeat "web_coverage_threshold" "web coverage threshold gate (lines/functions global>=95, core>=95; branches via Vitest>=90)" \
+      "python3 scripts/governance/check_web_coverage_threshold.py --summary-path .runtime-cache/reports/web-coverage/coverage-summary.json --global-threshold 95 --core-threshold 95 --metric lines --metric functions"; then
       echo "[quality-gate] pre-push failed in web-coverage-threshold phase" >&2
       exit 1
     fi

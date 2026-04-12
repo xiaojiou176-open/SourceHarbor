@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useTransition } from "react";
 import { getFlashMessage, toErrorCode } from "@/app/flash-message";
 import { SourceIdentityCard } from "@/components/source-identity-card";
@@ -128,6 +129,16 @@ function statusLabel(copy: Copy, status: string): string {
 		return copy.statusLabels.reused;
 	}
 	return copy.statusLabels.rejected;
+}
+
+function buildFeedUniverseHref(
+	subscriptionId: string | null | undefined,
+): string | null {
+	const value = String(subscriptionId || "").trim();
+	if (!value) {
+		return null;
+	}
+	return `/feed?sub=${encodeURIComponent(value)}`;
 }
 
 export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
@@ -270,6 +281,17 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 							{result.results.map((item) => {
 								const tone = statusTone(item.status);
 								const identity = resolveManualIntakeIdentity(item);
+								const feedUniverseHref = buildFeedUniverseHref(
+									item.matched_subscription_id || item.subscription_id,
+								);
+								const jobHref = item.job_id
+									? `/jobs?job_id=${encodeURIComponent(item.job_id)}`
+									: null;
+								const readerHref = item.reader_route
+									?.trim()
+									.startsWith("/reader/")
+									? item.reader_route.trim()
+									: null;
 								return (
 									<div
 										key={`${item.line_number}-${item.raw_input}`}
@@ -306,11 +328,47 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 													copy.emptyState,
 											}}
 											compact
+											action={
+												<div className="flex flex-wrap gap-3 text-sm">
+													{readerHref ? (
+														<Link
+															href={readerHref}
+															className="underline underline-offset-4"
+														>
+															Open reader edition
+														</Link>
+													) : null}
+													{feedUniverseHref ? (
+														<Link
+															href={feedUniverseHref}
+															className="underline underline-offset-4"
+														>
+															Open tracked universe
+														</Link>
+													) : null}
+													{jobHref ? (
+														<Link
+															href={jobHref}
+															className="underline underline-offset-4"
+														>
+															Open job trace
+														</Link>
+													) : null}
+												</div>
+											}
 										/>
 										<div className="rounded-xl border border-border/50 bg-muted/20 px-3 py-2 text-xs text-muted-foreground">
 											<p className={`break-all ${editorialMono.className}`}>
 												{item.raw_input}
 											</p>
+											{item.published_document_title ? (
+												<p className="mt-2">
+													Published unit · {item.published_document_title}
+													{item.published_document_publish_status
+														? ` · ${item.published_document_publish_status}`
+														: ""}
+												</p>
+											) : null}
 											<p className="mt-2">{item.message}</p>
 										</div>
 									</div>
