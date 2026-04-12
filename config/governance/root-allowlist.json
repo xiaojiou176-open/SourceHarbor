@@ -100,6 +100,13 @@
       "mutable": false
     },
     {
+      "path": ".stitch",
+      "kind": "design-contract",
+      "reason": "Repo-tracked Stitch design truth source for SourceHarbor UI system rules and generation guidance.",
+      "owner": "platform",
+      "mutable": false
+    },
+    {
       "path": "AGENTS.md",
       "kind": "governance",
       "reason": "Repository AI execution constitution.",
