@@ -29,6 +29,7 @@ ALLOWED_DOTFILES = {
     ".secrets.baseline",
     ".stylelintignore",
     ".stylelintrc.json",
+    ".stitch",
     ".vscode",
 }
 ALLOWED_ROOT_FILES = {
