@@ -79,7 +79,9 @@ export default async function ReaderPage() {
 							variant="outline"
 							className="w-fit border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/30 dark:text-rose-200"
 						>
-							{shelfUnavailable ? "Reader temporarily unavailable" : "Reader frontstage"}
+							{shelfUnavailable
+								? "Reader temporarily unavailable"
+								: "Reader frontstage"}
 						</Badge>
 						<div className="space-y-4">
 							<p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">

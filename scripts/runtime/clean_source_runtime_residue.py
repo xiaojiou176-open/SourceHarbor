@@ -43,9 +43,7 @@ def _collect_residue() -> tuple[list[str], list[str]]:
         if path.is_dir() and (path.name in DIR_MARKERS or path.name.endswith(".egg-info")):
             residue_dirs.append(rel_path(path))
             continue
-        if path.is_file() and (
-            path.suffix in FILE_SUFFIXES or path.name in FILE_MARKERS
-        ):
+        if path.is_file() and (path.suffix in FILE_SUFFIXES or path.name in FILE_MARKERS):
             residue_files.append(rel_path(path))
 
     return sorted(residue_dirs), sorted(residue_files)

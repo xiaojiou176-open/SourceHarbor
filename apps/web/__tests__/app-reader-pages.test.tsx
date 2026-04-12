@@ -127,10 +127,9 @@ describe("reader pages", () => {
 			"href",
 			"/subscriptions",
 		);
-		expect(screen.getByRole("link", { name: "Open reader detail" })).toHaveAttribute(
-			"href",
-			"/reader/doc-1",
-		);
+		expect(
+			screen.getByRole("link", { name: "Open reader detail" }),
+		).toHaveAttribute("href", "/reader/doc-1");
 	});
 
 	it("renders reader detail with warning banner and source drawer", async () => {
@@ -207,7 +206,9 @@ describe("reader pages", () => {
 	});
 
 	it("renders an honest shelf error instead of pretending the shelf is empty", async () => {
-		mockListPublishedReaderDocuments.mockRejectedValue(new Error("network failed"));
+		mockListPublishedReaderDocuments.mockRejectedValue(
+			new Error("network failed"),
+		);
 		mockGetNavigationBrief.mockRejectedValue(new Error("network failed"));
 
 		render(await ReaderPage());
@@ -223,10 +224,9 @@ describe("reader pages", () => {
 		expect(
 			within(alert).getByRole("link", { name: "Open specimen detail" }),
 		).toHaveAttribute("href", `/reader/${DEMO_READER_DOCUMENT_ID}`);
-		expect(within(alert).getByRole("link", { name: "Open ops desk" })).toHaveAttribute(
-			"href",
-			"/ops",
-		);
+		expect(
+			within(alert).getByRole("link", { name: "Open ops desk" }),
+		).toHaveAttribute("href", "/ops");
 		expect(
 			screen.queryByText("No published reader documents yet"),
 		).not.toBeInTheDocument();

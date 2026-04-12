@@ -7,6 +7,7 @@ import { EntryList } from "@/components/entry-list";
 import { FeedFeedbackPanel } from "@/components/feed-feedback-panel";
 import { FormSelectField } from "@/components/form-field";
 import { ReadingPane } from "@/components/reading-pane";
+import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SyncNowButton } from "@/components/sync-now-button";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api/client";
@@ -16,6 +17,7 @@ import {
 	type SearchParamsInput,
 } from "@/lib/search-params";
 import { buildProductMetadata } from "@/lib/seo";
+import { resolveSubscriptionIdentity } from "@/lib/source-identity";
 
 const feedCopy = getLocaleMessages().feedPage;
 
@@ -183,6 +185,9 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 	let selectedFeedback: Awaited<
 		ReturnType<typeof apiClient.getFeedFeedback>
 	> | null = null;
+	let activeSubscription:
+		| Awaited<ReturnType<typeof apiClient.listSubscriptions>>[number]
+		| null = null;
 	let errorCode: string | null = null;
 	try {
 		const query: Parameters<typeof apiClient.getDigestFeed>[0] = {
@@ -205,6 +210,20 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 			query.subscription_id = safeSubscriptionId;
 		}
 		feed = await apiClient.getDigestFeed(query);
+		if (safeSubscriptionId) {
+			try {
+				const subscriptions = await apiClient.listSubscriptions({
+					enabled_only: false,
+				});
+				activeSubscription =
+					subscriptions.find(
+						(subscription) =>
+							String(subscription.id || "").trim() === safeSubscriptionId,
+					) ?? null;
+			} catch {
+				activeSubscription = null;
+			}
+		}
 	} catch (err) {
 		errorCode = toErrorCode(err);
 	}
@@ -377,6 +396,33 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					</div>
 				</form>
 			</section>
+
+			{safeSubscriptionId ? (
+				<section
+					className="folo-panel folo-surface space-y-4"
+					aria-label={copy.activeTrackedUniverseLabel}
+				>
+					<div className="space-y-1">
+						<p className="folo-page-kicker">
+							{copy.activeTrackedUniverseEyebrow}
+						</p>
+						<h2 className="text-lg font-semibold text-foreground">
+							{copy.activeTrackedUniverseTitle}
+						</h2>
+						<p className="text-sm text-muted-foreground">
+							{activeSubscription
+								? copy.activeTrackedUniverseDescription
+								: copy.activeTrackedUniverseFallback}
+						</p>
+					</div>
+					{activeSubscription ? (
+						<SourceIdentityCard
+							identity={resolveSubscriptionIdentity(activeSubscription)}
+							compact
+						/>
+					) : null}
+				</section>
+			) : null}
 
 			{errorCode ? (
 				<>

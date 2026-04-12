@@ -132,7 +132,7 @@ def _resolve_provider_failure(
 
 
 def _unpack_gemini_result(
-    result: tuple[str | None, str] | tuple[str | None, str, dict[str, Any]]
+    result: tuple[str | None, str] | tuple[str | None, str, dict[str, Any]],
 ) -> tuple[str | None, str, dict[str, Any]]:
     if len(result) == 2:
         text, media_input = result

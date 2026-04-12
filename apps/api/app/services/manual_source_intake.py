@@ -378,18 +378,18 @@ class ManualSourceIntakeService:
                         job_id=str(payload.get("job_id") or "")
                     )
                     if reader_bridge is not None:
-                        result["published_document_id"] = str(
-                            reader_bridge.get("id") or ""
-                        ).strip() or None
-                        result["published_document_title"] = str(
-                            reader_bridge.get("title") or ""
-                        ).strip() or None
-                        result["published_document_publish_status"] = str(
-                            reader_bridge.get("publish_status") or ""
-                        ).strip() or None
-                        result["reader_route"] = str(
-                            reader_bridge.get("reader_route") or ""
-                        ).strip() or None
+                        result["published_document_id"] = (
+                            str(reader_bridge.get("id") or "").strip() or None
+                        )
+                        result["published_document_title"] = (
+                            str(reader_bridge.get("title") or "").strip() or None
+                        )
+                        result["published_document_publish_status"] = (
+                            str(reader_bridge.get("publish_status") or "").strip() or None
+                        )
+                        result["reader_route"] = (
+                            str(reader_bridge.get("reader_route") or "").strip() or None
+                        )
                     result["relation_kind"] = relation_kind
                     result["matched_subscription_id"] = matched_subscription_id
                     result["matched_subscription_name"] = matched_subscription_name

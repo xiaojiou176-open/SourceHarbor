@@ -77,7 +77,9 @@ def _iter_source_files(source_roots: list[Path], source_files: list[Path]) -> li
     return files
 
 
-def collect_interactive_labels(source_roots: list[Path], source_files: list[Path]) -> dict[str, set[str]]:
+def collect_interactive_labels(
+    source_roots: list[Path], source_files: list[Path]
+) -> dict[str, set[str]]:
     labels: dict[str, set[str]] = {}
     for file_path in _iter_source_files(source_roots, source_files):
         content = file_path.read_text(encoding="utf-8")

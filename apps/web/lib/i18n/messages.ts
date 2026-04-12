@@ -560,7 +560,14 @@ const MESSAGES = {
 				ops: "Ops",
 				misc: "Misc",
 			},
-			subscriptionFilterLabel: "Subscription",
+			subscriptionFilterLabel: "Tracked universe",
+			activeTrackedUniverseLabel: "Active tracked universe",
+			activeTrackedUniverseEyebrow: "Tracked universe",
+			activeTrackedUniverseTitle: "You are reading one tracked universe",
+			activeTrackedUniverseDescription:
+				"This feed is pinned to the same source universe that manual intake and reader footnotes point back to.",
+			activeTrackedUniverseFallback:
+				"This feed is pinned to one tracked universe, but the identity card could not be loaded right now.",
 		},
 		subscriptionsPage: {
 			metadataTitle: "Subscriptions",
@@ -1806,7 +1813,14 @@ const MESSAGES = {
 				ops: "Ops",
 				misc: "Misc",
 			},
-			subscriptionFilterLabel: "Subscription",
+			subscriptionFilterLabel: "Tracked universe",
+			activeTrackedUniverseLabel: "Active tracked universe",
+			activeTrackedUniverseEyebrow: "Tracked universe",
+			activeTrackedUniverseTitle: "你当前正在阅读一个 tracked universe",
+			activeTrackedUniverseDescription:
+				"这个 feed 已经固定在和 manual intake、reader footnotes 回跳一致的 source universe 上。",
+			activeTrackedUniverseFallback:
+				"这个 feed 已固定到一个 tracked universe，但当前没有读到对应的身份卡。",
 		},
 		subscriptionsPage: {
 			metadataTitle: "Subscriptions",

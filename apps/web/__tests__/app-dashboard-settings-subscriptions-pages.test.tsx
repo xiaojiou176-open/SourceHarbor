@@ -290,9 +290,10 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getAllByRole("link", { name: "Open Briefings" })[0],
 			).toHaveAttribute("href", "/briefings");
-			expect(
-				screen.getByRole("link", { name: "Open Reader" }),
-			).toHaveAttribute("href", "/reader");
+			expect(screen.getByRole("link", { name: "Open Reader" })).toHaveAttribute(
+				"href",
+				"/reader",
+			);
 			for (const link of screen.getAllByRole("link", {
 				name: "Open Briefings",
 			})) {

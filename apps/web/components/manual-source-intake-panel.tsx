@@ -131,7 +131,9 @@ function statusLabel(copy: Copy, status: string): string {
 	return copy.statusLabels.rejected;
 }
 
-function buildFeedUniverseHref(subscriptionId: string | null | undefined): string | null {
+function buildFeedUniverseHref(
+	subscriptionId: string | null | undefined,
+): string | null {
 	const value = String(subscriptionId || "").trim();
 	if (!value) {
 		return null;
@@ -285,7 +287,9 @@ export function ManualSourceIntakePanel({ copy, sessionToken }: Props) {
 								const jobHref = item.job_id
 									? `/jobs?job_id=${encodeURIComponent(item.job_id)}`
 									: null;
-								const readerHref = item.reader_route?.trim().startsWith("/reader/")
+								const readerHref = item.reader_route
+									?.trim()
+									.startsWith("/reader/")
 									? item.reader_route.trim()
 									: null;
 								return (

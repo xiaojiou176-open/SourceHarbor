@@ -138,36 +138,34 @@ export function ReadingPane({
 
 	if (!jobId) {
 		return (
-			<div
+			<output
 				className="feed-reading-pane-shell feed-reading-state"
 				data-reading-state="empty"
-				role="status"
 				aria-live="polite"
 				aria-atomic="true"
 			>
-				<p className="feed-reading-state-title">
+				<span className="feed-reading-state-title block">
 					Select an entry to read the digest and body
-				</p>
-				<p className="feed-reading-state-meta">
+				</span>
+				<span className="feed-reading-state-meta block">
 					Video and article items both support AI digest and outline views
-				</p>
-			</div>
+				</span>
+			</output>
 		);
 	}
 
 	if (loading) {
 		return (
-			<div
+			<output
 				className="feed-reading-pane-shell feed-reading-state"
 				data-reading-state="loading"
-				role="status"
 				aria-live="polite"
 				aria-atomic="true"
 				aria-busy="true"
 			>
-				<div className="feed-reading-spinner" aria-hidden="true" />
-				<p className="feed-reading-state-meta">Loading...</p>
-			</div>
+				<span className="feed-reading-spinner" aria-hidden="true" />
+				<span className="feed-reading-state-meta block">Loading...</span>
+			</output>
 		);
 	}
 
