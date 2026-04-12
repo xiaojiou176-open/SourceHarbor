@@ -35,7 +35,7 @@ This file is the machine-generated third-party rights ledger for the tracked pub
 | `click` | `8.3.1` | `BSD-3-Clause` | `license-expression` |
 | `courlan` | `1.3.2` | `Apache 2.0` | `license-field` |
 | `coverage` | `7.13.4` | `Apache-2.0` | `license-field` |
-| `cryptography` | `46.0.6` | `Apache-2.0 OR BSD-3-Clause` | `license-expression` |
+| `cryptography` | `46.0.7` | `Apache-2.0 OR BSD-3-Clause` | `license-expression` |
 | `dateparser` | `1.3.0` | `BSD` | `license-field` |
 | `distro` | `1.9.0` | `Apache License, Version 2.0` | `license-field` |
 | `execnet` | `2.1.2` | `MIT` | `license-expression` |
@@ -331,7 +331,7 @@ http://www.apache.org/licenses/LICENSE-2.0` | `license-field` |
 | `@radix-ui/react-use-size` | `1.1.1` | `MIT` | `package-lock` |
 | `@radix-ui/react-visually-hidden` | `1.2.3` | `MIT` | `package-lock` |
 | `@radix-ui/rect` | `1.1.1` | `MIT` | `package-lock` |
-| `@sourceharbor/sdk` | `0.1.13` | `MIT` | `package-lock` |
+| `@sourceharbor/sdk` | `0.1.14` | `MIT` | `package-lock` |
 | `@swc/helpers` | `0.5.15` | `Apache-2.0` | `package-lock` |
 | `@tailwindcss/node` | `4.2.2` | `MIT` | `package-lock` |
 | `@tailwindcss/oxide` | `4.2.2` | `MIT` | `package-lock` |
