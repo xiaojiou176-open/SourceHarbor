@@ -75,6 +75,9 @@ and official-surface distribution truth are still separate ledgers.
 
 - current `main` is active and externally verifiable through GitHub checks and
   workflow-dispatch lanes when those current-head runs have been freshly reread
+- the Wave 2 reader-frontstage tail now lives on current `main`, so the front
+  door, subscriptions atlas, feed desk, and reader detail surfaces should be
+  read as current-main truth rather than repo-local archive-only work
 - the public distribution artifacts are real, but several official-surface submissions still need true submit/read-back proof
 - the current public repo has a live GitHub Release object
 - official-surface listing truth is still separate from GitHub Release truth
@@ -193,7 +196,8 @@ This is the short scoreboard for the directions most likely to get overstated.
 | VS Code agent plugin bundle | **ship-now** | `starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/` now gives VS Code agent workflows a real source-installable plugin bundle over the same MCP/API truth |
 | OpenClaw via local starter pack + MCP / HTTP substrate | **first-cut** | the repo ships a compatibility page plus a first-cut local OpenClaw starter pack, but it still is not a marketplace or primary front-door claim |
 | OpenClaw ClawHub package template | **first-cut** | the repo ships a publish-ready metadata template, but there is still no live ClawHub publish receipt and `CLAWHUB_TOKEN` is currently unset locally |
-| Official MCP Registry listing + metadata template | **ship-now** | the registry now has a live active `SourceHarbor MCP` entry; the remaining work is version refresh, not first publication |
+| Official MCP Registry listing + metadata template | **ship-now** | a fresh registry API read-back still confirms an active `SourceHarbor MCP` entry at `0.1.14`; the remaining work is version refresh, not first publication |
+| PyPI package surface | **ship-now** | the public `sourceharbor` project is still live on PyPI at `0.1.14`; the remaining work is a package-version refresh to catch back up with the repo-controlled `0.1.19` line |
 | Site-specific MCP directory packets | **first-cut** | `config/public/mcp-directory-profile.json` plus `docs/submission/*.md` give the repo a real per-directory packet layer, but same-day submit/read-back still varies per site |
 | Public Python SDK | **later** | no public package surface exists yet |
 | Public skills pack / templates | **first-cut** | `docs/public-skills.md`, `docs/compat/*`, `templates/public-skills/*`, and `examples/*` now provide a usable first public starter surface, but not a fully hardened ecosystem product yet |
@@ -212,9 +216,11 @@ current maintainer re-audit:
 - Resend live delivery still needs a real sender identity chain: `RESEND_FROM_EMAIL`, a verified sender/domain, and a destination mailbox
 - the strict YouTube live-smoke lane now has recent local proof, but the full lane still needs operator-managed YouTube API access when it is reopened
 - official-surface public distribution is now split more sharply:
-  - Official MCP Registry is already live, but still lagging the newest repo snapshot
+  - Official MCP Registry and PyPI are already live, but both still lag the repo-controlled `0.1.19` package line
   - `awesome-opencode` is submitted and waiting on maintainer review
-  - `mcpservers.org` and `MCP.so` still need same-day public read-back proof
+  - `mcp.so` currently returns `Project not found` on the direct server page
+  - `mcpservers.org` public search currently returns `0` servers for `sourceharbor`
+  - PulseMCP public read-back still stops at an anonymous `Access Denied` page
   - ClawHub still needs a real publish step and auth
 - the GitHub social preview image still remains a manual platform upload step even though the tracked asset chain already exists
 
@@ -228,7 +234,11 @@ are more specific than generic "secret missing" language.
 | --- | --- | --- | --- |
 | Resend sender identity | provider canary still reports `config_error`; sender configuration remains incomplete because `RESEND_FROM_EMAIL` is still missing | repo code already exposes notifications and settings; GitHub/release truth is no longer the missing piece | set `RESEND_FROM_EMAIL`, verify the sender/domain in Resend, choose a real destination mailbox, then rerun the provider canary or strict live-smoke lane |
 | YouTube strict live-smoke | recent local proof now passes direct probe, provider canary, and strict live-smoke preflight; the remaining step is restoring operator-managed YouTube API access whenever the full live lane is reopened | repo-side implementation is no longer the blocker; the remaining action is making the intended YouTube API access available when the lane is rerun | restore the intended YouTube API access in the environment used for the live-smoke lane, then rerun the strict live-smoke lane when you want the full end-to-end receipt |
-| Official MCP Registry version refresh | the registry currently lists an active `SourceHarbor MCP` entry at public version `0.1.14`, while the repo-controlled package and directory packet have already moved ahead to `0.1.19` | the repo already has the package, template, and listing truth; the missing step is a deliberate publish/refresh action with package credentials plus a fresh registry read-back | publish the intended current package version when the right credentials are available, then read the updated version back from the official registry |
+| Official MCP Registry + PyPI version refresh | fresh API/JSON read-back still shows both the official registry entry and the PyPI package at `0.1.14`, while the repo-controlled package and directory packet remain at `0.1.19` | the repo already has the package, template, and live package surfaces; the missing step is a deliberate publish/refresh action with package credentials plus a fresh read-back on both endpoints | publish the intended current package version when the right credentials are available, then read the updated version back from both the official registry and PyPI |
+| MCP.so direct listing | a fresh direct page read-back at `https://mcp.so/server/sourceharbor-mcp` currently says `Project not found` | the repo-side packet exists, but this public route does not currently prove a live listing | capture either a real submit/accept receipt or a fresh direct-page read-back showing the listing has appeared |
+| mcpservers.org listing | a fresh public search for `sourceharbor` currently returns `0` servers | the repo-side packet exists, but the public search surface still does not show a live listing | capture either the approval/listing URL or a later public search result that shows the server |
+| PulseMCP listing | a fresh anonymous page read-back currently stops at `Access Denied`; public search snippets still suggest a SourceHarbor MCP surface exists somewhere behind that gate | the public read-back is platform-controlled rather than repo-controlled | capture a direct readable listing URL, editor acknowledgment, or another public proof path that no longer stops at access control |
+| awesome-opencode maintainer review | fresh GitHub read-back still shows `awesome-opencode/awesome-opencode#270` open | the repo-side packet already landed upstream, so the remaining step is maintainer review rather than repo work | wait for merge/rejection/feedback and capture the resulting URL or maintainer comment |
 | GitHub social preview | the tracked asset already exists in-repo, but live upload/read-back still remains a manual GitHub Settings step | the remaining step is a manual upload in GitHub repo settings, not a repo-code change | upload `docs/assets/sourceharbor-social-preview.png` in GitHub repo social preview settings, then read the live setting back |
 
 ## Remote Truth Reading Rules

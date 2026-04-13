@@ -7,6 +7,13 @@ and this project follows semantic-ish release communication even when the reposi
 
 ## [Unreleased]
 
+## [0.1.27] - 2026-04-12
+
+### Changed
+
+- landed the Wave 2 reader-frontstage tail so `/`, `/subscriptions`, `/feed`, and `/reader/[documentId]` now share one calmer reader-first product line with stronger source identity and a first-class repair rail
+- refreshed the public distribution ledgers after a new read-back pass: the Official MCP Registry API and PyPI still confirm `0.1.14`, `awesome-opencode#270` remains open, `mcp.so` currently says `Project not found`, `mcpservers.org` search returns `0` servers for `sourceharbor`, and PulseMCP public read-back still stops at an anonymous `Access Denied` page
+
 ## [0.1.22] - 2026-04-10
 
 ### Changed

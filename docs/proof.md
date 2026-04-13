@@ -121,6 +121,9 @@ Current remote-proof reading rule:
   public API image publishing, or strict CI image publishing still belong to the
   external-proof ledger, not the default install story, and they must be
   refreshed whenever `main` moves again
+- a fresh GitHub release cut can catch latest release truth back up to current
+  `main`, but that does not automatically refresh package registries,
+  marketplace directories, or other external listing ledgers
 - release-side proof must still be checked against the latest live tag, because current `main` can move ahead again after docs/governance closeout merges
 - provider-backed live proof still stays separate from GitHub/release truth
 - a tracked social-preview asset path is not the same thing as the asset being uploaded live in GitHub repo settings
