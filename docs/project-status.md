@@ -218,9 +218,9 @@ current maintainer re-audit:
 - official-surface public distribution is now split more sharply:
   - Official MCP Registry and PyPI are already live, but both still lag the repo-controlled `0.1.19` package line
   - `awesome-opencode` is submitted and waiting on maintainer review
-  - `mcp.so` currently returns `Project not found` on the direct server page
-  - `mcpservers.org` public search currently returns `0` servers for `sourceharbor`
-  - PulseMCP public read-back still stops at an anonymous `Access Denied` page
+  - `mcp.so` anonymous direct read-back currently returns `403 Forbidden`, so there is still no public listing proof on that route
+  - `mcpservers.org` anonymous direct/search read-back still does not prove a live listing for `sourceharbor`
+  - PulseMCP anonymous public read-back still stops at `403 / Access Denied`
   - ClawHub still needs a real publish step and auth
 - the GitHub social preview image still remains a manual platform upload step even though the tracked asset chain already exists
 
