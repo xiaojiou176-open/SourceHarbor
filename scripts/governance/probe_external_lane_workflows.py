@@ -323,7 +323,7 @@ def main() -> int:
                     f"{note}; preflight passed; failed at `{failure_details['failed_step_name']}` "
                     "with GHCR blob HEAD 403 Forbidden"
                 )
-        if lane_state == "blocked":
+        if lane_state in {"blocked", "historical", "missing"}:
             overall_status = "blocked"
         lanes.append(
             {
@@ -361,7 +361,10 @@ def main() -> int:
         extra={"report_kind": "external-lane-workflows"},
     )
 
-    print("[external-lane-workflows] PASS")
+    if overall_status == "pass":
+        print("[external-lane-workflows] PASS")
+    else:
+        print("[external-lane-workflows] BLOCKED")
     for lane in lanes:
         latest_run = lane.get("latest_run") or {}
         run_id = latest_run.get("databaseId", "")
