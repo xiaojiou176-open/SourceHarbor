@@ -362,7 +362,9 @@ export function resolveReaderSourceIdentity(
 					? "Video contract gap"
 					: null,
 			source.identity_status === "derived_identity" ? "Linked identity" : null,
-			source.claim_kinds?.length ? `${source.claim_kinds.length} claim kinds` : null,
+			source.claim_kinds?.length
+				? `${source.claim_kinds.length} claim kinds`
+				: null,
 		]),
 	};
 }
