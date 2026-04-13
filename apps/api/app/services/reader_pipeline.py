@@ -859,9 +859,7 @@ class ReaderPipelineService:
         }
 
     @staticmethod
-    def _normalize_relation_kind(
-        relation_kind: Any, *, source_origin: Any
-    ) -> str | None:
+    def _normalize_relation_kind(relation_kind: Any, *, source_origin: Any) -> str | None:
         normalized_relation = str(relation_kind or "").strip()
         normalized_origin = str(source_origin or "").strip()
         if normalized_relation == "manual_injected":

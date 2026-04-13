@@ -280,10 +280,16 @@ class FeedService:
                     "source_item_id": source_item_id,
                     "affiliation_label": source_name
                     if subscription_id
-                    else ("Today lane" if source_origin == "manual_injected" else "Unmatched source"),
+                    else (
+                        "Today lane" if source_origin == "manual_injected" else "Unmatched source"
+                    ),
                     "relation_kind": "matched_subscription"
                     if subscription_id
-                    else ("manual_one_off" if source_origin == "manual_injected" else "unmatched_source"),
+                    else (
+                        "manual_one_off"
+                        if source_origin == "manual_injected"
+                        else "unmatched_source"
+                    ),
                     "thumbnail_url": identity.thumbnail_url,
                     "avatar_url": identity.avatar_url,
                     "avatar_label": identity.avatar_label,
