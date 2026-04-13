@@ -3,8 +3,10 @@ from __future__ import annotations
 import re
 import uuid
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from urllib.parse import urlparse
 
+from ..models import IngestRun, IngestRunItem
 from .source_identity import build_identity_payload
 from .source_names import build_source_name_fallback
 from .subscriptions import (
@@ -189,6 +191,8 @@ class ManualSourceIntakeService:
         queued_manual_items = 0
         reused_manual_items = 0
         rejected_count = 0
+        manual_item_count = 0
+        manual_run: IngestRun | None = None
 
         for line_number, value in self.iter_non_empty_lines(raw_input):
             plan = self.plan(value)
@@ -414,6 +418,16 @@ class ManualSourceIntakeService:
                     result["thumbnail_url"] = identity.thumbnail_url
                     result["avatar_url"] = identity.avatar_url
                     result["avatar_label"] = identity.avatar_label
+                    manual_item_count += 1
+                    manual_run = self._persist_manual_source_item(
+                        manual_run=manual_run,
+                        payload=payload,
+                        platform=plan.platform or "generic",
+                        source_url=plan.source_url or value,
+                        title=plan.display_name or value,
+                        content_profile=plan.content_profile or "video",
+                        matched_subscription_id=matched_subscription_id,
+                    )
                     if payload.get("reused"):
                         reused_manual_items += 1
                     else:
@@ -427,6 +441,18 @@ class ManualSourceIntakeService:
                 result["message"] = str(exc)
                 rejected_count += 1
             results.append(result)
+
+        if manual_run is not None:
+            manual_run.status = "succeeded"
+            manual_run.candidates_count = manual_item_count
+            manual_run.jobs_created = queued_manual_items
+            manual_run.entries_fetched = manual_item_count
+            manual_run.entries_normalized = manual_item_count
+            manual_run.completed_at = datetime.now(UTC)
+            manual_db = getattr(self.videos_service, "db", None)
+            if manual_db is not None:
+                manual_db.add(manual_run)
+                manual_db.commit()
 
         processed_count = len(results)
         return {
@@ -709,3 +735,70 @@ class ManualSourceIntakeService:
         if str(source_url or "").strip():
             return "source_url"
         return "source_value"
+
+    def _persist_manual_source_item(
+        self,
+        *,
+        manual_run: IngestRun | None,
+        payload: dict[str, object],
+        platform: str,
+        source_url: str,
+        title: str,
+        content_profile: str,
+        matched_subscription_id: str | None,
+    ) -> IngestRun | None:
+        db = getattr(self.videos_service, "db", None)
+        if db is None or not hasattr(db, "add"):
+            return manual_run
+        job_uuid = self._coerce_uuid(payload.get("job_id"))
+        video_uuid = self._coerce_uuid(payload.get("video_db_id"))
+        if job_uuid is None or video_uuid is None:
+            return manual_run
+        run = manual_run
+        if run is None:
+            run = IngestRun(
+                subscription_id=None,
+                platform=None,
+                max_new_videos=0,
+                status="running",
+                requested_by="manual_intake",
+                requested_trace_id="manual_intake",
+                filters_json={"manual_intake": True},
+            )
+            db.add(run)
+            db.flush()
+        item = IngestRunItem(
+            ingest_run_id=run.id,
+            subscription_id=self._coerce_uuid(matched_subscription_id),
+            video_id=video_uuid,
+            job_id=job_uuid,
+            ingest_event_id=None,
+            platform=platform,
+            video_uid=str(payload.get("video_uid") or "").strip() or str(video_uuid),
+            source_url=source_url,
+            title=title,
+            published_at=None,
+            entry_hash=f"manual:{self._manual_entry_hash(source_url)}",
+            pipeline_mode=str(payload.get("mode") or "").strip() or None,
+            content_type=content_profile,
+            item_status="pending_consume",
+        )
+        db.add(item)
+        db.flush()
+        return run
+
+    @staticmethod
+    def _coerce_uuid(value: object | None) -> uuid.UUID | None:
+        if isinstance(value, uuid.UUID):
+            return value
+        text = str(value or "").strip()
+        if not text:
+            return None
+        try:
+            return uuid.UUID(text)
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _manual_entry_hash(source_url: str) -> str:
+        return uuid.uuid5(uuid.NAMESPACE_URL, source_url).hex

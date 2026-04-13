@@ -1761,10 +1761,26 @@ class ReaderPipelineService:
             else None,
             "job_bundle": f"/api/v1/jobs/{job_id}/bundle" if job_id else None,
             "job_knowledge_cards": f"/knowledge?job_id={job_id}" if job_id else None,
-            "artifact_meta": ReaderPipelineService._artifact_asset_route(job_id, "meta"),
-            "artifact_transcript": ReaderPipelineService._artifact_asset_route(job_id, "transcript"),
-            "artifact_comments": ReaderPipelineService._artifact_asset_route(job_id, "comments"),
-            "artifact_outline": ReaderPipelineService._artifact_asset_route(job_id, "outline"),
+            "artifact_meta": (
+                ReaderPipelineService._artifact_asset_route(job_id, "meta")
+                if ReaderPipelineService._artifact_manifest_has(artifact_manifest, "meta")
+                else None
+            ),
+            "artifact_transcript": (
+                ReaderPipelineService._artifact_asset_route(job_id, "transcript")
+                if ReaderPipelineService._artifact_manifest_has(artifact_manifest, "transcript")
+                else None
+            ),
+            "artifact_comments": (
+                ReaderPipelineService._artifact_asset_route(job_id, "comments")
+                if ReaderPipelineService._artifact_manifest_has(artifact_manifest, "comment")
+                else None
+            ),
+            "artifact_outline": (
+                ReaderPipelineService._artifact_asset_route(job_id, "outline")
+                if ReaderPipelineService._artifact_manifest_has(artifact_manifest, "outline")
+                else None
+            ),
             "source_url": source_url or None,
         }
 
