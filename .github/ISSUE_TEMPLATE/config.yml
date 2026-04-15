@@ -10,5 +10,5 @@ contact_links:
     url: https://xiaojiou176-open.github.io/SourceHarbor/
     about: Start with the layered docs map and public proof pages.
   - name: Security report
-    url: https://github.com/xiaojiou176-open/SourceHarbor/security
+    url: https://github.com/xiaojiou176-open/sourceharbor/security
     about: Use GitHub Security Advisories for sensitive vulnerability reports.
