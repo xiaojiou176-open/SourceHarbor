@@ -51,6 +51,13 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
 
+      - name: Fail closed unless running from current main
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "publish-pypi must run from current main only; got ${GITHUB_REF}" >&2
+            exit 1
+          fi
+
       - name: Verify expected version and MCP ownership marker
         env:
           EXPECTED_VERSION: ${{ inputs.expected_version }}
@@ -59,8 +66,6 @@ jobs:
           import pathlib
           import tomllib
 
-          expected = pathlib.Path().joinpath().resolve()
-          del expected  # keep mypy-like linters calm in inline scripts
           pyproject = tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))
           version = pyproject["project"]["version"]
           expected_version = pathlib.os.environ["EXPECTED_VERSION"]

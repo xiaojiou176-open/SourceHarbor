@@ -48,6 +48,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Fail closed unless running from current main
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "publish-mcp-registry must run from current main only; got ${GITHUB_REF}" >&2
+            exit 1
+          fi
+
       - name: Verify version and metadata alignment
         env:
           EXPECTED_VERSION: ${{ inputs.expected_version }}

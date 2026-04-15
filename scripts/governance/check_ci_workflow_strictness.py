@@ -989,6 +989,10 @@ def _check_publish_pypi_specific_rules(text: str, failures: list[str]) -> None:
         failures.append(
             "publish-pypi.yml: publish: must request `id-token: write` for Trusted Publishing"
         )
+    if 'if [[ "${GITHUB_REF}" != "refs/heads/main" ]]' not in text:
+        failures.append(
+            "publish-pypi.yml: must fail closed unless workflow_dispatch runs from `refs/heads/main`"
+        )
     if "pypa/gh-action-pypi-publish@" not in text:
         failures.append(
             "publish-pypi.yml: must publish through `pypa/gh-action-pypi-publish@release/v1`"
@@ -1037,6 +1041,10 @@ def _check_publish_mcp_registry_specific_rules(text: str, failures: list[str]) -
     if "id-token: write" not in publish:
         failures.append(
             "publish-mcp-registry.yml: publish: must request `id-token: write` for registry OIDC auth"
+        )
+    if 'if [[ "${GITHUB_REF}" != "refs/heads/main" ]]' not in text:
+        failures.append(
+            "publish-mcp-registry.yml: must fail closed unless workflow_dispatch runs from `refs/heads/main`"
         )
     if "mcp-publisher login github-oidc" not in text:
         failures.append(
