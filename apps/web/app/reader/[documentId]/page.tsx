@@ -28,6 +28,46 @@ type ReaderDetailPageProps = {
 	params: Promise<{ documentId: string }> | { documentId: string };
 };
 
+function looksLikeRawUrl(value: string | null | undefined): boolean {
+	const text = String(value || "")
+		.trim()
+		.toLowerCase();
+	return text.startsWith("http://") || text.startsWith("https://");
+}
+
+function formatReaderHeroTitle(document: {
+	title: string;
+	topic_label?: string | null;
+	materialization_mode: string;
+	source_refs?: Array<Parameters<typeof resolveReaderSourceIdentity>[0]>;
+}): string {
+	const rawTitle = document.title.trim();
+	if (!looksLikeRawUrl(rawTitle)) {
+		return rawTitle || "Published document";
+	}
+	const topicLabel = String(document.topic_label || "").trim();
+	if (topicLabel && !looksLikeRawUrl(topicLabel)) {
+		return topicLabel;
+	}
+	const firstSource = Array.isArray(document.source_refs)
+		? document.source_refs[0]
+		: null;
+	const sourceTitle = firstSource
+		? resolveReaderSourceIdentity(firstSource).title
+		: "";
+	if (sourceTitle && !looksLikeRawUrl(sourceTitle)) {
+		return sourceTitle;
+	}
+	if (firstSource?.platform) {
+		return document.materialization_mode === "singleton_polish"
+			? `Reading note from ${String(firstSource.platform).trim()}`
+			: `Reading story from ${String(firstSource.platform).trim()}`;
+	}
+	return document.materialization_mode === "singleton_polish"
+		? "Reading note"
+		: "Published story";
+}
+
 export async function generateMetadata({
 	params,
 }: ReaderDetailPageProps): Promise<Metadata> {
@@ -71,6 +111,7 @@ export default async function ReaderDetailPage({
 	const topSources = Array.isArray(document.source_refs)
 		? document.source_refs.slice(0, 2)
 		: [];
+	const heroTitle = formatReaderHeroTitle(document);
 	const warningReasons = Array.isArray(document.warning?.reasons)
 		? document.warning.reasons
 		: [];
@@ -163,7 +204,7 @@ export default async function ReaderDetailPage({
 							tabIndex={-1}
 							className={`max-w-4xl text-3xl leading-[1.02] tracking-tight [overflow-wrap:anywhere] sm:text-4xl md:text-5xl xl:text-6xl ${editorialSerif.className}`}
 						>
-							{document.title}
+							{heroTitle}
 						</h1>
 						<p className="max-w-4xl text-base leading-8 text-foreground/75">
 							{document.summary ??
