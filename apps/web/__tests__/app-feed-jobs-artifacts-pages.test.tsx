@@ -70,6 +70,12 @@ describe("feed/jobs/artifacts pages", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockListSubscriptions.mockResolvedValue([]);
+		mockGetArtifactMarkdown.mockResolvedValue({
+			markdown: "# Preview",
+			source_title: "Preview",
+			source_url: null,
+			published_at: null,
+		});
 	});
 
 	it(
@@ -111,12 +117,14 @@ describe("feed/jobs/artifacts pages", () => {
 			});
 
 			expect(
-				screen.getByRole("heading", { name: "AI Weekly" }),
-			).toBeInTheDocument();
-			expect(screen.getByText("YouTube · Tech Channel")).toBeInTheDocument();
+				screen.getAllByRole("heading", { name: "AI Weekly" }).length,
+			).toBeGreaterThanOrEqual(1);
 			expect(
-				screen.getByText("Reader edition ready · AI Weekly edition"),
-			).toBeInTheDocument();
+				screen.getAllByText("YouTube · Tech Channel").length,
+			).toBeGreaterThanOrEqual(1);
+			expect(
+				screen.getAllByText("Reader edition ready · AI Weekly edition").length,
+			).toBeGreaterThanOrEqual(1);
 			expect(screen.getAllByText("Saved").length).toBeGreaterThan(0);
 			expect(screen.getByText("useful")).toBeInTheDocument();
 			expect(screen.getAllByText("Tech").length).toBeGreaterThan(0);
@@ -126,7 +134,7 @@ describe("feed/jobs/artifacts pages", () => {
 			);
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?source=youtube&category=tech&limit=50&page=2&cursor=cursor-2",
+				"/feed?source=youtube&category=tech&limit=50&page=2&cursor=cursor-2&item=job-abcdef123",
 			);
 			expect(screen.getByText("Page 1")).toBeInTheDocument();
 			expect(
@@ -199,8 +207,49 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getAllByText("Curated first").length).toBeGreaterThan(0);
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?source=youtube&sort=curated&page=3&cursor=4__2026-02-04T00%3A00%3A00Z__job-curated-1&prev_cursor=4__2026-02-03T00%3A00%3A00Z__job-curated-0",
+				"/feed?source=youtube&sort=curated&page=3&cursor=4__2026-02-04T00%3A00%3A00Z__job-curated-1&prev_cursor=4__2026-02-03T00%3A00%3A00Z__job-curated-0&item=job-curated-1",
 			);
+		},
+		PAGE_TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"defaults the reading preview to the first visible item when no explicit item is selected",
+		async () => {
+			mockGetDigestFeed.mockResolvedValue({
+				items: [
+					{
+						feed_id: "feed-default-1",
+						job_id: "job-default-1",
+						video_url: "https://www.youtube.com/watch?v=default1",
+						title: "Default preview article",
+						source: "youtube",
+						source_name: "Tech Channel",
+						category: "tech",
+						published_at: "2026-02-05T00:00:00Z",
+						summary_md: "# default preview",
+						artifact_type: "digest",
+						published_document_title: "Default preview edition",
+					},
+				],
+				has_more: false,
+				next_cursor: null,
+			});
+			mockGetFeedFeedback.mockResolvedValue({
+				job_id: "job-default-1",
+				state: null,
+				notes: null,
+			});
+
+			render(await FeedPage({ searchParams: {} }));
+
+			expect(mockGetFeedFeedback).toHaveBeenCalledWith("job-default-1");
+			expect(
+				screen.getByRole("heading", { name: "Default preview article", level: 2 }),
+			).toBeInTheDocument();
+			expect(
+				screen.getByRole("link", { name: "Keep reading here" }),
+			).toHaveAttribute("href", "/feed?item=job-default-1");
 		},
 		PAGE_TEST_TIMEOUT_MS,
 	);
@@ -251,7 +300,7 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getAllByText("Useful").length).toBeGreaterThan(0);
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?source=youtube&category=tech&feedback=useful&page=3&cursor=cursor-feedback-2&prev_cursor=cursor-feedback-1",
+				"/feed?source=youtube&category=tech&feedback=useful&page=3&cursor=cursor-feedback-2&prev_cursor=cursor-feedback-1&item=job-feedback-1",
 			);
 		},
 		PAGE_TEST_TIMEOUT_MS,
@@ -295,7 +344,7 @@ describe("feed/jobs/artifacts pages", () => {
 				screen.getByRole("link", { name: "← Previous page" }),
 			).toHaveAttribute(
 				"href",
-				"/feed?source=youtube&category=tech&page=2&cursor=cursor-1",
+				"/feed?source=youtube&category=tech&page=2&cursor=cursor-1&item=job-zxyw9876",
 			);
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
@@ -303,7 +352,7 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getByText("Page 3")).toBeInTheDocument();
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?source=youtube&category=tech&page=4&cursor=cursor-3&prev_cursor=cursor-2",
+				"/feed?source=youtube&category=tech&page=4&cursor=cursor-3&prev_cursor=cursor-2&item=job-zxyw9876",
 			);
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"data-variant",
@@ -485,10 +534,10 @@ describe("feed/jobs/artifacts pages", () => {
 			).toBeInTheDocument();
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
-			).toHaveAttribute("href", "/feed?sub=sub-123");
+			).toHaveAttribute("href", "/feed?sub=sub-123&item=job-sub");
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?sub=sub-123&page=3&cursor=cursor-sub&prev_cursor=cursor-1",
+				"/feed?sub=sub-123&page=3&cursor=cursor-sub&prev_cursor=cursor-1&item=job-sub",
 			);
 		},
 		PAGE_TEST_TIMEOUT_MS,
@@ -530,7 +579,7 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getAllByText("legacy_platform").length).toBeGreaterThan(0);
 			expect(screen.getByRole("link", { name: "Next page →" })).toHaveAttribute(
 				"href",
-				"/feed?source=legacy_platform&page=2&cursor=cursor-legacy",
+				"/feed?source=legacy_platform&page=2&cursor=cursor-legacy&item=job-legacy",
 			);
 		},
 		PAGE_TEST_TIMEOUT_MS,

@@ -186,7 +186,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 			safeSubscriptionId ||
 			safeSort !== "recent",
 	);
-	const selectedJobId = item.trim() || null;
+		const requestedJobId = item.trim() || null;
 
 	let feed: Awaited<ReturnType<typeof apiClient.getDigestFeed>> | null = null;
 	let selectedFeedback: Awaited<
@@ -280,22 +280,24 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 			itemValue: itemId ?? undefined,
 		});
 
-	const retryHref = buildPageUrl({
-		cursorValue: safeCursor,
-		prevCursorValue: safePrevCursor,
-		pageValue: safePage,
-		itemValue: selectedJobId ?? undefined,
-	});
+		const selectedItem = requestedJobId
+			? items.find((feedItem) => feedItem.job_id === requestedJobId)
+			: null;
+		const effectiveSelectedItem = selectedItem ?? items[0] ?? null;
+		const effectiveSelectedJobId = effectiveSelectedItem?.job_id ?? null;
+		const retryHref = buildPageUrl({
+			cursorValue: safeCursor,
+			prevCursorValue: safePrevCursor,
+			pageValue: safePage,
+			itemValue: effectiveSelectedJobId ?? undefined,
+		});
 
-	const selectedItem = selectedJobId
-		? items.find((feedItem) => feedItem.job_id === selectedJobId)
-		: null;
-	if (selectedJobId && !errorCode) {
-		try {
-			selectedFeedback = await apiClient.getFeedFeedback(selectedJobId);
-		} catch {
-			selectedFeedback = null;
-		}
+		if (effectiveSelectedJobId && !errorCode) {
+			try {
+				selectedFeedback = await apiClient.getFeedFeedback(effectiveSelectedJobId);
+			} catch {
+				selectedFeedback = null;
+			}
 	}
 
 	return (
@@ -332,13 +334,13 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					</p>
 					<div className="flex flex-wrap gap-3">
 						<Button asChild variant="hero">
-							<Link
-								href={
-									selectedJobId
-										? buildItemUrl({ item: selectedJobId })
-										: "/feed"
-								}
-							>
+								<Link
+									href={
+										effectiveSelectedJobId
+											? buildItemUrl({ item: effectiveSelectedJobId })
+											: "/feed"
+									}
+								>
 								Keep reading here
 							</Link>
 						</Button>
@@ -414,12 +416,16 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 						)}
 					</div>
 				</summary>
-				<form
-					method="GET"
-					className="feed-filter-form mt-4"
-					aria-label={copy.filterRegionLabel}
-				>
-					<input type="hidden" name="item" value={selectedJobId ?? ""} />
+					<form
+						method="GET"
+						className="feed-filter-form mt-4"
+						aria-label={copy.filterRegionLabel}
+					>
+						<input
+							type="hidden"
+							name="item"
+							value={effectiveSelectedJobId ?? ""}
+						/>
 					<div className="feed-filter-selects">
 						<FormSelectField
 							name="source"
@@ -495,13 +501,13 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 								className="feed-filter-clear"
 								data-testid="feed-filter-clear"
 							>
-								<Link
-									href={
-										selectedJobId
-											? `/feed?item=${encodeURIComponent(selectedJobId)}`
-											: "/feed"
-									}
-								>
+									<Link
+										href={
+											effectiveSelectedJobId
+												? `/feed?item=${encodeURIComponent(effectiveSelectedJobId)}`
+												: "/feed"
+										}
+									>
 									{copy.clearButton}
 								</Link>
 							</Button>
@@ -543,39 +549,39 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					) : null}
 				</section>
 			) : (
-				<div className="feed-main-flow">
-					<EntryList
-						items={items.map((feedItem) => ({
-							...feedItem,
-							href: buildItemUrl({ item: feedItem.job_id }),
-						}))}
-						selectedJobId={selectedJobId}
-					/>
-					<div className="space-y-4">
-						<ReadingPane
-							jobId={selectedJobId}
-							title={selectedItem?.title}
-							source={selectedItem?.source}
-							sourceName={selectedItem?.source_name}
-							videoUrl={selectedItem?.video_url}
-							publishedAt={selectedItem?.published_at}
-							publishedDateLabel={formatPublishedDateLabel(
-								selectedItem?.published_at,
-							)}
-							identity={selectedItem ?? undefined}
+					<div className="feed-main-flow">
+						<EntryList
+							items={items.map((feedItem) => ({
+								...feedItem,
+								href: buildItemUrl({ item: feedItem.job_id }),
+							}))}
+							selectedJobId={effectiveSelectedJobId}
 						/>
-						{selectedJobId ? (
-							<details className="rounded-2xl border border-border/60 bg-background/72 p-4">
-								<summary className="cursor-pointer list-none font-semibold text-foreground">
-									React to this item
+						<div className="space-y-4">
+							<ReadingPane
+								jobId={effectiveSelectedJobId}
+								title={effectiveSelectedItem?.title}
+								source={effectiveSelectedItem?.source}
+								sourceName={effectiveSelectedItem?.source_name}
+								videoUrl={effectiveSelectedItem?.video_url}
+								publishedAt={selectedItem?.published_at}
+								publishedDateLabel={formatPublishedDateLabel(
+									effectiveSelectedItem?.published_at,
+								)}
+								identity={effectiveSelectedItem ?? undefined}
+							/>
+							{effectiveSelectedJobId ? (
+								<details className="rounded-2xl border border-border/60 bg-background/72 p-4">
+									<summary className="cursor-pointer list-none font-semibold text-foreground">
+										React to this item
 								</summary>
-								<div className="mt-4">
-									<FeedFeedbackPanel
-										initialFeedback={selectedFeedback}
-										jobId={selectedJobId}
-										sessionToken={sessionToken}
-									/>
-								</div>
+									<div className="mt-4">
+										<FeedFeedbackPanel
+											initialFeedback={selectedFeedback}
+											jobId={effectiveSelectedJobId}
+											sessionToken={sessionToken}
+										/>
+									</div>
 							</details>
 						) : null}
 					</div>
@@ -590,13 +596,13 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					<div className="folo-pagination-group">
 						{!isFirstPage ? (
 							<Button asChild variant="surface" size="sm">
-								<Link
-									href={buildPageUrl({
-										cursorValue: safePrevCursor,
-										pageValue: Math.max(1, safePage - 1),
-										itemValue: selectedJobId ?? undefined,
-									})}
-								>
+									<Link
+										href={buildPageUrl({
+											cursorValue: safePrevCursor,
+											pageValue: Math.max(1, safePage - 1),
+											itemValue: effectiveSelectedJobId ?? undefined,
+										})}
+									>
 									{copy.previousPageButton}
 								</Link>
 							</Button>
@@ -633,14 +639,14 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 						</span>
 						{nextCursor !== null ? (
 							<Button asChild variant="surface" size="sm">
-								<Link
-									href={buildPageUrl({
-										cursorValue: nextCursor,
-										prevCursorValue: safeCursor,
-										pageValue: safePage + 1,
-										itemValue: selectedJobId ?? undefined,
-									})}
-								>
+									<Link
+										href={buildPageUrl({
+											cursorValue: nextCursor,
+											prevCursorValue: safeCursor,
+											pageValue: safePage + 1,
+											itemValue: effectiveSelectedJobId ?? undefined,
+										})}
+									>
 									{copy.nextPageButton}
 								</Link>
 							</Button>

@@ -247,6 +247,50 @@ describe("reader pages", () => {
 		);
 	});
 
+	it("replaces a raw URL hero title with a reader-friendly fallback title", async () => {
+		mockGetPublishedReaderDocument.mockResolvedValue({
+			id: "doc-url",
+			title: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+			window_id: "2026-04-14@America/Los_Angeles",
+			topic_label: null,
+			source_item_count: 1,
+			published_with_gap: false,
+			materialization_mode: "singleton_polish",
+			version: 1,
+			summary: "A polish-only reader document from youtube.",
+			markdown: "# Story",
+			sections: [],
+			source_refs: [
+				{
+					source_item_id: "src-1",
+					title: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+					platform: "youtube",
+				},
+			],
+			coverage_ledger: {},
+			traceability_pack: {},
+			repair_history: [],
+			warning: null,
+			consumption_batch_id: "batch-url",
+		});
+
+		render(
+			await ReaderDocumentPage({
+				params: Promise.resolve({ documentId: "doc-url" }),
+			}),
+		);
+
+		expect(
+			screen.getByRole("heading", { name: "Reading note from youtube", level: 1 }),
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole("heading", {
+				name: "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+				level: 1,
+			}),
+		).not.toBeInTheDocument();
+	});
+
 	it("renders an honest shelf error instead of pretending the shelf is empty", async () => {
 		mockListPublishedReaderDocuments.mockRejectedValue(
 			new Error("network failed"),
