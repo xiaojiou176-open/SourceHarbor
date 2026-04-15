@@ -200,7 +200,7 @@ PY
         encoding="utf-8",
     )
     (scripts_dir / "dev_worker.sh").write_text(
-        "#!/usr/bin/env bash\nset -euo pipefail\nsleep 300\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nwhile true; do\n  sleep 1\ndone\n",
         encoding="utf-8",
     )
     (deploy_dir / "core_services.sh").write_text(
