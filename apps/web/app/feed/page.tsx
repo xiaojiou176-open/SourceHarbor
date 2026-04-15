@@ -316,10 +316,7 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 						<p className="folo-page-subtitle">{copy.heroSubtitle}</p>
 					</div>
 					<div className="folo-page-toolbar">
-						<SyncNowButton
-							sessionToken={sessionToken}
-							prominence="secondary"
-						/>
+						<SyncNowButton sessionToken={sessionToken} prominence="secondary" />
 					</div>
 				</div>
 			</div>

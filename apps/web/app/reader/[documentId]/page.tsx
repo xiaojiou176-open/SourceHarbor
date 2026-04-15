@@ -318,11 +318,11 @@ export default async function ReaderDetailPage({
 				<div className="space-y-2">
 					<div className="flex items-center gap-2 text-sm font-medium text-foreground">
 						<NotebookText className="h-4 w-4 text-rose-600" />
-							Story
+						Story
 					</div>
 					<CardDescription className="max-w-3xl leading-6">
-							This is the finished reading view. Start here before you open
-							notes or source details.
+						This is the finished reading view. Start here before you open notes
+						or source details.
 					</CardDescription>
 					{sections.length ? (
 						<div className="flex flex-wrap gap-2">

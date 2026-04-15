@@ -79,7 +79,8 @@ const OFFICIAL_SURFACE_ROWS = [
 		name: "Official MCP Registry",
 		status: "Listed, refresh blocked",
 		tone: "secondary" as const,
-		snapshot: "Live entry exists at 0.1.14; refresh to 0.1.19 is credential-blocked.",
+		snapshot:
+			"Live entry exists at 0.1.14; refresh to 0.1.19 is credential-blocked.",
 		summary:
 			"The official registry entry and PyPI package already exist publicly at 0.1.14. The repo-controlled package line is 0.1.19, so the remaining step is a credentialed refresh, not first-time publication.",
 		href: RESOURCE_LINKS.mcpRegistry,
@@ -170,7 +171,8 @@ export default function BuildersPage() {
 							</div>
 						</div>
 						<p className="text-sm leading-7 text-muted-foreground">
-							Start with one tool lane only. Open proof, packages, and starter packs after you already know which door you need.
+							Start with one tool lane only. Open proof, packages, and starter
+							packs after you already know which door you need.
 						</p>
 					</CardContent>
 				</Card>
@@ -181,8 +183,8 @@ export default function BuildersPage() {
 							Keep the rest as a reference map
 						</h2>
 						<CardDescription>
-							Use this only after you already picked the lane you need. It is
-							a map, not the first doorway.
+							Use this only after you already picked the lane you need. It is a
+							map, not the first doorway.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">

@@ -172,25 +172,22 @@ describe("Sidebar + Sheet contract", () => {
 				"aria-current",
 				"page",
 			);
-			expect(screen.getByRole("link", { name: "System status" })).toHaveAttribute(
+			expect(
+				screen.getByRole("link", { name: "System status" }),
+			).toHaveAttribute("href", "/ops");
+			expect(
+				screen.getByRole("link", { name: "Saved topics" }),
+			).toHaveAttribute("href", "/watchlists");
+			expect(
+				screen.getByRole("link", { name: "What changed" }),
+			).toHaveAttribute("href", "/trends");
+			expect(screen.getByRole("link", { name: "Sources" })).toHaveAttribute(
 				"href",
-				"/ops",
-			);
-			expect(screen.getByRole("link", { name: "Saved topics" })).toHaveAttribute(
-				"href",
-				"/watchlists",
-			);
-			expect(screen.getByRole("link", { name: "What changed" })).toHaveAttribute(
-				"href",
-				"/trends",
+				"/subscriptions",
 			);
 			expect(
-				screen.getByRole("link", { name: "Sources" }),
-			).toHaveAttribute("href", "/subscriptions");
-			expect(screen.getByRole("link", { name: "Story briefs" })).toHaveAttribute(
-				"href",
-				"/briefings",
-			);
+				screen.getByRole("link", { name: "Story briefs" }),
+			).toHaveAttribute("href", "/briefings");
 			expect(
 				screen.queryByRole("link", { name: "Disabled Source" }),
 			).toBeNull();
@@ -429,10 +426,9 @@ describe("Sidebar + Sheet contract", () => {
 				/>,
 			);
 
-			expect(screen.getByRole("link", { name: "Processing history" })).toHaveAttribute(
-				"aria-current",
-				"page",
-			);
+			expect(
+				screen.getByRole("link", { name: "Processing history" }),
+			).toHaveAttribute("aria-current", "page");
 			expect(
 				screen.getByRole("link", { name: "Reading desk" }),
 			).not.toHaveAttribute("aria-current");
@@ -497,10 +493,9 @@ describe("Sidebar + Sheet contract", () => {
 				/>,
 			);
 
-			expect(screen.getByRole("link", { name: "Reading desk" })).toHaveAttribute(
-				"aria-current",
-				"page",
-			);
+			expect(
+				screen.getByRole("link", { name: "Reading desk" }),
+			).toHaveAttribute("aria-current", "page");
 			expect(
 				screen.getByRole("link", { name: "API health: Unhealthy" }),
 			).toBeInTheDocument();

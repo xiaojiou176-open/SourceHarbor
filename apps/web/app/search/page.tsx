@@ -136,8 +136,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div className="flex flex-wrap gap-2">
-							<Badge variant="outline">{humanizeSource(leadResult.source)}</Badge>
-							<Badge variant="outline">{leadResult.platform || "unknown"}</Badge>
+							<Badge variant="outline">
+								{humanizeSource(leadResult.source)}
+							</Badge>
+							<Badge variant="outline">
+								{leadResult.platform || "unknown"}
+							</Badge>
 							<Badge variant="secondary">
 								{describeMatchStrength(leadResult.score, maxScore)}
 							</Badge>
@@ -152,12 +156,16 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 						</div>
 						<div className="flex flex-wrap gap-3">
 							<Button asChild variant="hero" size="sm">
-								<Link href={`/feed?item=${encodeURIComponent(leadResult.job_id)}`}>
+								<Link
+									href={`/feed?item=${encodeURIComponent(leadResult.job_id)}`}
+								>
 									{copy.openFeedEntryButton}
 								</Link>
 							</Button>
 							<Button asChild variant="secondary" size="sm">
-								<Link href={`/jobs?job_id=${encodeURIComponent(leadResult.job_id)}`}>
+								<Link
+									href={`/jobs?job_id=${encodeURIComponent(leadResult.job_id)}`}
+								>
 									{copy.openJobTraceButton}
 								</Link>
 							</Button>
@@ -177,48 +185,56 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 			) : null}
 
 			<div className={queryValue ? "flex flex-col gap-6" : "space-y-6"}>
-					{queryValue && (error || !leadResult || remainingResults.length > 0) ? (
-						<Card className="order-1 folo-surface border-border/70">
-							<CardHeader>
-								<h2 className="text-xl font-semibold">
-									{error && !leadResult
-										? "The reading lane is temporarily unavailable"
-										: leadResult
+				{queryValue && (error || !leadResult || remainingResults.length > 0) ? (
+					<Card className="order-1 folo-surface border-border/70">
+						<CardHeader>
+							<h2 className="text-xl font-semibold">
+								{error && !leadResult
+									? "The reading lane is temporarily unavailable"
+									: leadResult
 										? "Keep reading"
 										: askIntent
 											? copy.askResultsTitle
 											: copy.searchResultsTitle}
-								</h2>
-								<CardDescription>
-									{error && !leadResult
-										? "Search could not load the current reading lane. Retry first, then widen into the API or ops view only if it still stays quiet."
-										: leadResult
+							</h2>
+							<CardDescription>
+								{error && !leadResult
+									? "Search could not load the current reading lane. Retry first, then widen into the API or ops view only if it still stays quiet."
+									: leadResult
 										? "Only the remaining matches stay here so the strongest hit can keep the stage."
 										: queryValue
 											? `${askIntent ? copy.askResultsPrefix : copy.searchResultsPrefix} for “${queryValue}”.`
 											: askIntent
 												? copy.askRunPrompt
 												: copy.searchRunPrompt}
-								</CardDescription>
-							</CardHeader>
-							<CardContent className="space-y-4">
-								{!error && queryValue && results.length === 0 ? (
-									<p className="text-sm text-muted-foreground">{copy.noResults}</p>
-								) : null}
-								{remainingResults.map((item, index) => (
-									<Card
-										key={`${item.job_id}-${item.source}-${index}`}
-										className="border-border/60"
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							{!error && queryValue && results.length === 0 ? (
+								<p className="text-sm text-muted-foreground">
+									{copy.noResults}
+								</p>
+							) : null}
+							{remainingResults.map((item, index) => (
+								<Card
+									key={`${item.job_id}-${item.source}-${index}`}
+									className="border-border/60"
 								>
 									<CardContent className="space-y-4 pt-6">
 										<div className="flex flex-wrap gap-2">
-											<Badge variant="outline">{humanizeSource(item.source)}</Badge>
-											<Badge variant="outline">{item.platform || "unknown"}</Badge>
+											<Badge variant="outline">
+												{humanizeSource(item.source)}
+											</Badge>
+											<Badge variant="outline">
+												{item.platform || "unknown"}
+											</Badge>
 											<Badge variant="secondary">
 												{describeMatchStrength(item.score, maxScore)}
 											</Badge>
 											{normalizedMode !== "keyword" ? (
-												<Badge variant="secondary">{copy.experimentalMode}</Badge>
+												<Badge variant="secondary">
+													{copy.experimentalMode}
+												</Badge>
 											) : null}
 										</div>
 										<div className="space-y-2">
@@ -268,24 +284,29 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 					</Card>
 				) : null}
 
-					{queryValue ? (
+				{queryValue ? (
 					<details className="order-2 folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm">
-					<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
-						<div className="space-y-2">
-							<p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-								Refine later
-							</p>
-							<p className="text-base font-semibold text-foreground">
-								Open the search controls only if the first result is not enough
-							</p>
-						</div>
+						<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
+							<div className="space-y-2">
+								<p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+									Refine later
+								</p>
+								<p className="text-base font-semibold text-foreground">
+									Open the search controls only if the first result is not
+									enough
+								</p>
+							</div>
 						</summary>
 						<div className="mt-5 space-y-5">
 							<form
 								method="GET"
 								className="grid gap-4 xl:grid-cols-[1.5fr_0.72fr_0.72fr_0.26fr]"
 							>
-								<input type="hidden" name="intent" value={askIntent ? "ask" : ""} />
+								<input
+									type="hidden"
+									name="intent"
+									value={askIntent ? "ask" : ""}
+								/>
 								<FormInputField
 									name="q"
 									label={askIntent ? copy.questionLabel : copy.queryLabel}
@@ -332,7 +353,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 									href={askIntent ? "/briefings" : "/ask"}
 									className="underline underline-offset-4 hover:text-foreground"
 								>
-									{askIntent ? briefingsCopy.openBriefingButton : copy.searchTruthCta}
+									{askIntent
+										? briefingsCopy.openBriefingButton
+										: copy.searchTruthCta}
 								</Link>
 								{askIntent ? null : (
 									<>
@@ -350,94 +373,100 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 							</p>
 						</div>
 					</details>
-					) : (
+				) : (
 					<section>
 						<Card className="folo-surface border-border/70">
-						<CardHeader>
-							<h2 className="text-xl font-semibold">
-								{askIntent ? copy.askFormTitle : copy.searchFormTitle}
-						</h2>
-						<CardDescription>
-							{askIntent ? copy.askFormDescription : copy.searchFormDescription}
-						</CardDescription>
-						</CardHeader>
-						<CardContent className="space-y-6">
-							<form
-								method="GET"
-								className="grid gap-4 xl:grid-cols-[1.5fr_0.72fr_0.72fr_0.26fr]"
-						>
-							<input
-								type="hidden"
-								name="intent"
-								value={askIntent ? "ask" : ""}
-							/>
-							<FormInputField
-								name="q"
-								label={askIntent ? copy.questionLabel : copy.queryLabel}
-								placeholder={
-									askIntent ? copy.questionPlaceholder : copy.queryPlaceholder
-								}
-								defaultValue={queryValue}
-								hint={askIntent ? copy.askHint : copy.searchHint}
-							/>
-							<FormSelectField
-								name="mode"
-								label={askIntent ? copy.groundingModeLabel : copy.modeLabel}
-								defaultValue={normalizedMode}
-								options={modeOptions}
-							/>
-							<FormSelectField
-								name="platform"
-								label={copy.platformLabel}
-								defaultValue={safePlatform}
-								options={platformOptions}
-							/>
-							<FormInputField
-								name="top_k"
-								label={copy.topKLabel}
-								type="number"
-								min={1}
-								max={20}
-								defaultValue={safeTopK}
-							/>
-							<div className="flex flex-wrap items-end gap-3 xl:col-span-full">
-								<Button type="submit" variant="hero" size="sm">
-									{askIntent ? copy.askButton : copy.searchButton}
-								</Button>
-								<Button asChild variant="ghost" size="sm">
-									<Link href={askIntent ? "/ask" : "/search"}>
-										{copy.clearButton}
-									</Link>
-									</Button>
-								</div>
-							</form>
-							<p className="text-sm leading-6 text-muted-foreground">
-								Start with one plain-language question. Open filters only after
-								the first reading path feels too wide.
-							</p>
-							<p className="text-sm leading-6 text-muted-foreground">
-								Need a wider reading path?{" "}
-								<Link
-									href={askIntent ? "/briefings" : "/ask"}
-									className="underline underline-offset-4 hover:text-foreground"
+							<CardHeader>
+								<h2 className="text-xl font-semibold">
+									{askIntent ? copy.askFormTitle : copy.searchFormTitle}
+								</h2>
+								<CardDescription>
+									{askIntent
+										? copy.askFormDescription
+										: copy.searchFormDescription}
+								</CardDescription>
+							</CardHeader>
+							<CardContent className="space-y-6">
+								<form
+									method="GET"
+									className="grid gap-4 xl:grid-cols-[1.5fr_0.72fr_0.72fr_0.26fr]"
 								>
-									{askIntent ? briefingsCopy.openBriefingButton : copy.searchTruthCta}
-								</Link>
-								{askIntent ? null : (
-									<>
-										{" "}
-										or{" "}
-										<Link
-											href="/briefings"
-											className="underline underline-offset-4 hover:text-foreground"
-										>
-											{briefingsCopy.openBriefingButton}
-										</Link>
-									</>
-								)}
-								.
-							</p>
-						</CardContent>
+									<input
+										type="hidden"
+										name="intent"
+										value={askIntent ? "ask" : ""}
+									/>
+									<FormInputField
+										name="q"
+										label={askIntent ? copy.questionLabel : copy.queryLabel}
+										placeholder={
+											askIntent
+												? copy.questionPlaceholder
+												: copy.queryPlaceholder
+										}
+										defaultValue={queryValue}
+										hint={askIntent ? copy.askHint : copy.searchHint}
+									/>
+									<FormSelectField
+										name="mode"
+										label={askIntent ? copy.groundingModeLabel : copy.modeLabel}
+										defaultValue={normalizedMode}
+										options={modeOptions}
+									/>
+									<FormSelectField
+										name="platform"
+										label={copy.platformLabel}
+										defaultValue={safePlatform}
+										options={platformOptions}
+									/>
+									<FormInputField
+										name="top_k"
+										label={copy.topKLabel}
+										type="number"
+										min={1}
+										max={20}
+										defaultValue={safeTopK}
+									/>
+									<div className="flex flex-wrap items-end gap-3 xl:col-span-full">
+										<Button type="submit" variant="hero" size="sm">
+											{askIntent ? copy.askButton : copy.searchButton}
+										</Button>
+										<Button asChild variant="ghost" size="sm">
+											<Link href={askIntent ? "/ask" : "/search"}>
+												{copy.clearButton}
+											</Link>
+										</Button>
+									</div>
+								</form>
+								<p className="text-sm leading-6 text-muted-foreground">
+									Start with one plain-language question. Open filters only
+									after the first reading path feels too wide.
+								</p>
+								<p className="text-sm leading-6 text-muted-foreground">
+									Need a wider reading path?{" "}
+									<Link
+										href={askIntent ? "/briefings" : "/ask"}
+										className="underline underline-offset-4 hover:text-foreground"
+									>
+										{askIntent
+											? briefingsCopy.openBriefingButton
+											: copy.searchTruthCta}
+									</Link>
+									{askIntent ? null : (
+										<>
+											{" "}
+											or{" "}
+											<Link
+												href="/briefings"
+												className="underline underline-offset-4 hover:text-foreground"
+											>
+												{briefingsCopy.openBriefingButton}
+											</Link>
+										</>
+									)}
+									.
+								</p>
+							</CardContent>
 						</Card>
 					</section>
 				)}

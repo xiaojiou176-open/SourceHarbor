@@ -381,9 +381,7 @@ describe("compounder pages", () => {
 		).toEqual([
 			"/briefings?watchlist_id=wl-1&story_id=story-1&via=briefing-story",
 		]);
-		expect(
-			screen.getByText("Alerts"),
-		).toBeInTheDocument();
+		expect(screen.getByText("Alerts")).toBeInTheDocument();
 		expect(
 			screen.getByText(/Keep this secondary until it is actually ready/i),
 		).toBeInTheDocument();
@@ -456,9 +454,10 @@ describe("compounder pages", () => {
 		expect(
 			screen.getAllByRole("link", { name: "Open bundle" })[0],
 		).toHaveAttribute("href", "/api/v1/jobs/job-1/bundle");
-		expect(
-			screen.getByRole("link", { name: "Open brief" }),
-		).toHaveAttribute("href", "/briefings?watchlist_id=wl-1&story_id=story-1");
+		expect(screen.getByRole("link", { name: "Open brief" })).toHaveAttribute(
+			"href",
+			"/briefings?watchlist_id=wl-1&story_id=story-1",
+		);
 		const aiWeeklyArticle = screen
 			.getAllByText("AI Weekly")[0]
 			?.closest("article");

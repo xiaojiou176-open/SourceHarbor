@@ -164,52 +164,54 @@ describe("dashboard/settings/subscriptions pages", () => {
 		});
 	});
 
-		it(
-			"renders the reader-first front door without operator-console modules",
-			async () => {
-				render(await DashboardPage());
-				expect(document.querySelector(".folo-page-shell")).not.toBeNull();
-				expect(
-					document.querySelectorAll('[data-slot="card"]').length,
-				).toBeGreaterThanOrEqual(1);
-				expect(
-					screen.getAllByRole("heading", {
-						name: "Start with something worth reading",
-					})[0],
-				).toBeInTheDocument();
-				expect(
-					screen.getAllByRole("link", { name: "Open Reader" })[0],
-				).toHaveAttribute("href", "/reader");
+	it(
+		"renders the reader-first front door without operator-console modules",
+		async () => {
+			render(await DashboardPage());
+			expect(document.querySelector(".folo-page-shell")).not.toBeNull();
 			expect(
-				screen.getByRole("heading", { name: "Choose your first reading route" }),
+				document.querySelectorAll('[data-slot="card"]').length,
+			).toBeGreaterThanOrEqual(1);
+			expect(
+				screen.getAllByRole("heading", {
+					name: "Start with something worth reading",
+				})[0],
+			).toBeInTheDocument();
+			expect(
+				screen.getAllByRole("link", { name: "Open Reader" })[0],
+			).toHaveAttribute("href", "/reader");
+			expect(
+				screen.getByRole("heading", {
+					name: "Choose your first reading route",
+				}),
 			).toHaveClass("sr-only");
-				expect(
-					screen.getByRole("link", { name: "Open specimen detail" }),
-				).toHaveAttribute("href", "/reader/demo");
-				expect(
-					screen.getByText(/If you want a softer first step/i),
-				).toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Open Feed" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Open saved topics" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Open Briefs" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Open developer guide" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Open tool setup" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("link", { name: "Inspect proof ladder" }),
-				).not.toBeInTheDocument();
-				expect(
-					screen.queryByRole("heading", { name: "Command center metrics" }),
-				).not.toBeInTheDocument();
+			expect(
+				screen.getByRole("link", { name: "Open specimen detail" }),
+			).toHaveAttribute("href", "/reader/demo");
+			expect(
+				screen.getByText(/If you want a softer first step/i),
+			).toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open Feed" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open saved topics" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open Briefs" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open developer guide" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open tool setup" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Inspect proof ladder" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("heading", { name: "Command center metrics" }),
+			).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole("heading", { name: "Poll subscriptions" }),
 			).not.toBeInTheDocument();

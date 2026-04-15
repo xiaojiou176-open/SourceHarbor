@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
+import { SignalStrip } from "@/components/signal-strip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +10,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { SignalStrip } from "@/components/signal-strip";
 import { apiClient } from "@/lib/api/client";
 import type {
 	WatchlistMergedStory,
@@ -459,7 +458,9 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 								<Button
 									key={item.id}
 									asChild
-									variant={selectedWatchlist?.id === item.id ? "hero" : "outline"}
+									variant={
+										selectedWatchlist?.id === item.id ? "hero" : "outline"
+									}
 									size="sm"
 								>
 									<Link
@@ -481,7 +482,8 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 							<CardHeader>
 								<CardTitle>Follow the story</CardTitle>
 								<CardDescription>
-									Start with the strongest repeated story first. Details stay behind it.
+									Start with the strongest repeated story first. Details stay
+									behind it.
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-4">
@@ -519,7 +521,8 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 										</p>
 										{briefing?.differences.compare?.diff_excerpt ? (
 											<p className="text-sm text-muted-foreground">
-												Latest shift: {briefing.differences.compare.diff_excerpt}
+												Latest shift:{" "}
+												{briefing.differences.compare.diff_excerpt}
 											</p>
 										) : null}
 
@@ -569,7 +572,8 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 							</summary>
 							<div className="mt-4 space-y-4 text-sm text-muted-foreground">
 								<p>
-									Use this only when you want the raw bundle, notes, or sample explanation after the main story already makes sense.
+									Use this only when you want the raw bundle, notes, or sample
+									explanation after the main story already makes sense.
 								</p>
 								{leadBundle ? (
 									<p>
@@ -577,9 +581,7 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 										{leadBundle.knowledge_cards.length}
 									</p>
 								) : null}
-								{leadBundle ? (
-									<p>{leadBundle.proof_boundary}</p>
-								) : null}
+								{leadBundle ? <p>{leadBundle.proof_boundary}</p> : null}
 								<div className="flex flex-wrap gap-3">
 									{leadStory.latest_run_job_id ? (
 										<Button asChild variant="outline" size="sm">

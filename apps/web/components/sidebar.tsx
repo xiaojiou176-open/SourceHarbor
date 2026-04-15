@@ -124,7 +124,10 @@ function SidebarNavContent({
 		pathname.startsWith("/jobs") ||
 		pathname.startsWith("/ingest-runs");
 	const followedSourcesOpen = Boolean(
-		isFeed || pathname.startsWith("/subscriptions") || currentCategory || currentSub,
+		isFeed ||
+			pathname.startsWith("/subscriptions") ||
+			currentCategory ||
+			currentSub,
 	);
 	const grouped = groupByCategory(subscriptions);
 	const enabledSubs = subscriptions.filter((s) => s.enabled);
@@ -297,7 +300,8 @@ function SidebarNavContent({
 								</p>
 								{!collapsed ? (
 									<p className="text-xs text-muted-foreground">
-										Open this only when you are setting up or checking the system.
+										Open this only when you are setting up or checking the
+										system.
 									</p>
 								) : null}
 							</div>
@@ -329,7 +333,10 @@ function SidebarNavContent({
 												)}
 												aria-current={item.active ? "page" : undefined}
 											>
-												<Icon className="size-4 shrink-0 opacity-80" aria-hidden />
+												<Icon
+													className="size-4 shrink-0 opacity-80"
+													aria-hidden
+												/>
 												<span className={collapsed ? "sr-only" : undefined}>
 													{item.label}
 												</span>
@@ -348,9 +355,9 @@ function SidebarNavContent({
 						aria-live="polite"
 						aria-atomic="true"
 					>
-							<p className="text-xs text-destructive">
-								Could not load your followed sources. Retry from Following.
-							</p>
+						<p className="text-xs text-destructive">
+							Could not load your followed sources. Retry from Following.
+						</p>
 						<Link
 							href="/subscriptions"
 							className="mt-1 inline-flex text-xs font-medium text-destructive underline underline-offset-2"
@@ -392,9 +399,14 @@ function SidebarNavContent({
 													? "bg-sidebar-accent text-sidebar-accent-foreground"
 													: "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
 											)}
-											aria-current={currentCategory === cat ? "page" : undefined}
+											aria-current={
+												currentCategory === cat ? "page" : undefined
+											}
 										>
-											<List className="size-3 shrink-0 opacity-70" aria-hidden />
+											<List
+												className="size-3 shrink-0 opacity-70"
+												aria-hidden
+											/>
 											{CATEGORY_LABELS[cat]}
 										</Link>
 										<ul className="ml-4 space-y-0.5 border-l border-border/40 pl-2">
