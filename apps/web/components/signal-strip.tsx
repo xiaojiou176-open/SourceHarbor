@@ -20,11 +20,7 @@ const TONE_CLASS: Record<NonNullable<SignalStripItem["tone"]>, string> = {
 	muted: "bg-muted-foreground/60",
 };
 
-export function SignalStrip({
-	title,
-	description,
-	items,
-}: SignalStripProps) {
+export function SignalStrip({ title, description, items }: SignalStripProps) {
 	return (
 		<div className="rounded-2xl border border-border/60 bg-background/70 p-4">
 			<div className="space-y-1">
@@ -52,7 +48,10 @@ export function SignalStrip({
 								</p>
 							</div>
 							<div className="h-2 overflow-hidden rounded-full bg-muted/50">
-								<div className={`h-full rounded-full ${tone}`} style={{ width }} />
+								<div
+									className={`h-full rounded-full ${tone}`}
+									style={{ width }}
+								/>
 							</div>
 							{item.detail ? (
 								<p className="text-xs leading-5 text-muted-foreground">

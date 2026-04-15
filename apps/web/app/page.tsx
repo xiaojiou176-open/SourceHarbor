@@ -41,9 +41,9 @@ export default function DashboardPage() {
 				>
 					{copy.heroTitle}
 				</h1>
-						<p className="folo-page-subtitle">
-							Open the reader first. Everything else can wait.
-						</p>
+				<p className="folo-page-subtitle">
+					Open the reader first. Everything else can wait.
+				</p>
 			</div>
 
 			<section
@@ -70,25 +70,25 @@ export default function DashboardPage() {
 							sources. Search and builder tools can wait.
 						</CardDescription>
 					</CardHeader>
-						<CardContent className="space-y-6 pt-0">
-							<div className="flex flex-wrap items-center gap-3">
-								<Button asChild variant="hero" size="lg">
-									<Link href="/reader">{copy.firstHop.evaluatePrimaryCta}</Link>
-								</Button>
-							</div>
-							<p className="text-xs leading-6 text-muted-foreground">
-								If you want a softer first step,{" "}
-								<Link
-									href="/reader/demo"
-									className="underline underline-offset-4 hover:text-foreground"
-								>
-									{copy.firstHop.evaluateSecondaryCta}
-								</Link>
-								.
-							</p>
-						</CardContent>
-					</Card>
-				</section>
-			</div>
-		);
-	}
+					<CardContent className="space-y-6 pt-0">
+						<div className="flex flex-wrap items-center gap-3">
+							<Button asChild variant="hero" size="lg">
+								<Link href="/reader">{copy.firstHop.evaluatePrimaryCta}</Link>
+							</Button>
+						</div>
+						<p className="text-xs leading-6 text-muted-foreground">
+							If you want a softer first step,{" "}
+							<Link
+								href="/reader/demo"
+								className="underline underline-offset-4 hover:text-foreground"
+							>
+								{copy.firstHop.evaluateSecondaryCta}
+							</Link>
+							.
+						</p>
+					</CardContent>
+				</Card>
+			</section>
+		</div>
+	);
+}

@@ -121,9 +121,7 @@ describe("reader pages", () => {
 		render(await ReaderPage());
 
 		expect(
-			screen.getByText(
-				"Pick a finished story and start reading",
-			),
+			screen.getByText("Pick a finished story and start reading"),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("heading", { name: "AI Agents", level: 3 }),
@@ -141,9 +139,10 @@ describe("reader pages", () => {
 			"href",
 			"/subscriptions",
 		);
-		expect(
-			screen.getByRole("link", { name: "Open story" }),
-		).toHaveAttribute("href", "/reader/doc-1");
+		expect(screen.getByRole("link", { name: "Open story" })).toHaveAttribute(
+			"href",
+			"/reader/doc-1",
+		);
 	});
 
 	it("renders reader detail with warning banner and source drawer", async () => {
@@ -205,16 +204,16 @@ describe("reader pages", () => {
 		expect(
 			screen.getByRole("link", { name: "Back to reader" }),
 		).toHaveAttribute("href", "/reader");
-		expect(screen.getByRole("link", { name: "Read the story" })).toHaveAttribute(
-			"href",
-			"#reader-body",
-		);
+		expect(
+			screen.getByRole("link", { name: "Read the story" }),
+		).toHaveAttribute("href", "#reader-body");
 		expect(
 			screen.getByRole("link", { name: "Keep the note nearby" }),
 		).toHaveAttribute("href", "#reader-warning");
-		expect(
-			screen.getByRole("link", { name: "See sources" }),
-		).toHaveAttribute("href", "#reader-evidence");
+		expect(screen.getByRole("link", { name: "See sources" })).toHaveAttribute(
+			"href",
+			"#reader-evidence",
+		);
 		expect(
 			screen.getByRole("link", { name: "Check coverage last" }),
 		).toHaveAttribute("href", "#reader-coverage");

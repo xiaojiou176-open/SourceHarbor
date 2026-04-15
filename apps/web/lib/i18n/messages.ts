@@ -126,8 +126,7 @@ const MESSAGES = {
 				subscriptionsDescription:
 					"Add a favorite creator, site, or feed without learning the whole system first.",
 				subscriptionsCta: "Follow sources",
-				subscriptionsHint:
-					"Paste a source first. The deeper setup can wait.",
+				subscriptionsHint: "Paste a source first. The deeper setup can wait.",
 				searchTitle: "Search your library",
 				searchDescription:
 					"Search past reading, notes, and supporting sources from one calm place.",
@@ -156,8 +155,7 @@ const MESSAGES = {
 			},
 			whyNow: {
 				sharedTruthTitle: "One calm place to read",
-				sharedTruthDescription:
-					"Reader and feed stay in one simple flow.",
+				sharedTruthDescription: "Reader and feed stay in one simple flow.",
 				proofFirstTitle: "Source trails are there when you need them",
 				proofFirstDescription:
 					"You can check where something came from without letting notes take over the page.",
@@ -167,8 +165,7 @@ const MESSAGES = {
 			},
 			firstHop: {
 				evaluateTitle: "Read the finished surface first",
-				evaluateDescription:
-					"Start with the clean reading surface first.",
+				evaluateDescription: "Start with the clean reading surface first.",
 				evaluatePrimaryCta: "Open Reader",
 				evaluateSecondaryCta: "Open specimen detail",
 				operateTitle: "Follow a few sources",
@@ -1674,7 +1671,8 @@ const MESSAGES = {
 			startNote:
 				"`./bin/sourceharbor mcp` 会路由到接在 apps/mcp/server.py 上的同一台 FastMCP server。`./bin/dev-mcp` 仍然是底层直达入口。",
 			toolsTitle: "代表性工具",
-			toolsDescription: "多数会话先摸一个工具族就够了，不需要一上来背全套名字。",
+			toolsDescription:
+				"多数会话先摸一个工具族就够了，不需要一上来背全套名字。",
 			relationshipTitle: "MCP 与其他产品面的关系",
 			relationshipDescription:
 				"把 MCP 保持成工具入口。只有当你需要给人读的 explanation 时，再跳到 Search 或 Ask。",
@@ -2188,8 +2186,7 @@ const MESSAGES = {
 			alertTitle: "提醒",
 			alertDescription:
 				"站内跟踪现在已经能用。外发提醒要不要打开，取决于投递是否真的准备好了。",
-			alertFallback:
-				"当前拿不到通知状态，先在这里继续跟踪。",
+			alertFallback: "当前拿不到通知状态，先在这里继续跟踪。",
 			openNotificationSettingsButton: "打开通知设置",
 			currentTitle: "你正在跟踪的话题",
 			currentDescription:

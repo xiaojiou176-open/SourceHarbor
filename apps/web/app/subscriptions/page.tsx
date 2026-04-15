@@ -444,8 +444,8 @@ export default async function SubscriptionsPage({
 									02 Run intake
 								</p>
 								<p className="leading-6">
-									Paste a source first. The result cards will tell you whether it
-									became something you follow or stayed one-off.
+									Paste a source first. The result cards will tell you whether
+									it became something you follow or stayed one-off.
 								</p>
 							</li>
 							<li className="grid gap-3 px-4 py-4 md:grid-cols-[72px_minmax(0,1fr)]">

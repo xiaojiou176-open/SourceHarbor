@@ -477,14 +477,12 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(mockListSubscriptions).toHaveBeenCalledWith({
 				enabled_only: false,
 			});
-				expect(screen.getByText("Article")).toBeInTheDocument();
-				expect(
-					screen.getByText("Pinned source"),
-				).toBeInTheDocument();
-				expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
-				expect(
-					screen.getByText(/Choose one thing worth reading/i),
-				).toBeInTheDocument();
+			expect(screen.getByText("Article")).toBeInTheDocument();
+			expect(screen.getByText("Pinned source")).toBeInTheDocument();
+			expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
+			expect(
+				screen.getByText(/Choose one thing worth reading/i),
+			).toBeInTheDocument();
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
 			).toHaveAttribute("href", "/feed?sub=sub-123");

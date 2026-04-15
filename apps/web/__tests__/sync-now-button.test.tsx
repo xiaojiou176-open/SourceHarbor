@@ -30,10 +30,9 @@ describe("SyncNowButton", () => {
 
 	it("renders idle label", () => {
 		render(<SyncNowButton />);
-		expect(screen.getByRole("button", { name: "Refresh list" })).toHaveAttribute(
-			"data-variant",
-			"hero",
-		);
+		expect(
+			screen.getByRole("button", { name: "Refresh list" }),
+		).toHaveAttribute("data-variant", "hero");
 	});
 
 	it("shows loading state and prevents duplicate requests while in flight", async () => {

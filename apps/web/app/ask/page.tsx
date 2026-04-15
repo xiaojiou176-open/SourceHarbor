@@ -277,8 +277,7 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 			story_page: null,
 			retrieval: null,
 			citations: [],
-			fallback_reason:
-				"Ask could not load the current answer lane right now.",
+			fallback_reason: "Ask could not load the current answer lane right now.",
 			fallback_next_step:
 				"Open raw search or the latest briefing while the answer lane recovers.",
 			fallback_actions: [
@@ -453,23 +452,23 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 									{askCopy.askClearContextButton}
 								</Link>
 							</>
-							) : (
-								<>
-									<Link
-										href="/briefings"
-										className="underline underline-offset-4 hover:text-foreground"
+						) : (
+							<>
+								<Link
+									href="/briefings"
+									className="underline underline-offset-4 hover:text-foreground"
 								>
 									{askCopy.askOpenBriefingButton}
 								</Link>
-									<Link
-										href="/search"
-										className="underline underline-offset-4 hover:text-foreground"
-									>
-										{askCopy.openRawSearchButton}
-									</Link>
-								</>
-							)}
-						</div>
+								<Link
+									href="/search"
+									className="underline underline-offset-4 hover:text-foreground"
+								>
+									{askCopy.openRawSearchButton}
+								</Link>
+							</>
+						)}
+					</div>
 					{!contextReady && watchlists.length > 0 ? (
 						<div className="space-y-3 border-t border-border/50 pt-4">
 							<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -515,619 +514,636 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 				{!safeQuestion ? <section>{askFormSurface}</section> : null}
 
 				<section className="space-y-4" aria-label={askCopy.askResultsAriaLabel}>
-				<Card className="folo-surface border-border/70">
-					<CardHeader>
-						<div className="flex flex-wrap items-center gap-3">
-							<h2 className="text-xl font-semibold">
-								{askCopy.askAnswerTitle}
-							</h2>
-							<Badge variant="outline">
-								{stateBadgeLabel(askPayload.answer_state)}
-							</Badge>
-						</div>
-						<CardDescription>
-							{stateDescription({
-								state: askPayload.answer_state,
-								hasQuestion: Boolean(safeQuestion),
-							})}
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-4">
-						{safeQuestion ? (
-							<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+					<Card className="folo-surface border-border/70">
+						<CardHeader>
+							<div className="flex flex-wrap items-center gap-3">
+								<h2 className="text-xl font-semibold">
+									{askCopy.askAnswerTitle}
+								</h2>
 								<Badge variant="outline">
-									{askCopy.askSummaryQuestionPrefix}: {safeQuestion}
-								</Badge>
-								<Badge variant="outline">
-									{askCopy.askSummaryHitsPrefix}: {retrievalHits.length}
+									{stateBadgeLabel(askPayload.answer_state)}
 								</Badge>
 							</div>
-						) : null}
+							<CardDescription>
+								{stateDescription({
+									state: askPayload.answer_state,
+									hasQuestion: Boolean(safeQuestion),
+								})}
+							</CardDescription>
+						</CardHeader>
+						<CardContent className="space-y-4">
+							{safeQuestion ? (
+								<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+									<Badge variant="outline">
+										{askCopy.askSummaryQuestionPrefix}: {safeQuestion}
+									</Badge>
+									<Badge variant="outline">
+										{askCopy.askSummaryHitsPrefix}: {retrievalHits.length}
+									</Badge>
+								</div>
+							) : null}
 
-						{selectedStory ? (
-							<div className="rounded-lg border border-border/60 bg-muted/20 p-4">
-								<div className="flex flex-wrap items-center gap-2">
-									<h3 className="text-lg font-semibold">
-										{askCopy.askStoryFocusTitle}
-									</h3>
-									<Badge variant="outline">
-										{askCopy.askSelectionBasisLabel}:{" "}
-										{selectionBasisLabel(askPayload.context.selection_basis)}
-									</Badge>
-									{selectedStory.topic_label ? (
-										<Badge variant="outline">{selectedStory.topic_label}</Badge>
-									) : null}
-								</div>
-								<p className="mt-2 text-sm text-muted-foreground">
-									{askCopy.askStoryFocusDescription}
-								</p>
-								<div className="mt-3 flex flex-wrap gap-2 text-sm text-muted-foreground">
-									<Badge variant="outline">
-										{briefingsCopy.sourcesLabel}: {selectedStory.source_count}
-									</Badge>
-									<Badge variant="outline">
-										{briefingsCopy.runsLabel}: {selectedStory.run_count}
-									</Badge>
-									<Badge variant="outline">
-										{briefingsCopy.matchedCardsLabel}:{" "}
-										{selectedStory.matched_card_count}
-									</Badge>
-								</div>
-								<div className="mt-3 flex flex-wrap gap-3">
-									{selectedStory.routes.briefing ? (
-										<Button asChild variant="outline" size="sm">
-											<Link href={selectedStory.routes.briefing}>
-												{askCopy.askOpenBriefingButton}
-											</Link>
-										</Button>
-									) : null}
-									{selectedStory.routes.watchlist_trend ? (
-										<Button asChild variant="outline" size="sm">
-											<Link href={selectedStory.routes.watchlist_trend}>
-												{briefingsCopy.openTrendButton}
-											</Link>
-										</Button>
-									) : null}
-									{selectedStory.routes.job_compare ? (
-										<Button asChild variant="outline" size="sm">
-											<Link href={selectedStory.routes.job_compare}>
-												{briefingsCopy.openCompareButton}
-											</Link>
-										</Button>
-									) : null}
-									{selectedStory.routes.job_knowledge_cards ? (
-										<Button asChild variant="outline" size="sm">
-											<Link href={selectedStory.routes.job_knowledge_cards}>
-												{briefingsCopy.openKnowledgeButton}
-											</Link>
-										</Button>
-									) : null}
-									{selectedStory.source_urls[0] ? (
-										<Button asChild variant="ghost" size="sm">
-											<a
-												href={selectedStory.source_urls[0]}
-												target="_blank"
-												rel="noreferrer"
-											>
-												{briefingsCopy.openSourceButton}
-											</a>
-										</Button>
-									) : null}
-								</div>
-								{storyChoices.length > 1 ? (
-									<div className="mt-4 rounded-lg border border-border/60 bg-background/70 p-4">
-										<div className="space-y-1">
-											<h3 className="text-lg font-semibold">
-												{askCopy.askStorySwitcherTitle}
-											</h3>
-											<p className="text-sm text-muted-foreground">
-												{askCopy.askStorySwitcherDescription}
-											</p>
-										</div>
-										<div className="mt-3 flex flex-wrap gap-2">
-											{storyChoices.map((story) => (
-												<Button
-													key={story.story_id}
-													asChild
-													size="sm"
-													variant={
-														story.story_id === activeStoryId ? "hero" : "outline"
-													}
-												>
-													<Link
-														href={
-															decorateAskRoute(story.routes.ask, {
-																question:
-																	safeQuestion ||
-																	story.topic_label ||
-																	story.headline,
-																mode: safeMode,
-																top_k: String(safeTopK),
-															}) ??
-															buildAskHref({
-																question: safeQuestion || undefined,
-																mode: safeMode,
-																top_k: String(safeTopK),
-																watchlist_id:
-																	askPayload.context.watchlist_id ?? undefined,
-																story_id: story.story_id,
-																topic_key: story.topic_key ?? undefined,
-															})
-														}
-													>
-														{story.headline}
-													</Link>
-												</Button>
-											))}
-										</div>
-										{askPayload.context.story_id || askPayload.context.topic_key ? (
-											<div className="mt-3 text-sm text-muted-foreground">
-												<Link
-													href={clearStoryHref}
-													className="underline underline-offset-4 hover:text-foreground"
-												>
-													{askCopy.askClearStoryContextButton}
-												</Link>
-											</div>
+							{selectedStory ? (
+								<div className="rounded-lg border border-border/60 bg-muted/20 p-4">
+									<div className="flex flex-wrap items-center gap-2">
+										<h3 className="text-lg font-semibold">
+											{askCopy.askStoryFocusTitle}
+										</h3>
+										<Badge variant="outline">
+											{askCopy.askSelectionBasisLabel}:{" "}
+											{selectionBasisLabel(askPayload.context.selection_basis)}
+										</Badge>
+										{selectedStory.topic_label ? (
+											<Badge variant="outline">
+												{selectedStory.topic_label}
+											</Badge>
 										) : null}
 									</div>
-								) : null}
-							</div>
-						) : null}
-
-						{askPayload.answer_state === "briefing_grounded" ? (
-							<div className="space-y-3">
-								<h3 className="text-2xl font-semibold">
-									{askPayload.answer_headline || askCopy.askAnswerFallbackTitle}
-								</h3>
-								{askPayload.answer_summary ? (
-									<p className="text-sm text-muted-foreground">
-										{askPayload.answer_summary}
+									<p className="mt-2 text-sm text-muted-foreground">
+										{askCopy.askStoryFocusDescription}
 									</p>
-								) : null}
-								{askPayload.answer_reason ? (
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{askCopy.askAnswerWhyLabel}
-										</p>
-										<p className="mt-2">{askPayload.answer_reason}</p>
+									<div className="mt-3 flex flex-wrap gap-2 text-sm text-muted-foreground">
+										<Badge variant="outline">
+											{briefingsCopy.sourcesLabel}: {selectedStory.source_count}
+										</Badge>
+										<Badge variant="outline">
+											{briefingsCopy.runsLabel}: {selectedStory.run_count}
+										</Badge>
+										<Badge variant="outline">
+											{briefingsCopy.matchedCardsLabel}:{" "}
+											{selectedStory.matched_card_count}
+										</Badge>
 									</div>
-								) : null}
-								<p className="text-sm text-muted-foreground">
-									{safeQuestion
-										? askCopy.askAnswerGroundedNote
-										: askCopy.askAnswerContextOnlyNote}
-								</p>
-							</div>
-						) : (
-							<div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4 text-sm text-muted-foreground">
-								<p className="font-medium text-foreground">
-									{askPayload.answer_state === "no_confident_answer"
-										? askCopy.askNoEvidenceTitle
-										: askPayload.answer_state === "briefing_unavailable"
-											? briefingsCopy.unavailableTitle
-											: askCopy.askContextMissingTitle}
-								</p>
-								<p>
-									{askPayload.answer_state === "no_confident_answer"
-										? askCopy.askNoEvidenceDescription
-										: askPayload.answer_state === "briefing_unavailable"
-											? briefingsCopy.unavailableDescription
-											: askCopy.askContextMissingDescription}
-								</p>
-								{askPayload.fallback_reason ? (
-									<p>{askPayload.fallback_reason}</p>
-								) : null}
-								{askPayload.fallback_next_step ? (
-									<p>{askPayload.fallback_next_step}</p>
-								) : null}
-								{fallbackActions.length > 0 ? (
-									<div className="space-y-2">
-										<p className="font-medium text-foreground">
-											{askCopy.askFallbackActionsTitle}
-										</p>
-										<div className="flex flex-wrap gap-3">
-											{fallbackActions.map((action) =>
-												action.route ? (
-													<Button
-														key={`${action.kind}-${action.route}`}
-														asChild
-														variant="outline"
-														size="sm"
-													>
-														<Link href={action.route}>{action.label}</Link>
-													</Button>
-												) : null,
-											)}
-										</div>
-									</div>
-								) : null}
-							</div>
-						)}
-					</CardContent>
-				</Card>
-
-						{shouldShowChangesLane || shouldShowEvidenceLane ? (
-							<details className="folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm">
-								<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
-									<div className="space-y-2">
-										<p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-											Receipts later
-										</p>
-										<p className="text-base font-semibold text-foreground">
-											Open the change log, citations, and raw evidence only when you need to verify the answer.
-										</p>
-									</div>
-								</summary>
-								<div className="mt-5 space-y-6">
-						{shouldShowChangesLane ? (
-							<section className="space-y-4">
-								<div className="space-y-1">
-									<h2 className="text-xl font-semibold">
-										{briefingsCopy.differencesTitle}
-									</h2>
-									<p className="text-sm text-muted-foreground">
-										{briefingsCopy.differencesDescription}
-									</p>
-								</div>
-									{askPayload.story_change_summary ? (
-										<div className="rounded-lg border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
-											<p className="font-medium text-foreground">
-											{askCopy.askAnswerWhyLabel}
-										</p>
-										<p className="mt-2">{askPayload.story_change_summary}</p>
-									</div>
-								) : null}
-								<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.addedTopicsLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.added_topics,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.removedTopicsLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.removed_topics,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.addedClaimKindsLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.added_claim_kinds,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.removedClaimKindsLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.removed_claim_kinds,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.newStoryKeysLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.new_story_keys,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-									<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">
-											{briefingsCopy.removedStoryKeysLabel}
-										</p>
-										<p className="mt-2">
-											{renderTokenList(
-												briefing.differences.removed_story_keys,
-												briefingsCopy.noneValue,
-											)}
-										</p>
-									</div>
-								</div>
-								<div className="rounded-lg border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
-									<p className="font-medium text-foreground">
-										{briefingsCopy.compareTitle}
-									</p>
-									<p className="mt-2">
-										{briefing.differences.compare?.diff_excerpt ||
-											briefingsCopy.noCompareExcerpt}
-									</p>
-									{briefing.differences.compare ? (
-										<p className="mt-2">
-											+{briefing.differences.compare.added_lines} / -
-											{briefing.differences.compare.removed_lines}
-										</p>
-									) : null}
-								</div>
-								<div className="flex flex-wrap gap-3">
-									<Button asChild variant="outline" size="sm">
-										<Link href={briefingHref}>
-											{askCopy.askOpenBriefingButton}
-										</Link>
-									</Button>
-									{compareHref ? (
-										<Button asChild variant="outline" size="sm">
-											<Link href={compareHref}>
-												{briefingsCopy.openCompareButton}
-											</Link>
+									<div className="mt-3 flex flex-wrap gap-3">
+										{selectedStory.routes.briefing ? (
+											<Button asChild variant="outline" size="sm">
+												<Link href={selectedStory.routes.briefing}>
+													{askCopy.askOpenBriefingButton}
+												</Link>
+											</Button>
+										) : null}
+										{selectedStory.routes.watchlist_trend ? (
+											<Button asChild variant="outline" size="sm">
+												<Link href={selectedStory.routes.watchlist_trend}>
+													{briefingsCopy.openTrendButton}
+												</Link>
+											</Button>
+										) : null}
+										{selectedStory.routes.job_compare ? (
+											<Button asChild variant="outline" size="sm">
+												<Link href={selectedStory.routes.job_compare}>
+													{briefingsCopy.openCompareButton}
+												</Link>
+											</Button>
+										) : null}
+										{selectedStory.routes.job_knowledge_cards ? (
+											<Button asChild variant="outline" size="sm">
+												<Link href={selectedStory.routes.job_knowledge_cards}>
+													{briefingsCopy.openKnowledgeButton}
+												</Link>
+											</Button>
+										) : null}
+										{selectedStory.source_urls[0] ? (
+											<Button asChild variant="ghost" size="sm">
+												<a
+													href={selectedStory.source_urls[0]}
+													target="_blank"
+													rel="noreferrer"
+												>
+													{briefingsCopy.openSourceButton}
+												</a>
 											</Button>
 										) : null}
 									</div>
-								</section>
-						) : null}
+									{storyChoices.length > 1 ? (
+										<div className="mt-4 rounded-lg border border-border/60 bg-background/70 p-4">
+											<div className="space-y-1">
+												<h3 className="text-lg font-semibold">
+													{askCopy.askStorySwitcherTitle}
+												</h3>
+												<p className="text-sm text-muted-foreground">
+													{askCopy.askStorySwitcherDescription}
+												</p>
+											</div>
+											<div className="mt-3 flex flex-wrap gap-2">
+												{storyChoices.map((story) => (
+													<Button
+														key={story.story_id}
+														asChild
+														size="sm"
+														variant={
+															story.story_id === activeStoryId
+																? "hero"
+																: "outline"
+														}
+													>
+														<Link
+															href={
+																decorateAskRoute(story.routes.ask, {
+																	question:
+																		safeQuestion ||
+																		story.topic_label ||
+																		story.headline,
+																	mode: safeMode,
+																	top_k: String(safeTopK),
+																}) ??
+																buildAskHref({
+																	question: safeQuestion || undefined,
+																	mode: safeMode,
+																	top_k: String(safeTopK),
+																	watchlist_id:
+																		askPayload.context.watchlist_id ??
+																		undefined,
+																	story_id: story.story_id,
+																	topic_key: story.topic_key ?? undefined,
+																})
+															}
+														>
+															{story.headline}
+														</Link>
+													</Button>
+												))}
+											</div>
+											{askPayload.context.story_id ||
+											askPayload.context.topic_key ? (
+												<div className="mt-3 text-sm text-muted-foreground">
+													<Link
+														href={clearStoryHref}
+														className="underline underline-offset-4 hover:text-foreground"
+													>
+														{askCopy.askClearStoryContextButton}
+													</Link>
+												</div>
+											) : null}
+										</div>
+									) : null}
+								</div>
+							) : null}
 
-						{shouldShowEvidenceLane ? (
-							<section className="space-y-6">
-								<div className="space-y-1">
-									<h2 className="text-xl font-semibold">
-										{briefingsCopy.evidenceTitle}
-									</h2>
+							{askPayload.answer_state === "briefing_grounded" ? (
+								<div className="space-y-3">
+									<h3 className="text-2xl font-semibold">
+										{askPayload.answer_headline ||
+											askCopy.askAnswerFallbackTitle}
+									</h3>
+									{askPayload.answer_summary ? (
+										<p className="text-sm text-muted-foreground">
+											{askPayload.answer_summary}
+										</p>
+									) : null}
+									{askPayload.answer_reason ? (
+										<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+											<p className="font-medium text-foreground">
+												{askCopy.askAnswerWhyLabel}
+											</p>
+											<p className="mt-2">{askPayload.answer_reason}</p>
+										</div>
+									) : null}
 									<p className="text-sm text-muted-foreground">
-										{briefingsCopy.evidenceDescription}
+										{safeQuestion
+											? askCopy.askAnswerGroundedNote
+											: askCopy.askAnswerContextOnlyNote}
 									</p>
 								</div>
-								{citations.length > 0 ? (
+							) : (
+								<div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-4 text-sm text-muted-foreground">
+									<p className="font-medium text-foreground">
+										{askPayload.answer_state === "no_confident_answer"
+											? askCopy.askNoEvidenceTitle
+											: askPayload.answer_state === "briefing_unavailable"
+												? briefingsCopy.unavailableTitle
+												: askCopy.askContextMissingTitle}
+									</p>
+									<p>
+										{askPayload.answer_state === "no_confident_answer"
+											? askCopy.askNoEvidenceDescription
+											: askPayload.answer_state === "briefing_unavailable"
+												? briefingsCopy.unavailableDescription
+												: askCopy.askContextMissingDescription}
+									</p>
+									{askPayload.fallback_reason ? (
+										<p>{askPayload.fallback_reason}</p>
+									) : null}
+									{askPayload.fallback_next_step ? (
+										<p>{askPayload.fallback_next_step}</p>
+									) : null}
+									{fallbackActions.length > 0 ? (
+										<div className="space-y-2">
+											<p className="font-medium text-foreground">
+												{askCopy.askFallbackActionsTitle}
+											</p>
+											<div className="flex flex-wrap gap-3">
+												{fallbackActions.map((action) =>
+													action.route ? (
+														<Button
+															key={`${action.kind}-${action.route}`}
+															asChild
+															variant="outline"
+															size="sm"
+														>
+															<Link href={action.route}>{action.label}</Link>
+														</Button>
+													) : null,
+												)}
+											</div>
+										</div>
+									) : null}
+								</div>
+							)}
+						</CardContent>
+					</Card>
+
+					{shouldShowChangesLane || shouldShowEvidenceLane ? (
+						<details className="folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm">
+							<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
+								<div className="space-y-2">
+									<p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+										Receipts later
+									</p>
+									<p className="text-base font-semibold text-foreground">
+										Open the change log, citations, and raw evidence only when
+										you need to verify the answer.
+									</p>
+								</div>
+							</summary>
+							<div className="mt-5 space-y-6">
+								{shouldShowChangesLane ? (
 									<section className="space-y-4">
-									<div className="space-y-1">
-									<h3 className="text-lg font-semibold">
-										{askCopy.askCitationsTitle}
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										{askCopy.askCitationsDescription}
-									</p>
-								</div>
-								<div className="grid gap-4 xl:grid-cols-2">
-									{citations.map((citation, index) => (
-										<article
-											key={`${citation.kind}-${citation.label}-${index}`}
-											className="rounded-xl border border-border/60 bg-muted/20 p-4"
-										>
-											<div className="space-y-3">
-												<div className="flex flex-wrap gap-2">
-													{citation.job_id ? (
-														<Badge variant="outline">
-															Job {compactId(citation.job_id)}
-														</Badge>
-													) : null}
-													<Badge variant="outline">
-														{formatSourceLabel(citation.kind)}
-													</Badge>
-												</div>
-												<div className="space-y-1">
-													<h4 className="text-lg font-semibold">
-														{citation.label}
-													</h4>
-													<p className="text-sm text-muted-foreground">
-														{citation.snippet}
-													</p>
-												</div>
-												<div className="flex flex-wrap gap-3">
-													{citation.route ? (
-														<Button asChild variant="outline" size="sm">
-															<Link href={citation.route}>
-																{citation.route_label ??
-																	askCopy.askOpenCitationRouteButton}
-															</Link>
-														</Button>
-													) : null}
-													{citation.source_url ? (
-														<Button asChild variant="ghost" size="sm">
-															<a
-																href={citation.source_url}
-																target="_blank"
-																rel="noreferrer"
-															>
-																{askCopy.openSourceButton}
-															</a>
-														</Button>
-													) : null}
-												</div>
+										<div className="space-y-1">
+											<h2 className="text-xl font-semibold">
+												{briefingsCopy.differencesTitle}
+											</h2>
+											<p className="text-sm text-muted-foreground">
+												{briefingsCopy.differencesDescription}
+											</p>
+										</div>
+										{askPayload.story_change_summary ? (
+											<div className="rounded-lg border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{askCopy.askAnswerWhyLabel}
+												</p>
+												<p className="mt-2">
+													{askPayload.story_change_summary}
+												</p>
 											</div>
-										</article>
-									))}
-								</div>
-							</section>
-						) : null}
-
-						{safeQuestion ? (
-							<section className="space-y-4">
-								<div className="space-y-1">
-									<h3 className="text-lg font-semibold">
-										{askCopy.askQuestionEvidenceTitle}
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										{askCopy.askQuestionEvidenceDescription}
-									</p>
-								</div>
-								{retrievalHits.length > 0 ? (
-									retrievalHits.map((hit) => (
-										<EvidenceCard
-											key={`${hit.job_id}-${hit.source}-${hit.snippet}`}
-											hit={hit}
-										/>
-									))
-								) : (
-									<p className="text-sm text-muted-foreground">
-										{askCopy.askNoEvidenceDescription}
-									</p>
-								)}
-							</section>
-						) : null}
-
-						{selectedStory ? (
-							<section className="space-y-4">
-								<div className="space-y-1">
-									<h3 className="text-lg font-semibold">
-										{briefingsCopy.storyEvidenceTitle}
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										{selectedStory.headline}
-									</p>
-								</div>
-								<div className="grid gap-4 xl:grid-cols-2">
-									{selectedStory.evidence_cards.map((card) => (
-										<article
-											key={card.card_id}
-											className="rounded-xl border border-border/60 bg-muted/20 p-4"
-										>
-											<div className="space-y-3">
-												<div className="flex flex-wrap gap-2">
-													<Badge variant="outline">
-														{platformLabel(
-															card.platform,
-															briefingsCopy.platformUnknown,
-														)}
-													</Badge>
-													{card.topic_label ? (
-														<Badge variant="outline">{card.topic_label}</Badge>
-													) : null}
-												</div>
-												<div className="space-y-1">
-													<h4 className="text-lg font-semibold">
-														{card.card_title ||
-															card.video_title ||
-															briefingsCopy.untitledEvidenceLabel}
-													</h4>
-													<p className="text-sm text-muted-foreground">
-														{card.card_body.trim() || briefingsCopy.noExcerpt}
-													</p>
-												</div>
-												<div className="flex flex-wrap gap-3">
-													<Button asChild variant="outline" size="sm">
-														<Link
-															href={`/jobs?job_id=${encodeURIComponent(card.job_id)}`}
-														>
-															{briefingsCopy.openJobButton}
-														</Link>
-													</Button>
-													<Button asChild variant="outline" size="sm">
-														<Link
-															href={`/knowledge?job_id=${encodeURIComponent(card.job_id)}`}
-														>
-															{briefingsCopy.openKnowledgeButton}
-														</Link>
-													</Button>
-													{card.source_url ? (
-														<Button asChild variant="ghost" size="sm">
-															<a
-																href={card.source_url}
-																target="_blank"
-																rel="noreferrer"
-															>
-																{briefingsCopy.openSourceButton}
-															</a>
-														</Button>
-													) : null}
-												</div>
+										) : null}
+										<div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.addedTopicsLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.added_topics,
+														briefingsCopy.noneValue,
+													)}
+												</p>
 											</div>
-										</article>
-									))}
-								</div>
-							</section>
-						) : null}
-
-						{featuredRuns.length > 0 ? (
-							<section className="space-y-4">
-								<div className="space-y-1">
-									<h3 className="text-lg font-semibold">
-										{briefingsCopy.featuredRunsTitle}
-									</h3>
-									<p className="text-sm text-muted-foreground">
-										{askCopy.askFeaturedRunsDescription}
-									</p>
-								</div>
-								<div className="grid gap-4 xl:grid-cols-2">
-									{featuredRuns.map((run) => (
-										<article
-											key={run.job_id}
-											className="rounded-xl border border-border/60 bg-muted/20 p-4"
-										>
-											<div className="space-y-3">
-												<div className="flex flex-wrap gap-2">
-													<Badge variant="outline">
-														{platformLabel(
-															run.platform,
-															briefingsCopy.platformUnknown,
-														)}
-													</Badge>
-													<Badge variant="outline">
-														{run.matched_card_count}{" "}
-														{briefingsCopy.matchedCardsLabel}
-													</Badge>
-												</div>
-												<div className="space-y-1">
-													<h4 className="text-lg font-semibold">{run.title}</h4>
-													<p className="text-sm text-muted-foreground">
-														{formatDateTime(run.created_at)}
-													</p>
-												</div>
-												<div className="flex flex-wrap gap-3">
-													<Button asChild variant="outline" size="sm">
-														<Link
-															href={`/jobs?job_id=${encodeURIComponent(run.job_id)}`}
-														>
-															{briefingsCopy.openJobButton}
-														</Link>
-													</Button>
-													<Button asChild variant="outline" size="sm">
-														<Link
-															href={`/knowledge?job_id=${encodeURIComponent(run.job_id)}`}
-														>
-															{briefingsCopy.openKnowledgeButton}
-														</Link>
-													</Button>
-													{run.source_url ? (
-														<Button asChild variant="ghost" size="sm">
-															<a
-																href={run.source_url}
-																target="_blank"
-																rel="noreferrer"
-															>
-																{briefingsCopy.openSourceButton}
-															</a>
-														</Button>
-													) : null}
-												</div>
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.removedTopicsLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.removed_topics,
+														briefingsCopy.noneValue,
+													)}
+												</p>
 											</div>
-										</article>
-									))}
-								</div>
-							</section>
-						) : null}
-
-								{!safeQuestion && !selectedStory && featuredRuns.length === 0 ? (
-									<p className="text-sm text-muted-foreground">
-										{askCopy.askExpectationDescription}
-									</p>
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.addedClaimKindsLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.added_claim_kinds,
+														briefingsCopy.noneValue,
+													)}
+												</p>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.removedClaimKindsLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.removed_claim_kinds,
+														briefingsCopy.noneValue,
+													)}
+												</p>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.newStoryKeysLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.new_story_keys,
+														briefingsCopy.noneValue,
+													)}
+												</p>
+											</div>
+											<div className="rounded-lg border border-border/60 bg-muted/20 p-3 text-sm text-muted-foreground">
+												<p className="font-medium text-foreground">
+													{briefingsCopy.removedStoryKeysLabel}
+												</p>
+												<p className="mt-2">
+													{renderTokenList(
+														briefing.differences.removed_story_keys,
+														briefingsCopy.noneValue,
+													)}
+												</p>
+											</div>
+										</div>
+										<div className="rounded-lg border border-border/60 bg-background/70 p-4 text-sm text-muted-foreground">
+											<p className="font-medium text-foreground">
+												{briefingsCopy.compareTitle}
+											</p>
+											<p className="mt-2">
+												{briefing.differences.compare?.diff_excerpt ||
+													briefingsCopy.noCompareExcerpt}
+											</p>
+											{briefing.differences.compare ? (
+												<p className="mt-2">
+													+{briefing.differences.compare.added_lines} / -
+													{briefing.differences.compare.removed_lines}
+												</p>
+											) : null}
+										</div>
+										<div className="flex flex-wrap gap-3">
+											<Button asChild variant="outline" size="sm">
+												<Link href={briefingHref}>
+													{askCopy.askOpenBriefingButton}
+												</Link>
+											</Button>
+											{compareHref ? (
+												<Button asChild variant="outline" size="sm">
+													<Link href={compareHref}>
+														{briefingsCopy.openCompareButton}
+													</Link>
+												</Button>
+											) : null}
+										</div>
+									</section>
 								) : null}
-								</section>
-						) : null}
-								</div>
-							</details>
-						) : null}
-					</section>
+
+								{shouldShowEvidenceLane ? (
+									<section className="space-y-6">
+										<div className="space-y-1">
+											<h2 className="text-xl font-semibold">
+												{briefingsCopy.evidenceTitle}
+											</h2>
+											<p className="text-sm text-muted-foreground">
+												{briefingsCopy.evidenceDescription}
+											</p>
+										</div>
+										{citations.length > 0 ? (
+											<section className="space-y-4">
+												<div className="space-y-1">
+													<h3 className="text-lg font-semibold">
+														{askCopy.askCitationsTitle}
+													</h3>
+													<p className="text-sm text-muted-foreground">
+														{askCopy.askCitationsDescription}
+													</p>
+												</div>
+												<div className="grid gap-4 xl:grid-cols-2">
+													{citations.map((citation, index) => (
+														<article
+															key={`${citation.kind}-${citation.label}-${index}`}
+															className="rounded-xl border border-border/60 bg-muted/20 p-4"
+														>
+															<div className="space-y-3">
+																<div className="flex flex-wrap gap-2">
+																	{citation.job_id ? (
+																		<Badge variant="outline">
+																			Job {compactId(citation.job_id)}
+																		</Badge>
+																	) : null}
+																	<Badge variant="outline">
+																		{formatSourceLabel(citation.kind)}
+																	</Badge>
+																</div>
+																<div className="space-y-1">
+																	<h4 className="text-lg font-semibold">
+																		{citation.label}
+																	</h4>
+																	<p className="text-sm text-muted-foreground">
+																		{citation.snippet}
+																	</p>
+																</div>
+																<div className="flex flex-wrap gap-3">
+																	{citation.route ? (
+																		<Button asChild variant="outline" size="sm">
+																			<Link href={citation.route}>
+																				{citation.route_label ??
+																					askCopy.askOpenCitationRouteButton}
+																			</Link>
+																		</Button>
+																	) : null}
+																	{citation.source_url ? (
+																		<Button asChild variant="ghost" size="sm">
+																			<a
+																				href={citation.source_url}
+																				target="_blank"
+																				rel="noreferrer"
+																			>
+																				{askCopy.openSourceButton}
+																			</a>
+																		</Button>
+																	) : null}
+																</div>
+															</div>
+														</article>
+													))}
+												</div>
+											</section>
+										) : null}
+
+										{safeQuestion ? (
+											<section className="space-y-4">
+												<div className="space-y-1">
+													<h3 className="text-lg font-semibold">
+														{askCopy.askQuestionEvidenceTitle}
+													</h3>
+													<p className="text-sm text-muted-foreground">
+														{askCopy.askQuestionEvidenceDescription}
+													</p>
+												</div>
+												{retrievalHits.length > 0 ? (
+													retrievalHits.map((hit) => (
+														<EvidenceCard
+															key={`${hit.job_id}-${hit.source}-${hit.snippet}`}
+															hit={hit}
+														/>
+													))
+												) : (
+													<p className="text-sm text-muted-foreground">
+														{askCopy.askNoEvidenceDescription}
+													</p>
+												)}
+											</section>
+										) : null}
+
+										{selectedStory ? (
+											<section className="space-y-4">
+												<div className="space-y-1">
+													<h3 className="text-lg font-semibold">
+														{briefingsCopy.storyEvidenceTitle}
+													</h3>
+													<p className="text-sm text-muted-foreground">
+														{selectedStory.headline}
+													</p>
+												</div>
+												<div className="grid gap-4 xl:grid-cols-2">
+													{selectedStory.evidence_cards.map((card) => (
+														<article
+															key={card.card_id}
+															className="rounded-xl border border-border/60 bg-muted/20 p-4"
+														>
+															<div className="space-y-3">
+																<div className="flex flex-wrap gap-2">
+																	<Badge variant="outline">
+																		{platformLabel(
+																			card.platform,
+																			briefingsCopy.platformUnknown,
+																		)}
+																	</Badge>
+																	{card.topic_label ? (
+																		<Badge variant="outline">
+																			{card.topic_label}
+																		</Badge>
+																	) : null}
+																</div>
+																<div className="space-y-1">
+																	<h4 className="text-lg font-semibold">
+																		{card.card_title ||
+																			card.video_title ||
+																			briefingsCopy.untitledEvidenceLabel}
+																	</h4>
+																	<p className="text-sm text-muted-foreground">
+																		{card.card_body.trim() ||
+																			briefingsCopy.noExcerpt}
+																	</p>
+																</div>
+																<div className="flex flex-wrap gap-3">
+																	<Button asChild variant="outline" size="sm">
+																		<Link
+																			href={`/jobs?job_id=${encodeURIComponent(card.job_id)}`}
+																		>
+																			{briefingsCopy.openJobButton}
+																		</Link>
+																	</Button>
+																	<Button asChild variant="outline" size="sm">
+																		<Link
+																			href={`/knowledge?job_id=${encodeURIComponent(card.job_id)}`}
+																		>
+																			{briefingsCopy.openKnowledgeButton}
+																		</Link>
+																	</Button>
+																	{card.source_url ? (
+																		<Button asChild variant="ghost" size="sm">
+																			<a
+																				href={card.source_url}
+																				target="_blank"
+																				rel="noreferrer"
+																			>
+																				{briefingsCopy.openSourceButton}
+																			</a>
+																		</Button>
+																	) : null}
+																</div>
+															</div>
+														</article>
+													))}
+												</div>
+											</section>
+										) : null}
+
+										{featuredRuns.length > 0 ? (
+											<section className="space-y-4">
+												<div className="space-y-1">
+													<h3 className="text-lg font-semibold">
+														{briefingsCopy.featuredRunsTitle}
+													</h3>
+													<p className="text-sm text-muted-foreground">
+														{askCopy.askFeaturedRunsDescription}
+													</p>
+												</div>
+												<div className="grid gap-4 xl:grid-cols-2">
+													{featuredRuns.map((run) => (
+														<article
+															key={run.job_id}
+															className="rounded-xl border border-border/60 bg-muted/20 p-4"
+														>
+															<div className="space-y-3">
+																<div className="flex flex-wrap gap-2">
+																	<Badge variant="outline">
+																		{platformLabel(
+																			run.platform,
+																			briefingsCopy.platformUnknown,
+																		)}
+																	</Badge>
+																	<Badge variant="outline">
+																		{run.matched_card_count}{" "}
+																		{briefingsCopy.matchedCardsLabel}
+																	</Badge>
+																</div>
+																<div className="space-y-1">
+																	<h4 className="text-lg font-semibold">
+																		{run.title}
+																	</h4>
+																	<p className="text-sm text-muted-foreground">
+																		{formatDateTime(run.created_at)}
+																	</p>
+																</div>
+																<div className="flex flex-wrap gap-3">
+																	<Button asChild variant="outline" size="sm">
+																		<Link
+																			href={`/jobs?job_id=${encodeURIComponent(run.job_id)}`}
+																		>
+																			{briefingsCopy.openJobButton}
+																		</Link>
+																	</Button>
+																	<Button asChild variant="outline" size="sm">
+																		<Link
+																			href={`/knowledge?job_id=${encodeURIComponent(run.job_id)}`}
+																		>
+																			{briefingsCopy.openKnowledgeButton}
+																		</Link>
+																	</Button>
+																	{run.source_url ? (
+																		<Button asChild variant="ghost" size="sm">
+																			<a
+																				href={run.source_url}
+																				target="_blank"
+																				rel="noreferrer"
+																			>
+																				{briefingsCopy.openSourceButton}
+																			</a>
+																		</Button>
+																	) : null}
+																</div>
+															</div>
+														</article>
+													))}
+												</div>
+											</section>
+										) : null}
+
+										{!safeQuestion &&
+										!selectedStory &&
+										featuredRuns.length === 0 ? (
+											<p className="text-sm text-muted-foreground">
+												{askCopy.askExpectationDescription}
+											</p>
+										) : null}
+									</section>
+								) : null}
+							</div>
+						</details>
+					) : null}
+				</section>
 				{safeQuestion ? (
 					<details className="folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm">
 						<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
@@ -1136,14 +1152,15 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 									Refine later
 								</p>
 								<p className="text-base font-semibold text-foreground">
-									Open the question controls only if the first answer is not enough
+									Open the question controls only if the first answer is not
+									enough
 								</p>
 							</div>
 						</summary>
 						<div className="mt-5">{askFormSurface}</div>
 					</details>
 				) : null}
-				</div>
 			</div>
-		);
+		</div>
+	);
 }

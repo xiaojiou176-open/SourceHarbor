@@ -62,13 +62,16 @@ export default function McpPage() {
 							the main front door.
 						</p>
 						<p className="text-sm leading-7 text-muted-foreground">
-							Start the server, try one tool family, then leave this page once you know the call you need.
+							Start the server, try one tool family, then leave this page once
+							you know the call you need.
 						</p>
 					</CardContent>
 				</Card>
 				<Card className="folo-surface border-border/70">
 					<CardHeader>
-						<h2 className="text-xl font-semibold">Start with one tool family</h2>
+						<h2 className="text-xl font-semibold">
+							Start with one tool family
+						</h2>
 						<CardDescription>
 							Jobs, retrieval, and ingest are enough to prove the lane. You do
 							not need the whole list on day one.
@@ -91,7 +94,8 @@ export default function McpPage() {
 								Use MCP for tool calls, not for storytelling
 							</p>
 							<p className="mt-2">
-								Start with jobs, retrieval, or ingest. Save the bigger answer layer for Search or Ask when a human needs to read the outcome.
+								Start with jobs, retrieval, or ingest. Save the bigger answer
+								layer for Search or Ask when a human needs to read the outcome.
 							</p>
 						</div>
 					</CardContent>
@@ -110,13 +114,15 @@ export default function McpPage() {
 					<div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
 						<p className="font-medium text-foreground">MCP</p>
 						<p className="mt-2">
-							Stay here when you already know the tool family and just need exact calls against the live pipeline.
+							Stay here when you already know the tool family and just need
+							exact calls against the live pipeline.
 						</p>
 					</div>
 					<div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
 						<p className="font-medium text-foreground">Search</p>
 						<p className="mt-2">
-							Use Search when a human needs grounded retrieval results laid out instead of raw tool output.
+							Use Search when a human needs grounded retrieval results laid out
+							instead of raw tool output.
 						</p>
 						<p className="mt-3 text-sm text-muted-foreground">
 							<Link
@@ -130,7 +136,8 @@ export default function McpPage() {
 					<div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
 						<p className="font-medium text-foreground">Ask</p>
 						<p className="mt-2">
-							Use Ask when the same evidence needs to become an answer, change summary, or story-aware explanation.
+							Use Ask when the same evidence needs to become an answer, change
+							summary, or story-aware explanation.
 						</p>
 						<p className="mt-3 text-sm text-muted-foreground">
 							<Link

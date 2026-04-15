@@ -333,16 +333,16 @@ export default async function ReaderPage() {
 						<Badge variant="outline" className="w-fit">
 							Reading note
 						</Badge>
-							<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
-								Up next
-							</p>
-							<h2 className="font-serif text-2xl font-semibold leading-none tracking-tight">
-								Where to go next
-							</h2>
-							<CardDescription>
-								Use this only when you want your next reading path. The story
-								should still come first.
-							</CardDescription>
+						<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
+							Up next
+						</p>
+						<h2 className="font-serif text-2xl font-semibold leading-none tracking-tight">
+							Where to go next
+						</h2>
+						<CardDescription>
+							Use this only when you want your next reading path. The story
+							should still come first.
+						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4 text-sm">
 						{navigationBrief ? (
@@ -462,9 +462,7 @@ export default async function ReaderPage() {
 										<span>Sources used {document.source_item_count}</span>
 									</div>
 									<Button asChild className="w-full">
-										<Link href={`/reader/${document.id}`}>
-											Open story
-										</Link>
+										<Link href={`/reader/${document.id}`}>Open story</Link>
 									</Button>
 								</CardContent>
 							</Card>
@@ -531,9 +529,7 @@ export default async function ReaderPage() {
 										read as one finished story.
 									</p>
 									<Button asChild className="w-full">
-										<Link href={`/reader/${document.id}`}>
-											Open story
-										</Link>
+										<Link href={`/reader/${document.id}`}>Open story</Link>
 									</Button>
 								</CardContent>
 							</Card>

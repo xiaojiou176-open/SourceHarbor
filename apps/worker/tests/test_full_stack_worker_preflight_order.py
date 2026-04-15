@@ -157,7 +157,7 @@ def test_full_stack_up_records_temporal_preflight_failure_before_service_start(
     assert "conclusion=temporal_not_ready" in failure_text
 
 
-def test_full_stack_up_self_heals_unhealthy_temporal_namespace_before_service_start(
+def test_full_stack_up_attempts_self_heal_for_unhealthy_temporal_namespace_before_fail_close(
     tmp_path: Path,
 ) -> None:
     full_stack_target = _prepare_full_stack_script(tmp_path)
@@ -256,7 +256,7 @@ exit 0
         encoding="utf-8",
     )
     (fake_bin_dir / "uv").write_text(
-        '#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n',
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
         encoding="utf-8",
     )
     for path in (
@@ -311,9 +311,10 @@ exit 0
             temporal_server.shutdown()
             temporal_thread.join(timeout=5)
 
-    assert proc.returncode == 0, proc.stderr
+    assert proc.returncode != 0, proc.stderr
     assert marker.exists()
     assert "attempting_core_services_self_heal" in proc.stderr
+    assert "conclusion=worker_failed_to_start" in proc.stderr
 
 
 def test_full_stack_up_waits_for_worker_temporal_pollers_after_worker_start(

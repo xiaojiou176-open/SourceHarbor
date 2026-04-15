@@ -9,6 +9,7 @@ import {
 	FormInputField,
 	FormSelectField,
 } from "@/components/form-field";
+import { SignalStrip } from "@/components/signal-strip";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -17,7 +18,6 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { SignalStrip } from "@/components/signal-strip";
 import { WebActionSessionHiddenInput } from "@/components/web-action-session-hidden-input";
 import { apiClient } from "@/lib/api/client";
 import { formatDateTime } from "@/lib/format";
@@ -204,7 +204,8 @@ export default async function WatchlistsPage({
 							</p>
 							{briefingPageResult.payload.story_change_summary ? (
 								<p className="mt-3 text-sm text-muted-foreground">
-									Latest shift: {briefingPageResult.payload.story_change_summary}
+									Latest shift:{" "}
+									{briefingPageResult.payload.story_change_summary}
 								</p>
 							) : null}
 						</div>
@@ -219,9 +220,7 @@ export default async function WatchlistsPage({
 
 						<div className="flex flex-wrap gap-3">
 							<Button asChild variant="hero" size="sm">
-								<Link href={compounderFrontDoorHref}>
-									Open story
-								</Link>
+								<Link href={compounderFrontDoorHref}>Open story</Link>
 							</Button>
 							{selectedStoryRoutes?.briefing ? (
 								<Link
@@ -265,7 +264,9 @@ export default async function WatchlistsPage({
 						</summary>
 						<div className="border-t border-border/50 px-6 pb-6 pt-4">
 							{watchlistsResult.error ? (
-								<p className="text-sm text-muted-foreground">{copy.currentError}</p>
+								<p className="text-sm text-muted-foreground">
+									{copy.currentError}
+								</p>
 							) : (
 								<ul className="space-y-3">
 									{watchlists.map((item) => (
@@ -282,10 +283,14 @@ export default async function WatchlistsPage({
 														: <code>{item.matcher_value}</code> ·{" "}
 														{deliveryLabelMap.get(item.delivery_channel) ??
 															item.delivery_channel}{" "}
-														· {item.enabled ? copy.enabledState : copy.pausedState}
+														·{" "}
+														{item.enabled
+															? copy.enabledState
+															: copy.pausedState}
 													</p>
 													<p className="text-xs text-muted-foreground">
-														{copy.updatedPrefix}: {formatDateTime(item.updated_at)}
+														{copy.updatedPrefix}:{" "}
+														{formatDateTime(item.updated_at)}
 													</p>
 												</div>
 												<div className="flex flex-wrap gap-3">
@@ -391,8 +396,8 @@ export default async function WatchlistsPage({
 										{!editingWatchlist ? (
 											<>
 												<p className="text-sm text-muted-foreground">
-													Start with the topic first. Tighten the matching rule and
-													delivery only after this watchlist proves useful.
+													Start with the topic first. Tighten the matching rule
+													and delivery only after this watchlist proves useful.
 												</p>
 												<FormSelectField
 													name="matcher_type"
@@ -405,7 +410,9 @@ export default async function WatchlistsPage({
 										<FormSelectField
 											name="delivery_channel"
 											label={copy.deliveryLabel}
-											defaultValue={editingWatchlist?.delivery_channel ?? "dashboard"}
+											defaultValue={
+												editingWatchlist?.delivery_channel ?? "dashboard"
+											}
 											options={deliveryOptions}
 										/>
 										<FormCheckboxField

@@ -161,7 +161,7 @@ export default async function ReaderDetailPage({
 						<h1
 							data-route-heading
 							tabIndex={-1}
-							className={`max-w-4xl text-4xl leading-[0.98] tracking-tight md:text-5xl xl:text-6xl ${editorialSerif.className}`}
+							className={`max-w-4xl text-3xl leading-[1.02] tracking-tight [overflow-wrap:anywhere] sm:text-4xl md:text-5xl xl:text-6xl ${editorialSerif.className}`}
 						>
 							{document.title}
 						</h1>
@@ -318,11 +318,11 @@ export default async function ReaderDetailPage({
 				<div className="space-y-2">
 					<div className="flex items-center gap-2 text-sm font-medium text-foreground">
 						<NotebookText className="h-4 w-4 text-rose-600" />
-							Story
+						Story
 					</div>
 					<CardDescription className="max-w-3xl leading-6">
-							This is the finished reading view. Start here before you open
-							notes or source details.
+						This is the finished reading view. Start here before you open notes
+						or source details.
 					</CardDescription>
 					{sections.length ? (
 						<div className="flex flex-wrap gap-2">
