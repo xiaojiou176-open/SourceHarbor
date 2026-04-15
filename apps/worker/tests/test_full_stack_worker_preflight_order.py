@@ -157,7 +157,7 @@ def test_full_stack_up_records_temporal_preflight_failure_before_service_start(
     assert "conclusion=temporal_not_ready" in failure_text
 
 
-def test_full_stack_up_attempts_self_heal_for_unhealthy_temporal_namespace_before_fail_close(
+def test_full_stack_up_attempts_self_heal_for_unhealthy_temporal_namespace_and_recovers(
     tmp_path: Path,
 ) -> None:
     full_stack_target = _prepare_full_stack_script(tmp_path)
@@ -311,10 +311,11 @@ exit 0
             temporal_server.shutdown()
             temporal_thread.join(timeout=5)
 
-    assert proc.returncode != 0, proc.stderr
+    assert proc.returncode == 0, proc.stderr
     assert marker.exists()
     assert "attempting_core_services_self_heal" in proc.stderr
-    assert "conclusion=worker_failed_to_start" in proc.stderr
+    assert "worker temporal pollers ready on task queue video-analysis" in proc.stderr
+    assert "full stack is ready" in proc.stderr
 
 
 def test_full_stack_up_waits_for_worker_temporal_pollers_after_worker_start(
