@@ -113,7 +113,7 @@ describe("Sidebar + Sheet contract", () => {
 	});
 
 	it(
-		"renders grouped category links and health chip metadata",
+		"keeps feed frontstage focused on reading and sources",
 		() => {
 			render(
 				<Sidebar
@@ -164,42 +164,30 @@ describe("Sidebar + Sheet contract", () => {
 			expect(
 				screen.getByRole("complementary", { name: "Sidebar navigation" }),
 			).toBeInTheDocument();
-			expect(screen.getByRole("link", { name: "Tech" })).toHaveAttribute(
-				"aria-current",
-				"page",
-			);
-			expect(screen.getByRole("link", { name: "Tech Daily" })).toHaveAttribute(
-				"aria-current",
-				"page",
-			);
-			expect(
-				screen.getByRole("link", { name: "System status" }),
-			).toHaveAttribute("href", "/ops");
-			expect(
-				screen.getByRole("link", { name: "Saved topics" }),
-			).toHaveAttribute("href", "/watchlists");
-			expect(
-				screen.getByRole("link", { name: "What changed" }),
-			).toHaveAttribute("href", "/trends");
 			expect(screen.getByRole("link", { name: "Sources" })).toHaveAttribute(
 				"href",
 				"/subscriptions",
 			);
 			expect(
-				screen.getByRole("link", { name: "Story briefs" }),
-			).toHaveAttribute("href", "/briefings");
+				screen.queryByRole("link", { name: "System status" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Saved topics" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "What changed" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Story briefs" }),
+			).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: "Search" })).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: "Ask" })).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: "Tech" })).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: "Tech Daily" })).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole("link", { name: "Disabled Source" }),
 			).toBeNull();
-			expect(
-				screen.getByRole("link", { name: "API health: Healthy" }),
-			).toHaveAttribute("href", "http://127.0.0.1:9000/healthz");
-			expect(
-				screen.getByRole("button", { name: "Switch theme" }),
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole("button", { name: "Switch theme" }),
-			).toHaveAttribute("data-slot", "button");
+			expect(screen.queryByRole("link", { name: /API health/i })).not.toBeInTheDocument();
 		},
 		SIDEBAR_TIMEOUT_MS,
 	);
@@ -320,7 +308,7 @@ describe("Sidebar + Sheet contract", () => {
 	);
 
 	it(
-		"shows subscription load failure hint with recovery link",
+		"keeps subscription load failure hint out of feed frontstage",
 		() => {
 			render(
 				<Sidebar
@@ -333,19 +321,16 @@ describe("Sidebar + Sheet contract", () => {
 			);
 
 			expect(
-				screen.getByText(
+				screen.queryByText(
 					/Could not load your followed sources\. Retry from Following\./i,
 				),
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole("link", { name: "Open Following" }),
-			).toHaveAttribute("href", "/subscriptions");
+			).not.toBeInTheDocument();
 		},
 		SIDEBAR_TIMEOUT_MS,
 	);
 
 	it(
-		"falls back to source value and unnamed labels for subscription links",
+		"keeps followed source tree out of feed frontstage even when a specific source is selected",
 		() => {
 			usePathnameMock.mockReturnValue("/feed");
 			useSearchParamsMock.mockReturnValue(
@@ -399,14 +384,10 @@ describe("Sidebar + Sheet contract", () => {
 			);
 
 			expect(
-				screen.getByRole("link", { name: "https://example.com/source" }),
-			).toHaveAttribute("aria-current", "page");
-			expect(
-				screen.getByRole("link", { name: "Untitled" }),
-			).toBeInTheDocument();
-			expect(
-				screen.getByRole("link", { name: "API health: Timeout / Unknown" }),
-			).toBeInTheDocument();
+				screen.queryByRole("link", { name: "https://example.com/source" }),
+			).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: "Untitled" })).not.toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: /API health/i })).not.toBeInTheDocument();
 		},
 		SIDEBAR_TIMEOUT_MS,
 	);
@@ -479,7 +460,7 @@ describe("Sidebar + Sheet contract", () => {
 	);
 
 	it(
-		"marks feed root active when no category or subscription filter is selected",
+		"keeps feed root active without exposing system health on the frontstage",
 		() => {
 			usePathnameMock.mockReturnValue("/feed");
 			useSearchParamsMock.mockReturnValue(createSearchParams(""));
@@ -496,9 +477,7 @@ describe("Sidebar + Sheet contract", () => {
 			expect(
 				screen.getByRole("link", { name: "Reading desk" }),
 			).toHaveAttribute("aria-current", "page");
-			expect(
-				screen.getByRole("link", { name: "API health: Unhealthy" }),
-			).toBeInTheDocument();
+			expect(screen.queryByRole("link", { name: /API health/i })).not.toBeInTheDocument();
 		},
 		SIDEBAR_TIMEOUT_MS,
 	);

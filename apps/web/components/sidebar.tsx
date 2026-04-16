@@ -114,6 +114,11 @@ function SidebarNavContent({
 }: NavContentProps) {
 	const pathname = usePathname();
 	const searchParams = useSearchParams();
+	const frontstageFocused =
+		pathname === "/" ||
+		pathname.startsWith("/reader") ||
+		pathname.startsWith("/feed") ||
+		pathname.startsWith("/subscriptions");
 	const currentCategory = searchParams.get("category") ?? "";
 	const currentSub = searchParams.get("sub") ?? "";
 	const isFeed = pathname === "/feed" || pathname.startsWith("/feed");
@@ -135,39 +140,61 @@ function SidebarNavContent({
 		{
 			id: "read",
 			label: "Read",
-			items: [
-				{ href: "/", label: "Home", icon: Home, active: pathname === "/" },
-				{
-					href: "/reader",
-					label: "Reader",
-					icon: FileText,
-					active: pathname.startsWith("/reader"),
-				},
-				{
-					href: "/feed",
-					label: "Reading desk",
-					icon: Sparkles,
-					active: isFeed && !currentCategory && !currentSub,
-				},
-				{
-					href: "/subscriptions",
-					label: "Sources",
-					icon: Plus,
-					active: pathname.startsWith("/subscriptions"),
-				},
-				{
-					href: "/search",
-					label: "Search",
-					icon: Search,
-					active: pathname.startsWith("/search"),
-				},
-				{
-					href: "/ask",
-					label: "Ask",
-					icon: MessageSquare,
-					active: pathname.startsWith("/ask"),
-				},
-			],
+			items: frontstageFocused
+				? [
+						{ href: "/", label: "Home", icon: Home, active: pathname === "/" },
+						{
+							href: "/reader",
+							label: "Reader",
+							icon: FileText,
+							active: pathname.startsWith("/reader"),
+						},
+						{
+							href: "/feed",
+							label: "Reading desk",
+							icon: Sparkles,
+							active: isFeed && !currentCategory && !currentSub,
+						},
+						{
+							href: "/subscriptions",
+							label: "Sources",
+							icon: Plus,
+							active: pathname.startsWith("/subscriptions"),
+						},
+					]
+				: [
+						{ href: "/", label: "Home", icon: Home, active: pathname === "/" },
+						{
+							href: "/reader",
+							label: "Reader",
+							icon: FileText,
+							active: pathname.startsWith("/reader"),
+						},
+						{
+							href: "/feed",
+							label: "Reading desk",
+							icon: Sparkles,
+							active: isFeed && !currentCategory && !currentSub,
+						},
+						{
+							href: "/subscriptions",
+							label: "Sources",
+							icon: Plus,
+							active: pathname.startsWith("/subscriptions"),
+						},
+						{
+							href: "/search",
+							label: "Search",
+							icon: Search,
+							active: pathname.startsWith("/search"),
+						},
+						{
+							href: "/ask",
+							label: "Ask",
+							icon: MessageSquare,
+							active: pathname.startsWith("/ask"),
+						},
+					],
 		},
 		{
 			id: "build",
@@ -243,10 +270,12 @@ function SidebarNavContent({
 		},
 	];
 	const primarySections = navSections.filter(
-		(section) => section.id === "read" || section.id === "compounder",
+		(section) =>
+			section.id === "read" || (!frontstageFocused && section.id === "compounder"),
 	);
 	const utilitySections = navSections.filter(
-		(section) => section.id === "build" || section.id === "operate",
+		(section) =>
+			!frontstageFocused && (section.id === "build" || section.id === "operate"),
 	);
 
 	return (
@@ -349,7 +378,7 @@ function SidebarNavContent({
 					</details>
 				) : null}
 
-				{subscriptionsLoadError && !collapsed ? (
+				{subscriptionsLoadError && !collapsed && !frontstageFocused ? (
 					<div
 						className="mx-1 mt-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2"
 						aria-live="polite"
@@ -367,7 +396,7 @@ function SidebarNavContent({
 					</div>
 				) : null}
 
-				{enabledSubs.length > 0 && !collapsed ? (
+				{enabledSubs.length > 0 && !collapsed && !frontstageFocused ? (
 					<details
 						className="rounded-xl border border-border/60 bg-background/60"
 						open={followedSourcesOpen}
@@ -440,20 +469,24 @@ function SidebarNavContent({
 
 			<div className="border-t border-border/40 p-3">
 				<div className="flex flex-col gap-0.5">
-					<Link
-						href="/settings"
-						className={cn(
-							"flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
-							pathname.startsWith("/settings")
-								? "bg-sidebar-accent text-sidebar-accent-foreground"
-								: "text-sidebar-foreground/90 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
-						)}
-						aria-current={pathname.startsWith("/settings") ? "page" : undefined}
-					>
-						<Settings className="size-4 shrink-0 opacity-80" aria-hidden />
-						<span className={collapsed ? "sr-only" : undefined}>Settings</span>
-					</Link>
-					<Separator className="my-2" />
+					{!frontstageFocused ? (
+						<>
+							<Link
+								href="/settings"
+								className={cn(
+									"flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+									pathname.startsWith("/settings")
+										? "bg-sidebar-accent text-sidebar-accent-foreground"
+										: "text-sidebar-foreground/90 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
+								)}
+								aria-current={pathname.startsWith("/settings") ? "page" : undefined}
+							>
+								<Settings className="size-4 shrink-0 opacity-80" aria-hidden />
+								<span className={collapsed ? "sr-only" : undefined}>Settings</span>
+							</Link>
+							<Separator className="my-2" />
+						</>
+					) : null}
 					<div
 						className={cn(
 							"flex items-center px-2 py-1",
@@ -465,7 +498,7 @@ function SidebarNavContent({
 						) : null}
 						<ThemeToggle />
 					</div>
-					{!collapsed ? (
+					{!collapsed && !frontstageFocused ? (
 						<a
 							href={apiHealthUrl}
 							target="_blank"
@@ -495,8 +528,14 @@ export function Sidebar({
 	apiHealthUrl,
 	apiHealthLabel,
 }: SidebarProps) {
+	const pathname = usePathname();
 	const [collapsed, setCollapsed] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
+	const frontstageFocused =
+		pathname === "/" ||
+		pathname.startsWith("/reader") ||
+		pathname.startsWith("/feed") ||
+		pathname.startsWith("/subscriptions");
 
 	useEffect(() => {
 		if (
@@ -509,14 +548,14 @@ export function Sidebar({
 		const syncCollapsed = () => {
 			const mobile = mediaQuery.matches;
 			setIsMobile(mobile);
-			setCollapsed(mobile);
+			setCollapsed(mobile || frontstageFocused);
 		};
 		syncCollapsed();
 		mediaQuery.addEventListener("change", syncCollapsed);
 		return () => {
 			mediaQuery.removeEventListener("change", syncCollapsed);
 		};
-	}, []);
+	}, [frontstageFocused]);
 
 	if (isMobile) {
 		return (
@@ -563,7 +602,7 @@ export function Sidebar({
 		<aside
 			className={cn(
 				"flex shrink-0 flex-col border-r border-border/40 bg-background transition-[width] duration-200 motion-reduce:transition-none",
-				collapsed ? "w-[72px]" : "w-[240px]",
+				collapsed ? "w-[72px]" : "w-[216px]",
 			)}
 			aria-label="Sidebar navigation"
 		>
@@ -607,7 +646,7 @@ export function Sidebar({
 						<p className="text-sm font-semibold tracking-tight text-foreground">
 							SourceHarbor
 						</p>
-						<p className="text-xs text-muted-foreground">Navigation atlas</p>
+						<p className="text-xs text-muted-foreground">Read first</p>
 					</div>
 				)}
 				<Button

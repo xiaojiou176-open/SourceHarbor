@@ -7,14 +7,11 @@ import { EntryList } from "@/components/entry-list";
 import { FeedFeedbackPanel } from "@/components/feed-feedback-panel";
 import { FormSelectField } from "@/components/form-field";
 import { ReadingPane } from "@/components/reading-pane";
-import { SignalStrip } from "@/components/signal-strip";
 import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SyncNowButton } from "@/components/sync-now-button";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/api/client";
 import {
-	editorialMono,
 	editorialSans,
 	editorialSerif,
 } from "@/lib/editorial-fonts";
@@ -236,13 +233,6 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 	}
 
 	const items = feed?.items ?? [];
-	const readerReadyCount = items.filter((item) =>
-		Boolean(item.published_document_title?.trim()),
-	).length;
-	const savedCount = items.filter((item) => Boolean(item.saved)).length;
-	const feedbackTaggedCount = items.filter((item) =>
-		Boolean(item.feedback_label?.trim()),
-	).length;
 	const nextCursor = feed?.next_cursor ?? null;
 	const isFirstPage = !safeCursor;
 
@@ -285,6 +275,11 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 		: null;
 	const effectiveSelectedItem = selectedItem ?? items[0] ?? null;
 	const effectiveSelectedJobId = effectiveSelectedItem?.job_id ?? null;
+	const leadReadingHref =
+		effectiveSelectedItem?.reader_route?.trim() ||
+		(effectiveSelectedJobId
+			? buildItemUrl({ item: effectiveSelectedJobId })
+			: "/feed");
 	const retryHref = buildPageUrl({
 		cursorValue: safeCursor,
 		prevCursorValue: safePrevCursor,
@@ -315,208 +310,22 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 							data-route-heading
 							tabIndex={-1}
 						>
-							{copy.heroTitle}
+							Reading desk
 						</h1>
-						<p className="folo-page-subtitle">{copy.heroSubtitle}</p>
+						<p className="folo-page-subtitle">
+							Open one item and read. Filters and reactions can wait.
+						</p>
 					</div>
-					<div className="folo-page-toolbar">
+					<div className="folo-page-toolbar flex-wrap">
+						{effectiveSelectedJobId ? (
+							<Button asChild variant="hero" data-interaction="cta">
+								<Link href={leadReadingHref}>Start with this story</Link>
+							</Button>
+						) : null}
 						<SyncNowButton sessionToken={sessionToken} prominence="secondary" />
 					</div>
 				</div>
 			</div>
-
-			<section className="space-y-4">
-				<div className="folo-panel folo-surface space-y-4">
-					<p className={`folo-page-kicker ${editorialMono.className}`}>
-						Read first
-					</p>
-					<p className="text-sm leading-7 text-muted-foreground">
-						Choose one thing worth reading, then open filters only if the desk
-						feels too wide.
-					</p>
-					<div className="flex flex-wrap gap-3">
-						<Button asChild variant="hero">
-							<Link
-								href={
-									effectiveSelectedJobId
-										? buildItemUrl({ item: effectiveSelectedJobId })
-										: "/feed"
-								}
-							>
-								Keep reading here
-							</Link>
-						</Button>
-						<Link
-							href="/reader"
-							className="inline-flex items-center text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
-						>
-							Open reader shelf
-						</Link>
-					</div>
-					{items.length > 0 ? (
-						<SignalStrip
-							title="Desk snapshot"
-							description="See what is readable now before you touch filters."
-							items={[
-								{
-									label: "Visible",
-									value: items.length,
-									max: safeLimit,
-									valueLabel: `${items.length}/${safeLimit}`,
-								},
-								{
-									label: "Reader-ready",
-									value: readerReadyCount,
-									max: Math.max(items.length, 1),
-									valueLabel: `${readerReadyCount}/${items.length}`,
-									tone: "success",
-								},
-								{
-									label: "Tagged",
-									value: feedbackTaggedCount,
-									max: Math.max(items.length, 1),
-									valueLabel: String(feedbackTaggedCount),
-									detail: `${savedCount} entries are already saved for later.`,
-								},
-							]}
-						/>
-					) : null}
-					{activeSubscription ? (
-						<div className="space-y-2">
-							<p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-								Pinned source
-							</p>
-							<SourceIdentityCard
-								identity={resolveSubscriptionIdentity(activeSubscription)}
-								compact
-							/>
-						</div>
-					) : null}
-				</div>
-			</section>
-
-			<details
-				className="folo-panel folo-surface feed-filter-panel"
-				open={isFiltered}
-			>
-				<summary className="m-[-0.5rem] cursor-pointer list-none rounded-xl p-2 transition-colors hover:bg-muted/20">
-					<div className="flex flex-wrap items-center justify-between gap-3">
-						<div className="space-y-1">
-							<p
-								className={`text-xs uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-							>
-								Filters when you need them
-							</p>
-							<p className="text-sm text-muted-foreground">
-								Open this only when the list feels too wide.
-							</p>
-						</div>
-						{isFiltered ? (
-							<Badge variant="outline">Filtered view</Badge>
-						) : (
-							<Badge variant="outline">Hidden by default</Badge>
-						)}
-					</div>
-				</summary>
-				<form
-					method="GET"
-					className="feed-filter-form mt-4"
-					aria-label={copy.filterRegionLabel}
-				>
-					<input
-						type="hidden"
-						name="item"
-						value={effectiveSelectedJobId ?? ""}
-					/>
-					<div className="feed-filter-selects">
-						<FormSelectField
-							name="source"
-							label={copy.filterLabels.source}
-							defaultValue={sourceSelectValue}
-							options={sourceOptions.map((option) => ({
-								value: option.value,
-								label: option.label,
-							}))}
-							fieldClassName="feed-filter-field"
-							labelClassName="sr-only"
-							selectClassName="feed-filter-select"
-						/>
-						<FormSelectField
-							name="category"
-							label={copy.filterLabels.category}
-							defaultValue={category}
-							options={[
-								{ value: "", label: copy.categoryOptions.all },
-								...Object.entries(categoryLabels).map(([key, value]) => ({
-									value: key,
-									label: value,
-								})),
-							]}
-							fieldClassName="feed-filter-field"
-							labelClassName="sr-only"
-							selectClassName="feed-filter-select"
-						/>
-						<FormSelectField
-							name="feedback"
-							label={copy.filterLabels.feedback}
-							defaultValue={safeFeedback}
-							options={feedbackOptions.map((option) => ({
-								value: option.value,
-								label: option.label,
-							}))}
-							fieldClassName="feed-filter-field"
-							labelClassName="sr-only"
-							selectClassName="feed-filter-select"
-						/>
-						<FormSelectField
-							name="sort"
-							label={copy.filterLabels.sort}
-							defaultValue={safeSort}
-							options={sortOptions.map((option) => ({
-								value: option.value,
-								label: option.label,
-							}))}
-							fieldClassName="feed-filter-field"
-							labelClassName="sr-only"
-							selectClassName="feed-filter-select"
-						/>
-					</div>
-					{safeSubscriptionId ? (
-						<input type="hidden" name="sub" value={safeSubscriptionId} />
-					) : null}
-					<input type="hidden" name="limit" value={String(safeLimit)} />
-					<div className="feed-filter-actions">
-						<Button
-							type="submit"
-							variant="outline"
-							size="sm"
-							data-interaction="control"
-							data-testid="feed-filter-submit"
-						>
-							{copy.filterButton}
-						</Button>
-						{isFiltered ? (
-							<Button
-								asChild
-								variant="ghost"
-								size="sm"
-								className="feed-filter-clear"
-								data-testid="feed-filter-clear"
-							>
-								<Link
-									href={
-										effectiveSelectedJobId
-											? `/feed?item=${encodeURIComponent(effectiveSelectedJobId)}`
-											: "/feed"
-									}
-								>
-									{copy.clearButton}
-								</Link>
-							</Button>
-						) : null}
-					</div>
-				</form>
-			</details>
 
 			{errorCode ? (
 				<>
@@ -544,6 +353,19 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					<p className="folo-empty-description">
 						{isFiltered ? copy.emptyFiltered : copy.emptyUnfiltered}
 					</p>
+					{isFiltered ? (
+						<Button asChild variant="outline" size="sm" data-interaction="link-muted">
+							<Link
+								href={
+									effectiveSelectedJobId
+										? `/feed?item=${encodeURIComponent(effectiveSelectedJobId)}`
+										: "/feed"
+								}
+							>
+								{copy.clearButton}
+							</Link>
+						</Button>
+					) : null}
 					{!isFiltered ? (
 						<Button asChild variant="hero" size="sm" data-interaction="cta">
 							<Link href="/subscriptions">{copy.goToSubscriptionsButton}</Link>
@@ -586,6 +408,131 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 								</div>
 							</details>
 						) : null}
+						<details
+							className="rounded-2xl border border-border/60 bg-background/72 p-4"
+							open={isFiltered}
+						>
+							<summary className="cursor-pointer list-none font-semibold text-foreground">
+								Desk notes and filters
+							</summary>
+							<div className="mt-4 space-y-4">
+								<p className="text-sm leading-6 text-muted-foreground">
+									Keep the desk quiet. Open filters only when the list feels too
+									wide or you need to react to one item.
+								</p>
+								{activeSubscription ? (
+									<details className="rounded-2xl border border-border/60 bg-background/80 p-4">
+										<summary className="cursor-pointer list-none text-sm font-medium text-foreground">
+											Pinned source
+										</summary>
+										<div className="mt-3">
+											<SourceIdentityCard
+												identity={resolveSubscriptionIdentity(activeSubscription)}
+												compact
+											/>
+										</div>
+									</details>
+								) : null}
+								<form
+									method="GET"
+									className="feed-filter-form"
+									aria-label={copy.filterRegionLabel}
+								>
+									<input
+										type="hidden"
+										name="item"
+										value={effectiveSelectedJobId ?? ""}
+									/>
+									<div className="feed-filter-selects">
+										<FormSelectField
+											name="source"
+											label={copy.filterLabels.source}
+											defaultValue={sourceSelectValue}
+											options={sourceOptions.map((option) => ({
+												value: option.value,
+												label: option.label,
+											}))}
+											fieldClassName="feed-filter-field"
+											labelClassName="sr-only"
+											selectClassName="feed-filter-select"
+										/>
+										<FormSelectField
+											name="category"
+											label={copy.filterLabels.category}
+											defaultValue={category}
+											options={[
+												{ value: "", label: copy.categoryOptions.all },
+												...Object.entries(categoryLabels).map(([key, value]) => ({
+													value: key,
+													label: value,
+												})),
+											]}
+											fieldClassName="feed-filter-field"
+											labelClassName="sr-only"
+											selectClassName="feed-filter-select"
+										/>
+										<FormSelectField
+											name="feedback"
+											label={copy.filterLabels.feedback}
+											defaultValue={safeFeedback}
+											options={feedbackOptions.map((option) => ({
+												value: option.value,
+												label: option.label,
+											}))}
+											fieldClassName="feed-filter-field"
+											labelClassName="sr-only"
+											selectClassName="feed-filter-select"
+										/>
+										<FormSelectField
+											name="sort"
+											label={copy.filterLabels.sort}
+											defaultValue={safeSort}
+											options={sortOptions.map((option) => ({
+												value: option.value,
+												label: option.label,
+											}))}
+											fieldClassName="feed-filter-field"
+											labelClassName="sr-only"
+											selectClassName="feed-filter-select"
+										/>
+									</div>
+									{safeSubscriptionId ? (
+										<input type="hidden" name="sub" value={safeSubscriptionId} />
+									) : null}
+									<input type="hidden" name="limit" value={String(safeLimit)} />
+									<div className="feed-filter-actions">
+										<Button
+											type="submit"
+											variant="outline"
+											size="sm"
+											data-interaction="control"
+											data-testid="feed-filter-submit"
+										>
+											{copy.filterButton}
+										</Button>
+										{isFiltered ? (
+											<Button
+												asChild
+												variant="ghost"
+												size="sm"
+												className="feed-filter-clear"
+												data-testid="feed-filter-clear"
+											>
+												<Link
+													href={
+														effectiveSelectedJobId
+															? `/feed?item=${encodeURIComponent(effectiveSelectedJobId)}`
+															: "/feed"
+													}
+												>
+													{copy.clearButton}
+												</Link>
+											</Button>
+										) : null}
+									</div>
+								</form>
+							</div>
+						</details>
 					</div>
 				</div>
 			)}

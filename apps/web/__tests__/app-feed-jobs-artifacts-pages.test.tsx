@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import FeedPage from "@/app/feed/page";
 import IngestRunsPage from "@/app/ingest-runs/page";
@@ -250,9 +250,9 @@ describe("feed/jobs/artifacts pages", () => {
 					level: 2,
 				}),
 			).toBeInTheDocument();
-			expect(
-				screen.getByRole("link", { name: "Keep reading here" }),
-			).toHaveAttribute("href", "/feed?item=job-default-1");
+				expect(
+					screen.getByRole("link", { name: "Start with this story" }),
+				).toHaveAttribute("href", "/feed?item=job-default-1");
 			expect(screen.getByText("February 5, 2026")).toBeInTheDocument();
 		},
 		PAGE_TEST_TIMEOUT_MS,
@@ -448,6 +448,8 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(
 				screen.getByText("Marked as saved and useful."),
 			).toBeInTheDocument();
+			const storyNotes = screen.getByText("Story notes");
+			fireEvent.click(storyNotes);
 			expect(
 				screen.getByRole("link", { name: "Inspect job trace" }),
 			).toHaveAttribute("href", "/jobs?job_id=job-reading-1");
@@ -534,7 +536,7 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getByText("Pinned source")).toBeInTheDocument();
 			expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
 			expect(
-				screen.getByText(/Choose one thing worth reading/i),
+				screen.getByText(/Open one item and read/i),
 			).toBeInTheDocument();
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
