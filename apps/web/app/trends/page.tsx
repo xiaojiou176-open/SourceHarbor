@@ -416,8 +416,12 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 			max: maxTimelineCards,
 			valueLabel: String(run.matched_card_count),
 			detail: formatDateTime(run.created_at),
-			tone: run.added_topics.length > 0 ? "success" : "primary",
+			tone:
+				run.added_topics.length > 0
+					? ("success" as const)
+					: ("primary" as const),
 		}));
+	const leadStoryJobId = leadStory?.latest_run_job_id ?? null;
 
 	return (
 		<div className="folo-page-shell folo-unified-shell">
@@ -583,19 +587,19 @@ export default async function TrendsPage({ searchParams }: TrendsPageProps) {
 								) : null}
 								{leadBundle ? <p>{leadBundle.proof_boundary}</p> : null}
 								<div className="flex flex-wrap gap-3">
-									{leadStory.latest_run_job_id ? (
+									{leadStoryJobId ? (
 										<Button asChild variant="outline" size="sm">
 											<Link
-												href={`/api/v1/jobs/${encodeURIComponent(leadStory.latest_run_job_id)}/bundle`}
+												href={`/api/v1/jobs/${encodeURIComponent(leadStoryJobId)}/bundle`}
 											>
 												Open bundle
 											</Link>
 										</Button>
 									) : null}
-									{leadStory.latest_run_job_id ? (
+									{leadStoryJobId ? (
 										<Button asChild variant="outline" size="sm">
 											<Link
-												href={`/knowledge?job_id=${encodeURIComponent(leadStory.latest_run_job_id)}`}
+												href={`/knowledge?job_id=${encodeURIComponent(leadStoryJobId)}`}
 											>
 												Open notes
 											</Link>

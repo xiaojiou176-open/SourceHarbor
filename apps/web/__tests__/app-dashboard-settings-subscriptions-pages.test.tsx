@@ -313,14 +313,14 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getByRole("link", { name: /Open trends/i }),
 			).toHaveAttribute("href", "/trends");
-			expect(screen.getByRole("link", { name: /Feed/i })).toHaveAttribute(
-				"href",
-				"/feed",
-			);
-			expect(screen.getByRole("link", { name: "Reader" })).toHaveAttribute(
-				"href",
-				"/reader",
-			);
+			expect(
+				screen.getByRole("link", { name: "Paste a source" }),
+			).toHaveAttribute("href", "#manual-source-intake-input");
+			expect(
+				screen.getByRole("link", {
+					name: "Open saved sources after you paste the first one",
+				}),
+			).toHaveAttribute("href", "#tracked-universes");
 			expect(
 				screen.getByRole("button", { name: "Save subscription" }),
 			).toBeInTheDocument();

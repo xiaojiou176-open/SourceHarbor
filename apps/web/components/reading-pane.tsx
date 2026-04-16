@@ -276,9 +276,6 @@ export function ReadingPane({
 						<h2 className={`feed-reading-title ${editorialSerif.className}`}>
 							{title || "Untitled"}
 						</h2>
-						<p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-							Preview lane
-						</p>
 						<div className="feed-reading-meta">
 							{sourceLabel ? (
 								<span>
@@ -291,101 +288,7 @@ export function ReadingPane({
 								</time>
 							) : null}
 						</div>
-						{safeReaderRoute ? (
-							<div className="mt-2 flex flex-wrap items-center gap-3">
-								<Button asChild size="sm">
-									<Link href={safeReaderRoute}>Open reader edition</Link>
-								</Button>
-								<p className="text-sm text-muted-foreground">
-									Use the reader edition when you want the finished article with
-									warning, evidence, and coverage in one place.
-								</p>
-							</div>
-						) : null}
-						<div className="feed-reading-links">
-							{safeVideoUrl ? (
-								<a
-									href={safeVideoUrl}
-									target="_blank"
-									rel="noreferrer noopener"
-									className={`feed-reading-link ${editorialMono.className}`}
-									data-interaction="link-primary"
-								>
-									Open original
-									<ExternalLinkIcon className="size-3" />
-								</a>
-							) : null}
-							{safeUniverseRoute ? (
-								<Link
-									href={safeUniverseRoute}
-									className={`feed-reading-link ${editorialMono.className}`}
-									data-interaction="link-muted"
-								>
-									Open source desk
-								</Link>
-							) : null}
-							<Link
-								href={`/jobs?job_id=${encodeURIComponent(jobId)}`}
-								className={`feed-reading-link ${editorialMono.className}`}
-								data-interaction="link-muted"
-							>
-								Inspect job trace
-							</Link>
-						</div>
-						{identity?.published_document_title ? (
-							<p className={`feed-reading-link ${editorialMono.className}`}>
-								Reader edition ready · {identity.published_document_title}
-								{identity.published_document_publish_status
-									? ` · ${identity.published_document_publish_status}`
-									: ""}
-								{identity.published_with_gap ? " · with gap" : ""}
-							</p>
-						) : safeUniverseRoute ? (
-							<p className={`feed-reading-link ${editorialMono.className}`}>
-								This preview is attached to one source desk. Open the reader
-								edition when you want the finished article.
-							</p>
-						) : null}
-						{identityModel ? (
-							<div className="mt-4">
-								<SourceIdentityCard identity={identityModel} compact />
-							</div>
-						) : null}
 					</header>
-
-					{headings.length > 0 ? (
-						<Collapsible open={outlineOpen} onOpenChange={setOutlineOpen}>
-							<CollapsibleTrigger className="feed-outline-trigger">
-								{outlineOpen ? (
-									<ChevronDownIcon className="size-4 text-muted-foreground" />
-								) : (
-									<ChevronRightIcon className="size-4 text-muted-foreground" />
-								)}
-								Outline
-							</CollapsibleTrigger>
-							<CollapsibleContent>
-								<nav className="feed-outline-panel">
-									<ul className="space-y-1.5">
-										{headings.map((heading) => (
-											<li
-												key={heading.id}
-												className="text-sm"
-												style={{ paddingLeft: `${(heading.level - 1) * 14}px` }}
-											>
-												<a
-													href={`#${heading.id}`}
-													className="feed-outline-link"
-													data-interaction="link-muted"
-												>
-													{heading.text}
-												</a>
-											</li>
-										))}
-									</ul>
-								</nav>
-							</CollapsibleContent>
-						</Collapsible>
-					) : null}
 
 					{markdown ? (
 						<div className="markdown-body">
@@ -394,6 +297,111 @@ export function ReadingPane({
 					) : (
 						<p className="text-muted-foreground">No body content</p>
 					)}
+
+					{safeVideoUrl ||
+					safeUniverseRoute ||
+					identity?.published_document_title ||
+					identityModel ||
+					headings.length > 0 ? (
+						<details className="mt-6 rounded-2xl border border-border/60 bg-background/85 p-4">
+							<summary className="cursor-pointer list-none text-sm font-medium text-foreground">
+								Story notes
+							</summary>
+							<div className="mt-4 space-y-4">
+								{safeReaderRoute ? (
+									<div className="flex flex-wrap items-center gap-3">
+										<Button asChild size="sm">
+											<Link href={safeReaderRoute}>Open reader edition</Link>
+										</Button>
+									</div>
+								) : null}
+								{identity?.published_document_title ? (
+									<p className={`feed-reading-link ${editorialMono.className}`}>
+										Reader edition ready · {identity.published_document_title}
+										{identity.published_document_publish_status
+											? ` · ${identity.published_document_publish_status}`
+											: ""}
+										{identity.published_with_gap ? " · with gap" : ""}
+									</p>
+								) : safeUniverseRoute ? (
+									<p className={`feed-reading-link ${editorialMono.className}`}>
+										This preview is attached to one source desk. Open the reader
+										edition when you want the finished article.
+									</p>
+								) : null}
+								<div className="feed-reading-links">
+									{safeVideoUrl ? (
+										<a
+											href={safeVideoUrl}
+											target="_blank"
+											rel="noreferrer noopener"
+											className={`feed-reading-link ${editorialMono.className}`}
+											data-interaction="link-primary"
+										>
+											Open original
+											<ExternalLinkIcon className="size-3" />
+										</a>
+									) : null}
+									{safeUniverseRoute ? (
+										<Link
+											href={safeUniverseRoute}
+											className={`feed-reading-link ${editorialMono.className}`}
+											data-interaction="link-muted"
+										>
+											Open source desk
+										</Link>
+									) : null}
+									<Link
+										href={`/jobs?job_id=${encodeURIComponent(jobId)}`}
+										className={`feed-reading-link ${editorialMono.className}`}
+										data-interaction="link-muted"
+									>
+										Inspect job trace
+									</Link>
+								</div>
+								{identityModel ? (
+									<div>
+										<SourceIdentityCard identity={identityModel} compact />
+									</div>
+								) : null}
+								{headings.length > 0 ? (
+									<Collapsible open={outlineOpen} onOpenChange={setOutlineOpen}>
+										<CollapsibleTrigger className="feed-outline-trigger">
+											{outlineOpen ? (
+												<ChevronDownIcon className="size-4 text-muted-foreground" />
+											) : (
+												<ChevronRightIcon className="size-4 text-muted-foreground" />
+											)}
+											Outline
+										</CollapsibleTrigger>
+										<CollapsibleContent>
+											<nav className="feed-outline-panel">
+												<ul className="space-y-1.5">
+													{headings.map((heading) => (
+														<li
+															key={heading.id}
+															className="text-sm"
+															style={{
+																paddingLeft: `${(heading.level - 1) * 14}px`,
+															}}
+														>
+															<a
+																href={`#${heading.id}`}
+																className="feed-outline-link"
+																data-interaction="link-muted"
+															>
+																{heading.text}
+															</a>
+														</li>
+													))}
+												</ul>
+											</nav>
+										</CollapsibleContent>
+									</Collapsible>
+								) : null}
+							</div>
+						</details>
+					) : null}
 				</article>
 			</ScrollArea>
 		</div>

@@ -10,7 +10,6 @@ import {
 	FormSelectField,
 } from "@/components/form-field";
 import { ManualSourceIntakePanel } from "@/components/manual-source-intake-panel";
-import { SignalStrip } from "@/components/signal-strip";
 import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SubmitButton } from "@/components/submit-button";
 import { SubscriptionBatchPanel } from "@/components/subscription-batch-panel";
@@ -277,12 +276,6 @@ export default async function SubscriptionsPage({
 	const pageErrorCode =
 		subscriptionsResult.errorCode ?? templateCatalogResult.errorCode;
 	const highlightedSubscriptions = subscriptions.slice(0, 6);
-	const strongTemplateCount = templatesForSupportTier(
-		templates,
-		"strong_supported",
-	).length;
-	const genericTemplateCount = genericTemplates.length;
-
 	return (
 		<div
 			className={`folo-page-shell folo-unified-shell ${editorialSans.className}`}
@@ -296,42 +289,22 @@ export default async function SubscriptionsPage({
 				>
 					{copy.heroTitle}
 				</h1>
-				<p className="folo-page-subtitle">{copy.heroSubtitle}</p>
+				<p className="folo-page-subtitle">
+					Paste a source first. Open the intake details only after you decide
+					you want to keep it.
+				</p>
 				<div className="mt-4 flex flex-wrap gap-3">
 					<Button asChild variant="hero">
 						<Link href="#manual-source-intake-input">Paste a source</Link>
 					</Button>
-					<Button asChild variant="outline">
-						<Link href="#tracked-universes">See saved sources</Link>
-					</Button>
 				</div>
+				<Link
+					href="#tracked-universes"
+					className="mt-3 inline-flex text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
+				>
+					Open saved sources after you paste the first one
+				</Link>
 			</div>
-
-			<SignalStrip
-				title="Intake snapshot"
-				description="See the shape of the desk first, then open the deeper workbench only when needed."
-				items={[
-					{
-						label: "Tracked",
-						value: subscriptions.length,
-						max: Math.max(subscriptions.length, 1),
-						valueLabel: String(subscriptions.length),
-					},
-					{
-						label: "Strong lanes",
-						value: strongTemplateCount,
-						max: Math.max(templates.length, 1),
-						valueLabel: String(strongTemplateCount),
-						tone: "success",
-					},
-					{
-						label: "General lanes",
-						value: genericTemplateCount,
-						max: Math.max(templates.length, 1),
-						valueLabel: String(genericTemplateCount),
-					},
-				]}
-			/>
 
 			{renderAlert(status, code)}
 			{pageErrorCode ? (
@@ -360,28 +333,32 @@ export default async function SubscriptionsPage({
 				/>
 			</section>
 
-			<section className="grid gap-4 xl:grid-cols-[1.28fr_0.92fr]">
-				<Card
+			<section className="space-y-4">
+				<details
 					id="tracked-universes"
-					className="folo-surface border-border/70 bg-gradient-to-br from-background via-background to-rose-50/60"
+					className="folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm"
 				>
-					<CardHeader className="gap-2">
-						<p
-							className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-						>
-							Atlas first
-						</p>
-						<h2
-							className={`text-2xl font-semibold ${editorialSerif.className}`}
-						>
-							Tracked universes
-						</h2>
-						<CardDescription>
-							Start by seeing which source worlds already belong to your desk,
-							then add the next one without decoding the whole contract.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+					<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
+						<div className="flex flex-wrap items-start justify-between gap-3">
+							<div className="space-y-2">
+								<p
+									className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
+								>
+									Saved sources
+								</p>
+								<h2
+									className={`text-2xl font-semibold ${editorialSerif.className}`}
+								>
+									Tracked universes
+								</h2>
+								<p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+									Open this after you paste a source or when you already know
+									what you want to follow.
+								</p>
+							</div>
+						</div>
+					</summary>
+					<div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
 						{highlightedSubscriptions.length ? (
 							highlightedSubscriptions.map((subscription) => (
 								<SourceIdentityCard
@@ -404,71 +381,8 @@ export default async function SubscriptionsPage({
 								</Button>
 							</div>
 						)}
-					</CardContent>
-				</Card>
-
-				<Card className="folo-surface border-border/70">
-					<CardHeader className="gap-2">
-						<p
-							className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-						>
-							Progressive disclosure
-						</p>
-						<h2
-							className={`text-2xl font-semibold ${editorialSerif.className}`}
-						>
-							Start in three moves
-						</h2>
-						<CardDescription>
-							Keep the first pass simple: pick a lane, run intake, then read
-							what landed.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="pt-0 text-sm text-muted-foreground">
-						<ol className="divide-y divide-border/60 rounded-[1.15rem] border border-border/60 bg-muted/15">
-							<li className="grid gap-3 px-4 py-4 md:grid-cols-[72px_minmax(0,1fr)]">
-								<p
-									className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-								>
-									01 Pick the universe
-								</p>
-								<p className="leading-6">
-									Choose a strong lane when you know the creator. Use a general
-									lane when the source is only proven as feed intake.
-								</p>
-							</li>
-							<li className="grid gap-3 px-4 py-4 md:grid-cols-[72px_minmax(0,1fr)]">
-								<p
-									className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-								>
-									02 Run intake
-								</p>
-								<p className="leading-6">
-									Paste a source first. The result cards will tell you whether
-									it became something you follow or stayed one-off.
-								</p>
-							</li>
-							<li className="grid gap-3 px-4 py-4 md:grid-cols-[72px_minmax(0,1fr)]">
-								<p
-									className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
-								>
-									03 Read next
-								</p>
-								<p className="leading-6">
-									Use{" "}
-									<Link href="/feed" className="underline underline-offset-4">
-										Feed
-									</Link>{" "}
-									and{" "}
-									<Link href="/reader" className="underline underline-offset-4">
-										Reader
-									</Link>{" "}
-									once the source is in your reading list.
-								</p>
-							</li>
-						</ol>
-					</CardContent>
-				</Card>
+					</div>
+				</details>
 			</section>
 
 			<section className="space-y-4">

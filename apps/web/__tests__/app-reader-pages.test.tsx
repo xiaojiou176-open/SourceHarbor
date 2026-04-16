@@ -121,7 +121,10 @@ describe("reader pages", () => {
 		render(await ReaderPage());
 
 		expect(
-			screen.getByText("Pick a finished story and start reading"),
+			screen.getByRole("heading", {
+				name: "AI Agents follow-up",
+				level: 1,
+			}),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("heading", { name: "AI Agents", level: 3 }),
@@ -130,15 +133,9 @@ describe("reader pages", () => {
 			1,
 		);
 		expect(
-			screen.getByText("Read 1 published reader documents."),
-		).toBeInTheDocument();
-		expect(
 			screen.getByRole("link", { name: "Continue reading" }),
 		).toHaveAttribute("href", "/reader/doc-2");
-		expect(screen.getByRole("link", { name: "Add sources" })).toHaveAttribute(
-			"href",
-			"/subscriptions",
-		);
+		expect(screen.getByText("Up next")).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "Open story" })).toHaveAttribute(
 			"href",
 			"/reader/doc-1",
@@ -191,10 +188,7 @@ describe("reader pages", () => {
 		expect(
 			screen.getByRole("heading", { name: "AI Agents", level: 1 }),
 		).toBeInTheDocument();
-		expect(screen.getByText("From these sources")).toBeInTheDocument();
-		expect(screen.getAllByText("Agents recap").length).toBeGreaterThanOrEqual(
-			1,
-		);
+		expect(screen.getByText("Source notes and repair")).toBeInTheDocument();
 		expect(screen.getByTestId("reader-source-drawer")).toHaveTextContent(
 			"AI Agents",
 		);
@@ -204,20 +198,8 @@ describe("reader pages", () => {
 		expect(
 			screen.getByRole("link", { name: "Back to reader" }),
 		).toHaveAttribute("href", "/reader");
-		expect(
-			screen.getByRole("link", { name: "Read the story" }),
-		).toHaveAttribute("href", "#reader-body");
-		expect(
-			screen.getByRole("link", { name: "Keep the note nearby" }),
-		).toHaveAttribute("href", "#reader-warning");
-		expect(screen.getByRole("link", { name: "See sources" })).toHaveAttribute(
-			"href",
-			"#reader-evidence",
-		);
-		expect(
-			screen.getByRole("link", { name: "Check coverage last" }),
-		).toHaveAttribute("href", "#reader-coverage");
-		expect(screen.getByText("Source map")).toBeInTheDocument();
+		expect(screen.getByText(/Read the story first/i)).toBeInTheDocument();
+		expect(screen.getByText("Source notes and repair")).toBeInTheDocument();
 		expect(screen.getByTestId("reader-repair-panel")).toHaveTextContent(
 			"doc-1:1",
 		);
@@ -232,18 +214,15 @@ describe("reader pages", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				name: "Reader specimen edition",
+				name: "What happens after the first prototype",
 				level: 1,
 			}),
 		).toBeInTheDocument();
-		expect(
-			screen.getAllByText("Specimen edition").length,
-		).toBeGreaterThanOrEqual(1);
 		expect(screen.getAllByText("Yellow warning").length).toBeGreaterThanOrEqual(
 			1,
 		);
 		expect(screen.getByTestId("reader-source-drawer")).toHaveTextContent(
-			"Reader specimen edition",
+			"What happens after the first prototype",
 		);
 	});
 

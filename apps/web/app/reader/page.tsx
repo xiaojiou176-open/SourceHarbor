@@ -1,8 +1,7 @@
-import { ArrowRight, LibraryBig } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { SourceIdentityCard } from "@/components/source-identity-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +24,46 @@ export const metadata: Metadata = buildProductMetadata({
 	route: "reader",
 });
 
+function looksLikeRawUrl(value: string | null | undefined): boolean {
+	const text = String(value || "")
+		.trim()
+		.toLowerCase();
+	return text.startsWith("http://") || text.startsWith("https://");
+}
+
+function formatReaderShelfTitle(document: {
+	title: string;
+	topic_label?: string | null;
+	materialization_mode: string;
+	source_refs?: Array<Parameters<typeof resolveReaderSourceIdentity>[0]>;
+}): string {
+	const rawTitle = document.title.trim();
+	if (!looksLikeRawUrl(rawTitle)) {
+		return rawTitle || "Published story";
+	}
+	const topicLabel = String(document.topic_label || "").trim();
+	if (topicLabel && !looksLikeRawUrl(topicLabel)) {
+		return topicLabel;
+	}
+	const firstSource = Array.isArray(document.source_refs)
+		? document.source_refs[0]
+		: null;
+	const sourceTitle = firstSource
+		? resolveReaderSourceIdentity(firstSource).title
+		: "";
+	if (sourceTitle && !looksLikeRawUrl(sourceTitle)) {
+		return sourceTitle;
+	}
+	if (firstSource?.platform) {
+		return document.materialization_mode === "singleton_polish"
+			? `Reading note from ${String(firstSource.platform).trim()}`
+			: `Reading story from ${String(firstSource.platform).trim()}`;
+	}
+	return document.materialization_mode === "singleton_polish"
+		? "Reading note"
+		: "Published story";
+}
+
 export default async function ReaderPage() {
 	const [documentsResult, briefResult] = await Promise.all([
 		apiClient
@@ -40,7 +79,6 @@ export default async function ReaderPage() {
 	const documents = documentsResult.data;
 	const navigationBrief = briefResult.data;
 	const documentsUnavailable = documentsResult.error;
-	const briefUnavailable = briefResult.error;
 	const navigationItems =
 		navigationBrief && Array.isArray(navigationBrief.items)
 			? navigationBrief.items
@@ -51,14 +89,8 @@ export default async function ReaderPage() {
 	);
 	const leadDocument = clearDocuments[0] ?? documents[0] ?? null;
 	const totalDocuments = documents.length;
-	const warningCount = documents.filter(
-		(document) => document.published_with_gap,
-	).length;
 	const shelfUnavailable = documentsUnavailable && totalDocuments === 0;
-	const leadSources =
-		leadDocument && Array.isArray(leadDocument.source_refs)
-			? leadDocument.source_refs.slice(0, 3)
-			: [];
+	const leadTitle = leadDocument ? formatReaderShelfTitle(leadDocument) : "";
 	const needsAttentionDocuments = documents.filter(
 		(document) =>
 			document.published_with_gap && document.id !== (leadDocument?.id ?? ""),
@@ -67,62 +99,30 @@ export default async function ReaderPage() {
 		(document) =>
 			document.id !== (leadDocument?.id ?? "") && !document.published_with_gap,
 	);
-	const shelfSnapshotItems = shelfUnavailable
-		? []
-		: [
-				{
-					label: "Published",
-					value: totalDocuments,
-					valueLabel: String(totalDocuments),
-				},
-				{
-					label: "Clear",
-					value: clearDocuments.length,
-					max: Math.max(totalDocuments, 1),
-					valueLabel: String(clearDocuments.length),
-					tone: "success" as const,
-				},
-				{
-					label: "Warnings",
-					value: warningCount,
-					max: Math.max(totalDocuments, 1),
-					valueLabel: String(warningCount),
-					tone: warningCount > 0 ? ("warning" as const) : ("muted" as const),
-				},
-			];
-
 	return (
 		<div
-			className={`mx-auto flex w-full max-w-7xl flex-col gap-14 px-4 py-8 md:px-6 ${editorialSans.className}`}
+			className={`mx-auto flex w-full max-w-[72rem] flex-col gap-10 px-4 py-8 md:px-6 ${editorialSans.className}`}
 		>
-			<section className="grid gap-6 xl:grid-cols-[minmax(0,1.52fr)_minmax(280px,0.72fr)]">
+			<section className="space-y-6">
 				<Card className="overflow-hidden border-border/70 bg-gradient-to-br from-background via-background to-rose-50/60 shadow-sm dark:to-rose-950/10">
 					<CardHeader className="space-y-7 pb-4">
-						<Badge
-							variant="outline"
-							className="w-fit border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/70 dark:bg-rose-950/30 dark:text-rose-200"
-						>
-							{shelfUnavailable
-								? "Reader temporarily unavailable"
-								: "Reading shelf"}
-						</Badge>
 						<div className="space-y-4">
-							<p className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-								{shelfUnavailable ? "Shelf status" : "Start here"}
-							</p>
 							<h1
 								data-route-heading
 								tabIndex={-1}
-								className={`max-w-4xl text-4xl leading-[0.96] tracking-tight md:text-6xl xl:text-7xl ${editorialSerif.className}`}
+								className={`max-w-4xl text-4xl leading-[0.96] tracking-tight md:text-5xl xl:text-6xl ${editorialSerif.className}`}
 							>
 								{shelfUnavailable
 									? "Reader shelf is temporarily unavailable"
-									: "Pick a finished story and start reading"}
+									: leadDocument
+										? leadTitle
+										: "Reader"}
 							</h1>
 							<CardDescription className="max-w-3xl text-base leading-8 text-foreground/75">
 								{shelfUnavailable
 									? "The reading shelf could not be loaded just now. You can still open the sample story or check the backstage status while it recovers."
-									: "Start with one finished story. Notes and source links are there when you need them, but the story should do the first job."}
+									: (leadDocument?.summary ??
+										"Pick one finished story. Read first, then open notes only when you need provenance.")}
 							</CardDescription>
 						</div>
 					</CardHeader>
@@ -155,145 +155,14 @@ export default async function ReaderPage() {
 								</Button>
 							)}
 						</div>
-						{shelfSnapshotItems.length ? (
-							<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-								{shelfSnapshotItems.map((item) => (
-									<Badge key={item.label} variant="outline">
-										{item.label}: {item.valueLabel}
-									</Badge>
-								))}
-							</div>
-						) : (
+						{shelfUnavailable ? (
 							<div className="rounded-[1.5rem] border border-border/60 bg-background/75 p-5 text-sm leading-7 text-foreground/75">
 								This page is in fail-close mode. Open the sample story or the
 								backstage status page, then come back once the live shelf
 								recovers.
 							</div>
-						)}
-						{leadDocument ? (
-							<div className="grid gap-6 rounded-[1.75rem] border border-border/70 bg-background/80 p-6 xl:grid-cols-[minmax(0,1.22fr)_minmax(260px,0.72fr)]">
-								<div className="space-y-5">
-									<div className="flex flex-wrap items-center gap-2">
-										<Badge variant="secondary">Featured story</Badge>
-										<Badge
-											variant={
-												leadDocument.published_with_gap
-													? "destructive"
-													: "outline"
-											}
-										>
-											{leadDocument.published_with_gap
-												? "Read with care"
-												: "Ready"}
-										</Badge>
-										{leadDocument.topic_label ? (
-											<Badge variant="outline">
-												{leadDocument.topic_label}
-											</Badge>
-										) : null}
-									</div>
-									<div className="space-y-3">
-										<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
-											Start here
-										</p>
-										<CardTitle className="font-serif text-4xl leading-[1.02] tracking-tight md:text-5xl">
-											{leadDocument.title}
-										</CardTitle>
-										<p className="max-w-3xl text-base leading-8 text-foreground/75">
-											{leadDocument.summary ??
-												"Open this story to read the finished piece first, then open source notes only if you want to look closer."}
-										</p>
-									</div>
-									<dl className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-										<div className="rounded-2xl border border-border/60 bg-muted/15 p-3">
-											<dt className="text-xs font-semibold uppercase tracking-[0.18em]">
-												Edition
-											</dt>
-											<dd className="mt-2 text-foreground/85">
-												{leadDocument.window_id}
-											</dd>
-										</div>
-										<div className="rounded-2xl border border-border/60 bg-muted/15 p-3">
-											<dt className="text-xs font-semibold uppercase tracking-[0.18em]">
-												Revision
-											</dt>
-											<dd className="mt-2 text-foreground/85">
-												{leadDocument.version}
-											</dd>
-										</div>
-										<div className="rounded-2xl border border-border/60 bg-muted/15 p-3">
-											<dt className="text-xs font-semibold uppercase tracking-[0.18em]">
-												Sources used
-											</dt>
-											<dd className="mt-2 text-foreground/85">
-												{leadDocument.source_item_count}
-											</dd>
-										</div>
-									</dl>
-								</div>
-								<aside className="space-y-4 rounded-3xl border border-border/60 bg-muted/20 p-5">
-									<div className="flex items-center gap-2 text-sm font-medium text-foreground">
-										<LibraryBig className="h-4 w-4 text-rose-600" />
-										Reading note
-									</div>
-									<p className="text-sm leading-6 text-muted-foreground">
-										Read the story first. Notes and source links stay close, but
-										they should never be louder than the story itself.
-									</p>
-									{leadSources.length ? (
-										<div className="rounded-2xl border border-border/60 bg-background/90 p-4">
-											<p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-												Sources behind this story
-											</p>
-											<div className="mt-3 space-y-2 text-sm text-muted-foreground">
-												{leadSources.map((source, index) => (
-													<SourceIdentityCard
-														key={String(source.source_item_id ?? source.title)}
-														identity={{
-															...resolveReaderSourceIdentity(source),
-															eyebrow: `Footnote ${String(index + 1).padStart(2, "0")}`,
-														}}
-														compact
-													/>
-												))}
-											</div>
-										</div>
-									) : null}
-									<div className="space-y-2 text-sm text-muted-foreground">
-										<p className="font-medium text-foreground">Keep going</p>
-										<ul className="space-y-2">
-											<li>
-												<Link
-													className="underline underline-offset-4"
-													href="/briefings"
-												>
-													Briefings
-												</Link>{" "}
-												for the story-first sweep.
-											</li>
-											<li>
-												<Link
-													className="underline underline-offset-4"
-													href="/trends"
-												>
-													Trends
-												</Link>{" "}
-												for repeated themes.
-											</li>
-											<li>
-												<Link
-													className="underline underline-offset-4"
-													href="/subscriptions"
-												>
-													Add sources
-												</Link>{" "}
-												when the shelf needs more material.
-											</li>
-										</ul>
-									</div>
-								</aside>
-							</div>
-						) : (
+						) : null}
+						{leadDocument ? null : (
 							<div className="grid gap-4 rounded-[1.75rem] border border-dashed border-border/70 bg-muted/20 p-6 md:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.8fr)]">
 								<div>
 									<p className="text-sm uppercase tracking-[0.24em] text-muted-foreground">
@@ -327,96 +196,43 @@ export default async function ReaderPage() {
 						)}
 					</CardContent>
 				</Card>
-
-				<Card className="border-border/70 bg-background/95 shadow-sm lg:sticky lg:top-6">
-					<CardHeader className="space-y-4">
-						<Badge variant="outline" className="w-fit">
-							Reading note
-						</Badge>
-						<p className="text-xs font-semibold uppercase tracking-[0.26em] text-muted-foreground">
-							Up next
-						</p>
-						<h2 className="font-serif text-2xl font-semibold leading-none tracking-tight">
-							Where to go next
-						</h2>
-						<CardDescription>
-							Use this only when you want your next reading path. The story
-							should still come first.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="space-y-4 text-sm">
-						{navigationBrief ? (
-							<>
-								<p className="text-muted-foreground">
-									{navigationBrief.summary}
-								</p>
-								<div className="flex flex-wrap gap-2">
-									<Badge variant="secondary">
-										Stories {navigationBrief.document_count}
-									</Badge>
-									<Badge variant="outline">
-										Needs note {navigationBrief.published_with_gap_count}
-									</Badge>
-								</div>
-								<div className="space-y-2">
-									{navigationItems.map((item, index) => (
-										<Link
-											key={item.document_id}
-											href={item.route}
-											className="block rounded-2xl border border-border/60 bg-muted/10 p-4 transition hover:border-rose-200/80 hover:bg-muted/30"
-										>
-											<div className="flex items-start gap-3">
-												<span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 text-xs font-semibold text-muted-foreground">
-													{String(index + 1).padStart(2, "0")}
-												</span>
-												<div className="min-w-0">
-													<p className="font-medium">{item.title}</p>
-													{item.summary ? (
-														<p className="mt-1 line-clamp-2 text-muted-foreground">
-															{item.summary}
-														</p>
-													) : null}
-												</div>
-											</div>
-										</Link>
-									))}
-								</div>
-							</>
-						) : (
-							<div
-								className="space-y-3"
-								role={briefUnavailable ? "status" : undefined}
-								aria-live={briefUnavailable ? "polite" : undefined}
-								aria-atomic={briefUnavailable ? "true" : undefined}
-							>
-								<p className="text-muted-foreground">
-									{briefUnavailable
-										? "The quick guide is temporarily unavailable. Open the featured story or the sample story directly while it reloads."
-										: "There is no guide yet. Until the first live story lands, use the sample story as your reading path."}
-								</p>
-								<div className="space-y-2">
-									<div className="rounded-2xl border border-border/60 p-4">
-										<p className="font-medium">01 Open the sample story</p>
-										<p className="mt-1 text-muted-foreground">
-											Read one finished sample before you worry about anything
-											else.
-										</p>
-									</div>
-									<div className="rounded-2xl border border-border/60 p-4">
-										<p className="font-medium">
-											02 Come back when the first live story lands
-										</p>
-										<p className="mt-1 text-muted-foreground">
-											Once the first story is published, this guide turns into a
-											short reading map.
-										</p>
-									</div>
-								</div>
-							</div>
-						)}
-					</CardContent>
-				</Card>
 			</section>
+
+			{navigationBrief ? (
+				<section className="space-y-4">
+					<div className="flex items-end justify-between gap-3">
+						<div>
+							<h2 className="font-serif text-3xl tracking-tight">Up next</h2>
+							<p className="text-sm text-muted-foreground">
+								Use this only after you finish the story you opened first.
+							</p>
+						</div>
+					</div>
+					<div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+						{navigationItems.map((item, index) => (
+							<Link
+								key={item.document_id}
+								href={item.route}
+								className="block rounded-2xl border border-border/60 bg-background/95 p-4 shadow-sm transition hover:border-rose-200/80 hover:bg-muted/20"
+							>
+								<div className="flex items-start gap-3">
+									<span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border/60 text-xs font-semibold text-muted-foreground">
+										{String(index + 1).padStart(2, "0")}
+									</span>
+									<div className="min-w-0">
+										<p className="font-medium">{item.title}</p>
+										{item.summary ? (
+											<p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+												{item.summary}
+											</p>
+										) : null}
+									</div>
+								</div>
+							</Link>
+						))}
+					</div>
+				</section>
+			) : null}
 
 			{needsAttentionDocuments.length ? (
 				<section className="space-y-4">
