@@ -183,6 +183,7 @@ Starts/stops local app processes:
 - Web (next dev)
 
 Notes:
+- `down` also attempts repo-owned core-services cleanup through `./scripts/deploy/core_services.sh down --env-file ./.env` so a clean local restart does not leave Postgres/Temporal residue behind.
 - `bin/dev-mcp` is an interactive stdio entrypoint, not a background daemon managed by this script.
 - Run `./bin/dev-mcp` manually in a dedicated terminal when you need local MCP debugging.
 EOF
