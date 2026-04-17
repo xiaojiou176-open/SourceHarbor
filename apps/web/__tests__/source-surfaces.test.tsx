@@ -275,7 +275,9 @@ describe("source surfaces", () => {
 		const sectionCard = screen.getByText("Section one").closest("div");
 		expect(sectionCard).not.toBeNull();
 		expect(
-			within(sectionCard as HTMLElement).getByText(/Supported by 1 linked source/),
+			within(sectionCard as HTMLElement).getByText(
+				/Supported by 1 linked source/,
+			),
 		).toBeInTheDocument();
 		expect(
 			within(sectionCard as HTMLElement).getByText("Deep Source"),

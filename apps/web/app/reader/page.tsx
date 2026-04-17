@@ -35,7 +35,9 @@ function isSingletonReadingMode(mode: string): boolean {
 	return mode === "singleton_polish" || mode === "polish_only";
 }
 
-function isGenericSourceFallbackTitle(value: string | null | undefined): boolean {
+function isGenericSourceFallbackTitle(
+	value: string | null | undefined,
+): boolean {
 	const normalized = String(value || "")
 		.trim()
 		.toLowerCase();

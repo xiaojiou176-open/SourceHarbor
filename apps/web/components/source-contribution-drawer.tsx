@@ -50,8 +50,8 @@ export function SourceContributionDrawer({
 						Where this story came from
 					</h2>
 					<p className="text-sm leading-6 text-muted-foreground">
-						Read the body first. Keep the warning in mind. Then open these
-						notes only when you want the source list behind a section, quote, or
+						Read the body first. Keep the warning in mind. Then open these notes
+						only when you want the source list behind a section, quote, or
 						warning.
 					</p>
 				</div>
@@ -166,7 +166,9 @@ export function SourceContributionDrawer({
 					<div className="mt-4 space-y-3 text-sm">
 						{document.sections.map((section) => {
 							const sourceTitles = section.source_item_ids
-								.map((sourceId) => sourceIdentityById.get(String(sourceId))?.title)
+								.map(
+									(sourceId) => sourceIdentityById.get(String(sourceId))?.title,
+								)
 								.filter(Boolean) as string[];
 							return (
 								<div
@@ -180,7 +182,7 @@ export function SourceContributionDrawer({
 										{sourceTitles.length
 											? `Supported by ${sourceTitles.length} linked ${
 													sourceTitles.length === 1 ? "source" : "sources"
-											  }.`
+												}.`
 											: "No linked sources yet."}
 									</p>
 									{sourceTitles.length ? (
