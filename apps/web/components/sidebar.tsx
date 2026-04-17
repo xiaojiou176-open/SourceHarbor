@@ -327,14 +327,23 @@ function SidebarNavContent({
 									key={item.href}
 									href={item.href}
 									className={cn(
-										"flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+										"group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+										collapsed ? "justify-center" : "",
 										item.active
-											? "bg-sidebar-accent text-sidebar-accent-foreground"
-											: "text-sidebar-foreground/90 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
+											? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm ring-1 ring-sidebar-border/70"
+											: "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
 									)}
 									aria-current={item.active ? "page" : undefined}
 								>
-									<Icon className="size-4 shrink-0 opacity-80" aria-hidden />
+									<Icon
+										className={cn(
+											"size-4 shrink-0 transition-colors duration-200 motion-reduce:transition-none",
+											item.active
+												? "opacity-100 text-sidebar-accent-foreground"
+												: "opacity-100 text-sidebar-foreground/90 group-hover:text-sidebar-accent-foreground",
+										)}
+										aria-hidden
+									/>
 									<span className={collapsed ? "sr-only" : undefined}>
 										{item.label}
 									</span>
@@ -382,15 +391,21 @@ function SidebarNavContent({
 												key={item.href}
 												href={item.href}
 												className={cn(
-													"flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+													"group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+													collapsed ? "justify-center" : "",
 													item.active
-														? "bg-sidebar-accent text-sidebar-accent-foreground"
-														: "text-sidebar-foreground/90 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
+														? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm ring-1 ring-sidebar-border/70"
+														: "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
 												)}
 												aria-current={item.active ? "page" : undefined}
 											>
 												<Icon
-													className="size-4 shrink-0 opacity-80"
+													className={cn(
+														"size-4 shrink-0 transition-colors duration-200 motion-reduce:transition-none",
+														item.active
+															? "opacity-100 text-sidebar-accent-foreground"
+															: "opacity-100 text-sidebar-foreground/90 group-hover:text-sidebar-accent-foreground",
+													)}
 													aria-hidden
 												/>
 												<span className={collapsed ? "sr-only" : undefined}>
@@ -501,16 +516,25 @@ function SidebarNavContent({
 							<Link
 								href="/settings"
 								className={cn(
-									"flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+									"group flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 motion-reduce:transition-none",
+									collapsed ? "justify-center" : "",
 									pathname.startsWith("/settings")
-										? "bg-sidebar-accent text-sidebar-accent-foreground"
-										: "text-sidebar-foreground/90 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
+										? "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm ring-1 ring-sidebar-border/70"
+										: "text-sidebar-foreground hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
 								)}
 								aria-current={
 									pathname.startsWith("/settings") ? "page" : undefined
 								}
 							>
-								<Settings className="size-4 shrink-0 opacity-80" aria-hidden />
+								<Settings
+									className={cn(
+										"size-4 shrink-0 transition-colors duration-200 motion-reduce:transition-none",
+										pathname.startsWith("/settings")
+											? "opacity-100 text-sidebar-accent-foreground"
+											: "opacity-100 text-sidebar-foreground/90 group-hover:text-sidebar-accent-foreground",
+									)}
+									aria-hidden
+								/>
 								<span className={collapsed ? "sr-only" : undefined}>
 									Settings
 								</span>

@@ -33,12 +33,12 @@ export default function DashboardPage() {
 		>
 			<section
 				aria-labelledby="dashboard-first-route-heading"
-				className="grid gap-4 xl:grid-cols-[minmax(0,1.28fr)_minmax(0,0.82fr)]"
+				className="mx-auto w-full max-w-5xl"
 			>
 				<h2 id="dashboard-first-route-heading" className="sr-only">
 					Choose your first reading route
 				</h2>
-				<Card className="folo-surface border-border/70 bg-gradient-to-br from-background via-background to-rose-50/60">
+				<Card className="folo-surface mx-auto w-full border-border/70 bg-gradient-to-br from-background via-background to-rose-50/60">
 					<CardHeader className="gap-4">
 						<p
 							className={`text-xs uppercase tracking-[0.24em] text-muted-foreground ${editorialMono.className}`}

@@ -31,6 +31,14 @@ def resolve_base_url(repo_root: Path, explicit_base_url: str) -> str:
     return "http://127.0.0.1:3000"
 
 
+def ensure_full_stack_up(repo_root: Path) -> None:
+    subprocess.run(
+        ["./bin/full-stack", "up"],
+        cwd=repo_root,
+        check=True,
+    )
+
+
 def run_capture_helper(repo_root: Path, output_dir: Path) -> None:
     cmd = [
         "uv",
@@ -38,7 +46,7 @@ def run_capture_helper(repo_root: Path, output_dir: Path) -> None:
         "--with",
         "playwright",
         "python",
-        "scripts/runtime/capture_reader_proof_pack.py",
+        "scripts/runtime/capture_frontstage_proof_pack.py",
         "--base-url",
         resolve_base_url(repo_root, ""),
         "--output-dir",
@@ -48,18 +56,9 @@ def run_capture_helper(repo_root: Path, output_dir: Path) -> None:
         subprocess.run(cmd, cwd=repo_root, check=True)
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(
-            "reader clean UI audit preflight failed while capturing the proof pack; "
-            "check that `./bin/full-stack up` has a responsive web route on "
-            "http://127.0.0.1:3000/reader/demo before rerunning."
+            "frontstage clean UI audit preflight failed while capturing the proof pack; "
+            "check that `./bin/full-stack up` has responsive routes on `/`, `/feed`, `/subscriptions`, and `/reader/demo` before rerunning."
         ) from exc
-
-
-def ensure_full_stack_up(repo_root: Path) -> None:
-    subprocess.run(
-        ["./bin/full-stack", "up"],
-        cwd=repo_root,
-        check=True,
-    )
 
 
 def post_json(url: str, payload: dict[str, object], api_key: str) -> dict[str, object]:
@@ -86,13 +85,15 @@ def create_mini_pack(source_dir: Path, mini_dir: Path) -> None:
         shutil.rmtree(mini_dir)
     mini_dir.mkdir(parents=True, exist_ok=True)
     keep = [
+        "desktop-home-clean.png",
+        "desktop-feed-clean.png",
+        "mobile-subscriptions-clean.png",
         "desktop-reader-demo-expanded-clean.png",
-        "mobile-reader-demo-top-clean.png",
     ]
     for name in keep:
         shutil.copy2(source_dir / name, mini_dir / name)
     (mini_dir / "playwright-axe-report.json").write_text(
-        '{"summary":"mini clean reader proof pack"}',
+        '{"summary":"frontstage clean mini proof pack"}',
         encoding="utf-8",
     )
     (mini_dir / "manifest.json").write_text(
@@ -103,7 +104,7 @@ def create_mini_pack(source_dir: Path, mini_dir: Path) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Capture a clean local reader proof pack and run the repo UI audit on it."
+        description="Capture a clean local frontstage proof pack and run the repo UI audit on it."
     )
     parser.add_argument(
         "--api-base-url",
@@ -117,7 +118,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--artifact-root-name",
-        default="sourceharbor-reader-proof-clean",
+        default="sourceharbor-frontstage-proof-clean",
         help="Artifact root name relative to system tempdir for /api/v1/ui-audit/run.",
     )
     parser.add_argument(
@@ -145,7 +146,7 @@ def main() -> int:
         "--with",
         "playwright",
         "python",
-        "scripts/runtime/capture_reader_proof_pack.py",
+        "scripts/runtime/capture_frontstage_proof_pack.py",
         "--base-url",
         base_url,
         "--output-dir",
@@ -155,8 +156,8 @@ def main() -> int:
         subprocess.run(cmd, cwd=repo_root, check=True)
     except subprocess.CalledProcessError as exc:
         raise RuntimeError(
-            "reader clean UI audit preflight failed while capturing the proof pack; "
-            f"check that `./bin/full-stack up` exposes a responsive reader route at {base_url}/reader/demo before rerunning."
+            "frontstage clean UI audit preflight failed while capturing the proof pack; "
+            f"check that `./bin/full-stack up` exposes responsive frontstage routes under {base_url} before rerunning."
         ) from exc
 
     run_payload = post_json(
@@ -183,6 +184,7 @@ def main() -> int:
         )
         effective_run = fallback_run
         effective_root_name = mini_name
+
     run_id = str(effective_run.get("run_id") or "").strip()
     if not run_id:
         print(json.dumps(effective_run, indent=2))

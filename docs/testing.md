@@ -237,6 +237,7 @@ and provider evidence that go beyond the ordinary local and PR-facing lanes.
 ./bin/quality-gate --mode pre-push
 ./bin/governance-audit --mode audit
 python3 scripts/runtime/run_reader_clean_ui_audit.py
+python3 scripts/runtime/run_frontstage_clean_ui_audit.py
 python3 scripts/governance/probe_remote_platform_truth.py
 python3 scripts/governance/check_remote_required_checks.py
 python3 scripts/governance/check_remote_security_alerts.py
@@ -257,6 +258,19 @@ Reader-frontstage UI proof note:
   automatically retries with a smaller mini pack so the maintainer-local UI
   review lane can still produce a usable verdict.
 - Treat it as a maintainer-local proof helper, not a hosted-distribution claim.
+
+Frontstage UI proof note:
+
+- `python3 scripts/runtime/run_frontstage_clean_ui_audit.py` is the broader
+  public-surface lane for `/`, `/feed`, `/subscriptions`, and `/reader/demo`.
+- It captures a clean frontstage proof pack into system temp space, hides
+  dev-only overlay noise from the screenshots, and submits that pack to
+  `/api/v1/ui-audit/run`.
+- If the full pack hits a Gemini provider timeout, the runner automatically
+  retries with a smaller mini pack so the public-surface audit can still return
+  a usable verdict.
+- Treat it as a maintainer-local proof helper for frontstage IA and UI quality,
+  not as hosted-distribution proof.
 
 Closeout note:
 

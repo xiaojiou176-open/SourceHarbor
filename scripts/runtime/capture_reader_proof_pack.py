@@ -11,6 +11,33 @@ from pathlib import Path
 from playwright.sync_api import Page, sync_playwright
 
 
+def resolve_base_url(explicit_base_url: str) -> str:
+    normalized = explicit_base_url.strip()
+    if normalized:
+        return normalized.rstrip("/")
+    resolved_env = (
+        Path(__file__).resolve().parents[2]
+        / ".runtime-cache"
+        / "run"
+        / "full-stack"
+        / "resolved.env"
+    )
+    if not resolved_env.is_file():
+        return "http://127.0.0.1:3000"
+    values: dict[str, str] = {}
+    for raw_line in resolved_env.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip()
+    if values.get("SOURCE_HARBOR_WEB_BASE_URL"):
+        return values["SOURCE_HARBOR_WEB_BASE_URL"].rstrip("/")
+    if values.get("WEB_PORT"):
+        return f"http://127.0.0.1:{values['WEB_PORT']}"
+    return "http://127.0.0.1:3000"
+
+
 def hide_dev_runtime_noise(page: Page) -> None:
     page.add_style_tag(
         content="""
@@ -131,7 +158,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--base-url",
-        default="http://127.0.0.1:3000",
+        default="",
         help="Base URL for the local web runtime.",
     )
     parser.add_argument(
@@ -143,10 +170,11 @@ def main() -> int:
 
     output_dir = Path(args.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
-    shots = capture_reader_pack(args.base_url.rstrip("/"), output_dir)
+    base_url = resolve_base_url(args.base_url)
+    shots = capture_reader_pack(base_url, output_dir)
     manifest = {
         "artifact_root": str(output_dir),
-        "base_url": args.base_url,
+        "base_url": base_url,
         "shots": shots,
     }
     (output_dir / "manifest.json").write_text(

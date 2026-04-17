@@ -13,10 +13,6 @@
 </p>
 
 <p align="center">
-  Reader-first source workflow for turning long-form inputs into grounded search, finished reading surfaces, and inspectable agent-ready receipts.
-</p>
-
-<p align="center">
   <a href="#see-it-in-30-seconds">See It In 30 Seconds</a>
   ·
   <a href="./docs/start-here.md">Run Locally</a>

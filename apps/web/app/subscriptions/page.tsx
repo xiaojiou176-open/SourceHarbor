@@ -355,6 +355,7 @@ export default async function SubscriptionsPage({
 				<section className="space-y-4 xl:order-1">
 					<details
 						id="tracked-universes"
+						open
 						className="folo-surface rounded-[1.6rem] border border-border/70 bg-background/95 p-5 shadow-sm"
 					>
 						<summary className="m-[-0.5rem] cursor-pointer list-none rounded-[1.2rem] p-2 transition-colors hover:bg-muted/20">
