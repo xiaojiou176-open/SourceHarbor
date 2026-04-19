@@ -217,6 +217,58 @@ def test_step_collect_subtitles_asr_fallback_success_after_missing_binary(
     assert execution.state_updates["transcript"] == "asr transcript"
 
 
+def test_step_collect_subtitles_subtitle_override_enables_asr_when_default_disabled(
+    tmp_path: Path,
+) -> None:
+    ctx = _make_ctx(
+        tmp_path,
+        youtube_transcript_fallback_enabled=False,
+        asr_fallback_enabled=False,
+        asr_model_size="small",
+    )
+    media_path = ctx.download_dir / "sample.mp4"
+    media_path.write_bytes(b"video")
+    seen_commands: list[list[str]] = []
+
+    async def _run_command(current_ctx: PipelineContext, cmd: list[str]) -> CommandResult:
+        seen_commands.append(cmd)
+        (current_ctx.download_dir / "sample.txt").write_text(
+            "override transcript",
+            encoding="utf-8",
+        )
+        return CommandResult(ok=True)
+
+    execution = asyncio.run(
+        subtitles.step_collect_subtitles(
+            ctx,
+            {
+                "platform": "bilibili",
+                "source_url": "https://www.bilibili.com/video/BV1xx",
+                "video_uid": "BV1xx",
+                "media_path": str(media_path.resolve()),
+                "overrides": {
+                    "subtitles": {
+                        "asr_fallback_enabled": True,
+                        "asr_model_size": "tiny",
+                        "subprocess_timeout_seconds": 420,
+                    }
+                },
+            },
+            run_command=_run_command,
+            fetch_youtube_transcript_text_fn=lambda _video_id: "",
+        )
+    )
+
+    assert execution.status == "succeeded"
+    assert execution.degraded is False
+    assert execution.output["transcript_provider"] == "asr_fallback"
+    assert execution.output["asr_model_size"] == "tiny"
+    assert execution.output["subprocess_timeout_seconds"] == 420
+    assert execution.state_updates["transcript"] == "override transcript"
+    assert any("tiny" in arg for cmd in seen_commands for arg in cmd)
+    assert seen_commands
+
+
 def test_step_collect_subtitles_breaks_on_non_binary_asr_failure(tmp_path: Path) -> None:
     ctx = _make_ctx(
         tmp_path,

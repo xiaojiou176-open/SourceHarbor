@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import re
 from collections.abc import Awaitable, Callable
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -93,6 +94,39 @@ async def step_collect_subtitles(
 ) -> StepExecution:
     subtitle_files = subtitle_candidates(ctx.download_dir)
     transcript, used_subtitle_files = collect_subtitle_text_from_files(subtitle_files)
+    overrides = dict(state.get("overrides") or {})
+    subtitle_override_section = overrides.get("subtitles")
+    subtitle_overrides = (
+        dict(subtitle_override_section)
+        if isinstance(subtitle_override_section, dict)
+        else {}
+    )
+    youtube_transcript_fallback_enabled = coerce_bool(
+        subtitle_overrides.get("youtube_transcript_fallback_enabled"),
+        default=coerce_bool(
+            getattr(ctx.settings, "youtube_transcript_fallback_enabled", True),
+            default=True,
+        ),
+    )
+    asr_fallback_enabled = coerce_bool(
+        subtitle_overrides.get("asr_fallback_enabled"),
+        default=coerce_bool(
+            getattr(ctx.settings, "asr_fallback_enabled", False),
+            default=False,
+        ),
+    )
+    asr_model_size = str(
+        subtitle_overrides.get("asr_model_size")
+        or getattr(ctx.settings, "asr_model_size", "small")
+        or "small"
+    ).strip()
+    raw_timeout_override = subtitle_overrides.get("subprocess_timeout_seconds")
+    try:
+        subtitle_timeout_override = (
+            max(1, int(raw_timeout_override)) if raw_timeout_override is not None else None
+        )
+    except (TypeError, ValueError):
+        subtitle_timeout_override = None
     if transcript:
         return StepExecution(
             status="succeeded",
@@ -114,10 +148,7 @@ async def step_collect_subtitles(
     video_uid = str(state.get("video_uid") or "").strip()
     platform = str(state.get("platform") or "").strip().lower()
 
-    if platform == "youtube" and coerce_bool(
-        getattr(ctx.settings, "youtube_transcript_fallback_enabled", True),
-        default=True,
-    ):
+    if platform == "youtube" and youtube_transcript_fallback_enabled:
         video_id = extract_youtube_video_id(source_url, video_uid)
         if video_id:
             try:
@@ -143,12 +174,9 @@ async def step_collect_subtitles(
     else:
         failure_reasons.append("youtube_transcript_fallback_disabled_or_not_youtube")
 
-    if coerce_bool(getattr(ctx.settings, "asr_fallback_enabled", False), default=False):
+    if asr_fallback_enabled:
         media_path = str(state.get("media_path") or "").strip()
         if media_path:
-            asr_model_size = str(
-                getattr(ctx.settings, "asr_model_size", "small") or "small"
-            ).strip()
             asr_failure_reasons: list[str] = []
             asr_commands = [
                 [
@@ -174,8 +202,21 @@ async def step_collect_subtitles(
                     "txt",
                 ],
             ]
+            run_ctx = ctx
+            if (
+                subtitle_timeout_override is not None
+                and subtitle_timeout_override
+                != int(getattr(ctx.settings, "pipeline_subprocess_timeout_seconds", 180) or 180)
+            ):
+                run_ctx = replace(
+                    ctx,
+                    settings=replace(
+                        ctx.settings,
+                        pipeline_subprocess_timeout_seconds=subtitle_timeout_override,
+                    ),
+                )
             for cmd in asr_commands:
-                result = await run_command(ctx, cmd)
+                result = await run_command(run_ctx, cmd)
                 if result.ok:
                     asr_text = collect_asr_output_text(ctx.download_dir, media_path)
                     if asr_text:
@@ -185,6 +226,11 @@ async def step_collect_subtitles(
                                 "subtitle_files": len(used_subtitle_files),
                                 "transcript_provider": "asr_fallback",
                                 "asr_model_size": asr_model_size,
+                                "subprocess_timeout_seconds": getattr(
+                                    run_ctx.settings,
+                                    "pipeline_subprocess_timeout_seconds",
+                                    None,
+                                ),
                                 "fallback_used": True,
                             },
                             state_updates={
