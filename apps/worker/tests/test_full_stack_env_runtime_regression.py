@@ -140,6 +140,8 @@ def test_full_stack_uses_runtime_snapshot_for_data_plane_and_worker_signature() 
         'start_one_retry worker 10 2 env DATABASE_URL="$DATABASE_URL" SOURCE_HARBOR_API_KEY="$startup_write_token"'
         in script
     )
+    assert 'local next_cli="$WEB_RUNTIME_WEB_DIR/node_modules/next/dist/bin/next"' in script
+    assert "exec node ./node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port" in script
     assert 'if [[ "$name" != "api" && "$cmd" != *"$ROOT_DIR"* ]]; then' not in script
     assert "Service-specific regex plus the expected port" in script
 

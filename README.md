@@ -182,6 +182,9 @@ Use it to choose the next page, then leave quickly:
 - **Runtime and verification truth:** [docs/proof.md](./docs/proof.md), [docs/testing.md](./docs/testing.md), [docs/runtime-truth.md](./docs/runtime-truth.md)
 - **Builder/package surfaces:** [docs/builders.md](./docs/builders.md), [packages/sourceharbor-cli/README.md](./packages/sourceharbor-cli/README.md), [packages/sourceharbor-sdk/README.md](./packages/sourceharbor-sdk/README.md)
 
+If you need the live operator-side log trail after a local run, start at
+`.runtime-cache/logs/components/full-stack`.
+
 ## Why SourceHarbor Feels Different
 
 Most repos in this space stop at one of these layers:

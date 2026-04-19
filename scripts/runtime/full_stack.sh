@@ -742,8 +742,9 @@ SOURCE_HARBOR_API_KEY=${startup_write_token}
 API_PORT=${API_PORT}
 EOF
   local next_bin="$WEB_RUNTIME_WEB_DIR/node_modules/.bin/next"
-  if [[ -x "$next_bin" ]]; then
-    printf '%s\0' "bash" "-lc" "cd \"$WEB_RUNTIME_WEB_DIR\" && export SOURCE_HARBOR_REPO_ROOT=\"$ROOT_DIR\" && export SOURCE_HARBOR_API_KEY=\"$startup_write_token\" && export WEB_ACTION_SESSION_TOKEN=\"$startup_web_session_token\" && export NEXT_PUBLIC_WEB_ACTION_SESSION_TOKEN=\"$startup_web_session_token\" && export NEXT_PUBLIC_API_BASE_URL=\"http://127.0.0.1:${API_PORT}\" && export API_PORT=\"$API_PORT\" && exec ./node_modules/.bin/next dev --hostname 127.0.0.1 --port \"$WEB_PORT\""
+  local next_cli="$WEB_RUNTIME_WEB_DIR/node_modules/next/dist/bin/next"
+  if [[ -x "$next_bin" && -f "$next_cli" ]]; then
+    printf '%s\0' "bash" "-lc" "cd \"$WEB_RUNTIME_WEB_DIR\" && export SOURCE_HARBOR_REPO_ROOT=\"$ROOT_DIR\" && export SOURCE_HARBOR_API_KEY=\"$startup_write_token\" && export WEB_ACTION_SESSION_TOKEN=\"$startup_web_session_token\" && export NEXT_PUBLIC_WEB_ACTION_SESSION_TOKEN=\"$startup_web_session_token\" && export NEXT_PUBLIC_API_BASE_URL=\"http://127.0.0.1:${API_PORT}\" && export API_PORT=\"$API_PORT\" && exec node ./node_modules/next/dist/bin/next dev --hostname 127.0.0.1 --port \"$WEB_PORT\""
     return 0
   fi
 
