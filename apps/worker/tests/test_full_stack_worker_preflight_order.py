@@ -197,6 +197,15 @@ def test_full_stack_up_attempts_self_heal_for_unhealthy_temporal_namespace_befor
     web_bin_dir.mkdir(parents=True, exist_ok=True)
     fake_bin_dir.mkdir(parents=True, exist_ok=True)
 
+    runtime_full_stack_target = scripts_dir / "runtime" / "full_stack.sh"
+    runtime_full_stack_target.write_text(
+        runtime_full_stack_target.read_text(encoding="utf-8").replace(
+            "(worker\\.main run-worker|scripts/dev_worker\\.sh)",
+            f"({worker_signature_regex})",
+        ),
+        encoding="utf-8",
+    )
+
     (scripts_dir / "dev_api.sh").write_text(
         """#!/usr/bin/env bash
 set -euo pipefail
@@ -308,7 +317,6 @@ exit 0
         "PIPELINE_WORKSPACE_DIR": str(tmp_path / "workspace"),
         "PIPELINE_ARTIFACT_ROOT": str(tmp_path / "artifacts"),
         "FULL_STACK_TEMPORAL_HEALTH_MARKER": str(marker),
-        "FULL_STACK_WORKER_SIGNATURE_REGEX": f"({worker_signature_regex})",
     }
 
     class _SilentHandler(socketserver.BaseRequestHandler):
