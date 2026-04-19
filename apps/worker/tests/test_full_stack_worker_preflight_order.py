@@ -360,8 +360,7 @@ exit 0
     if last_failure_reason.exists():
         failure_text = last_failure_reason.read_text(encoding="utf-8")
         assert (
-            "stage=worker_start" in failure_text
-            or "stage=worker_temporal_pollers" in failure_text
+            "stage=worker_start" in failure_text or "stage=worker_temporal_pollers" in failure_text
         )
     else:
         assert (
