@@ -181,11 +181,12 @@ describe("Sidebar + Sheet contract", () => {
 				screen.queryByRole("link", { name: "Story briefs" }),
 			).not.toBeInTheDocument();
 			expect(
-				screen.queryByRole("link", { name: "Search" }),
-			).not.toBeInTheDocument();
-			expect(
-				screen.queryByRole("link", { name: "Ask" }),
-			).not.toBeInTheDocument();
+				screen.getByRole("link", { name: "Search" }),
+			).toHaveAttribute("href", "/search");
+			expect(screen.getByRole("link", { name: "Ask" })).toHaveAttribute(
+				"href",
+				"/ask",
+			);
 			expect(
 				screen.queryByRole("link", { name: "Tech" }),
 			).not.toBeInTheDocument();

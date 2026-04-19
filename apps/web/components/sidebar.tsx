@@ -153,72 +153,44 @@ function SidebarNavContent({
 		{
 			id: "read",
 			label: "Read",
-			items:
-				frontstageFocused && !searchOrAskFocused
-					? [
-							{
-								href: "/",
-								label: "Home",
-								icon: Home,
-								active: pathname === "/",
-							},
-							{
-								href: "/reader",
-								label: "Reader",
-								icon: FileText,
-								active: pathname.startsWith("/reader"),
-							},
-							{
-								href: "/feed",
-								label: "Reading desk",
-								icon: Sparkles,
-								active: isFeed && !currentCategory && !currentSub,
-							},
-							{
-								href: "/subscriptions",
-								label: "Sources",
-								icon: Plus,
-								active: pathname.startsWith("/subscriptions"),
-							},
-						]
-					: [
-							{
-								href: "/",
-								label: "Home",
-								icon: Home,
-								active: pathname === "/",
-							},
-							{
-								href: "/reader",
-								label: "Reader",
-								icon: FileText,
-								active: pathname.startsWith("/reader"),
-							},
-							{
-								href: "/feed",
-								label: "Reading desk",
-								icon: Sparkles,
-								active: isFeed && !currentCategory && !currentSub,
-							},
-							{
-								href: "/subscriptions",
-								label: "Sources",
-								icon: Plus,
-								active: pathname.startsWith("/subscriptions"),
-							},
-							{
-								href: "/search",
-								label: "Search",
-								icon: Search,
-								active: pathname.startsWith("/search"),
-							},
-							{
-								href: "/ask",
-								label: "Ask",
-								icon: MessageSquare,
-								active: pathname.startsWith("/ask"),
-							},
-						],
+			items: [
+				{
+					href: "/",
+					label: "Home",
+					icon: Home,
+					active: pathname === "/",
+				},
+				{
+					href: "/reader",
+					label: "Reader",
+					icon: FileText,
+					active: pathname.startsWith("/reader"),
+				},
+				{
+					href: "/feed",
+					label: "Reading desk",
+					icon: Sparkles,
+					active: isFeed && !currentCategory && !currentSub,
+				},
+				{
+					href: "/subscriptions",
+					label: "Sources",
+					icon: Plus,
+					active: pathname.startsWith("/subscriptions"),
+				},
+				{
+					href: "/search",
+					label: "Search",
+					icon: Search,
+					active: pathname.startsWith("/search"),
+				},
+				{
+					href: "/ask",
+					label: "Ask",
+					icon: MessageSquare,
+					active: pathname.startsWith("/ask"),
+				},
+			],
 		},
 		{
 			id: "build",
