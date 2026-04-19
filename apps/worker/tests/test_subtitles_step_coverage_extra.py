@@ -277,7 +277,9 @@ def test_step_collect_subtitles_retries_after_empty_asr_output(tmp_path: Path) -
         nonlocal call_count
         call_count += 1
         if call_count == 2:
-            (current_ctx.download_dir / "sample.txt").write_text("second pass transcript", encoding="utf-8")
+            (current_ctx.download_dir / "sample.txt").write_text(
+                "second pass transcript", encoding="utf-8"
+            )
         return CommandResult(ok=True)
 
     execution = asyncio.run(
