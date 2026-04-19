@@ -360,7 +360,9 @@ exit 0
     if last_failure_reason.exists():
         failure_text = last_failure_reason.read_text(encoding="utf-8")
         assert (
-            "stage=worker_start" in failure_text or "stage=worker_temporal_pollers" in failure_text
+            "stage=worker_start" in failure_text
+            or "stage=worker_temporal_pollers" in failure_text
+            or "stage=web_port_check" in failure_text
         )
     else:
         assert (
@@ -368,6 +370,7 @@ exit 0
             or "DIAGNOSE stage=worker_start conclusion=worker_failed_to_start" in proc.stderr
             or "DIAGNOSE stage=worker_start conclusion=worker_process_not_detected" in proc.stderr
             or "DIAGNOSE stage=worker_temporal_pollers conclusion=pollers_not_ready" in proc.stderr
+            or "DIAGNOSE stage=web_port_check conclusion=web_port_unreachable" in proc.stderr
         )
 
 
