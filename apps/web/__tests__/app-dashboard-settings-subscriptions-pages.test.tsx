@@ -192,7 +192,9 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getByText(/If you want a softer first step/i),
 			).toBeInTheDocument();
-			expect(screen.getByRole("link", { name: "Open Feed" })).toHaveAttribute(
+			expect(
+				screen.getByRole("link", { name: "Open Timeline" }),
+			).toHaveAttribute(
 				"href",
 				"/feed",
 			);

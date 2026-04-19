@@ -166,7 +166,7 @@ function SidebarNavContent({
 				},
 				{
 					href: "/feed",
-					label: "Reading desk",
+					label: "Timeline",
 					icon: Sparkles,
 					active: isFeed && !currentCategory && !currentSub,
 				},

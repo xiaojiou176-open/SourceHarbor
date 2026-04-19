@@ -317,10 +317,10 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 							data-route-heading
 							tabIndex={-1}
 						>
-							Reading desk
+							{copy.heroTitle}
 						</h1>
 						<p className="folo-page-subtitle">
-							Open one item and read. Filters and reactions can wait.
+							{copy.heroSubtitle}
 						</p>
 					</div>
 					<div className="folo-page-toolbar flex-wrap">

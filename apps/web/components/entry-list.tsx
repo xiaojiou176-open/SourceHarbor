@@ -120,8 +120,8 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 											</h3>
 											<p className="feed-entry-support">
 												{item.published_document_title
-													? `Reader edition ready · ${item.published_document_title}`
-													: "Preview this item first, then decide whether to open the finished reader edition."}
+													? `Finished reader ready · ${item.published_document_title}`
+													: "Open the preview first. Notes and source tools can wait."}
 											</p>
 										</div>
 										<p
@@ -131,8 +131,8 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 											)}
 										>
 											{item.subscription_id
-												? `${displaySourceName} · Open the preview first. The source desk and notes can wait.`
-												: `${displaySourceName} · Start with the preview, then decide whether this item belongs in the reading flow.`}
+												? "Preview first. Open the source desk only after you know this belongs in the reading loop."
+												: "Preview first. If it earns a second read, open the source desk or the finished reader later."}
 										</p>
 									</div>
 								</Link>

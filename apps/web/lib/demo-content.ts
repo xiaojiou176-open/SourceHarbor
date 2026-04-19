@@ -41,7 +41,7 @@ export const USE_CASE_PAGES = {
 			"Feed, watchlists, trends, and ops diagnostics help you keep returning to the same research stream.",
 		],
 		links: [
-			{ href: "/feed", label: "Open Feed" },
+			{ href: "/feed", label: "Open Timeline" },
 			{ href: "/watchlists", label: "Open Watchlists" },
 			{ href: "/trends", label: "Open Trends" },
 			{ href: "/ops", label: "Open Ops inbox" },

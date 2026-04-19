@@ -19,7 +19,7 @@ def _goto_feed_ready(page: Page) -> None:
         page.goto("/feed", wait_until="domcontentloaded")
         try:
             expect(
-                page.get_by_role("heading", name=re.compile(r"Digest Feed|主阅读流"))
+                page.get_by_role("heading", name=re.compile(r"Timeline|主阅读流"))
             ).to_be_visible(timeout=12_000)
             return
         except AssertionError:

@@ -80,6 +80,21 @@ function isGenericPlatformLabel(
 	);
 }
 
+function isGenericReaderAffiliationLabel(
+	value: string | null | undefined,
+): boolean {
+	const normalized = String(value || "")
+		.trim()
+		.toLowerCase();
+	return [
+		"today lane",
+		"reading today",
+		"reading source",
+		"tracked source",
+		"unmatched source",
+	].includes(normalized);
+}
+
 function looksLikeOpaqueVideoId(
 	value: string | null | undefined,
 	platform: string | null | undefined,
@@ -198,7 +213,7 @@ function relationLabel(kind: SourceRelationKind): string {
 	if (kind === "subscription_tracked") return "Tracked source";
 	if (kind === "manual_injected") return "Reading today";
 	if (kind === "subscription_candidate") return "Needs review";
-	return "Unmatched source";
+	return "Not saved yet";
 }
 
 function supportTierLabel(value: string | null | undefined): string | null {
@@ -403,8 +418,12 @@ export function resolveFeedDisplaySourceName(item: DigestFeedItem): string {
 	const platform = normalizePlatform(item.source);
 	const title = resolveFeedDisplayTitle(item);
 	const candidates = [
-		cleanDisplayText(item.source_name),
-		cleanDisplayText(item.canonical_source_name),
+		!isGenericPlatformLabel(item.source_name, platform)
+			? cleanDisplayText(item.source_name)
+			: null,
+		!isGenericPlatformLabel(item.canonical_source_name, platform)
+			? cleanDisplayText(item.canonical_source_name)
+			: null,
 		cleanDisplayText(item.canonical_author_name),
 		cleanDisplayText(item.affiliation_label),
 		hostnameLabel(item.video_url),
@@ -425,17 +444,16 @@ export function resolveReaderSourceIdentity(
 		cleanDisplayText(source.creator_display_name) ||
 		cleanDisplayText(source.title) ||
 		cleanDisplayText(source.matched_subscription_name) ||
-		cleanDisplayText(source.affiliation_label);
+		(!isGenericReaderAffiliationLabel(source.affiliation_label)
+			? cleanDisplayText(source.affiliation_label)
+			: null);
 	const urlHost = hostnameLabel(source.source_url);
 	const title =
 		readableTitle ||
-		(urlHost && platform === "generic"
-			? urlHost
-			: urlHost
-				? `${platformMeta(platform).label} source`
-				: source.source_origin === "manual_injected"
-					? "Reading source"
-					: "Tracked source");
+		urlHost ||
+		(source.source_origin === "manual_injected"
+			? "Reading source"
+			: "Tracked source");
 	const relationKind = String(
 		source.relation_kind ||
 			(source.source_origin === "subscription_tracked"

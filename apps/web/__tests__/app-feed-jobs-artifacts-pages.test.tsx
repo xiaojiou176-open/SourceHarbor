@@ -128,9 +128,10 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(
 				screen.getAllByText("YouTube · Tech Channel").length,
 			).toBeGreaterThanOrEqual(1);
-			expect(
-				screen.getAllByText("Reader edition ready · AI Weekly edition").length,
-			).toBeGreaterThanOrEqual(1);
+				expect(
+					screen.getAllByText("Finished reader ready · AI Weekly edition")
+						.length,
+				).toBeGreaterThanOrEqual(1);
 			expect(screen.getAllByText("Saved").length).toBeGreaterThan(0);
 			expect(screen.getByText("useful")).toBeInTheDocument();
 			expect(screen.getAllByText("Tech").length).toBeGreaterThan(0);
@@ -468,11 +469,11 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(
 				screen.getByRole("link", { name: "Open source desk" }),
 			).toHaveAttribute("href", "/feed?sub=sub-reader-1");
-			expect(
-				screen.getByText(
-					"Reader edition ready · Reader edition one · published",
-				),
-			).toBeInTheDocument();
+				expect(
+					screen.getByText(
+						"Finished reader ready · Reader edition one · published",
+					),
+				).toBeInTheDocument();
 		},
 		PAGE_TEST_TIMEOUT_MS,
 	);
@@ -591,7 +592,11 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getByText("Article")).toBeInTheDocument();
 			expect(screen.getByText("Pinned source")).toBeInTheDocument();
 			expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
-			expect(screen.getByText(/Open one item and read/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					/Scan the timeline, open one item, and leave filters or reactions for later/i,
+				),
+			).toBeInTheDocument();
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
 			).toHaveAttribute("href", "/feed?sub=sub-123&item=job-sub");

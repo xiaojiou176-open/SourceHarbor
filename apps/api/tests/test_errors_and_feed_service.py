@@ -460,7 +460,7 @@ def test_feed_service_marks_manual_injected_rows_as_manual_one_off(tmp_path: Pat
     result = service.list_digest_feed()
 
     assert result["items"][0]["relation_kind"] == "manual_one_off"
-    assert result["items"][0]["affiliation_label"] == "Today lane"
+    assert result["items"][0]["affiliation_label"] == "Reading today"
 
 
 def test_feed_service_parse_cursor_and_title_resolution() -> None:

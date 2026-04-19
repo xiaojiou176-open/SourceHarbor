@@ -21,7 +21,7 @@ def _select_option(page: Page, label: str, option_name: str) -> None:
 
 def _goto_feed_ready(page: Page) -> None:
     page.goto("/feed", wait_until="domcontentloaded")
-    expect(page.get_by_role("heading", name="Digest Feed")).to_be_visible()
+    expect(page.get_by_role("heading", name="Timeline")).to_be_visible()
 
 
 def _require_mock_api_state(pytestconfig: pytest.Config, request: pytest.FixtureRequest):

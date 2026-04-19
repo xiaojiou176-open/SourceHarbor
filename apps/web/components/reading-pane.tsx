@@ -401,7 +401,7 @@ export function ReadingPane({
 								) : null}
 								{identity?.published_document_title ? (
 									<p className={`feed-reading-link ${editorialMono.className}`}>
-										Reader edition ready · {identity.published_document_title}
+										Finished reader ready · {identity.published_document_title}
 										{identity.published_document_publish_status
 											? ` · ${identity.published_document_publish_status}`
 											: ""}

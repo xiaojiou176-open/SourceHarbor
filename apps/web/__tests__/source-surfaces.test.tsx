@@ -150,7 +150,7 @@ describe("source surfaces", () => {
 					matched_subscription_name: null,
 					matched_by: null,
 					match_confidence: null,
-					source_universe_label: "Today lane",
+					source_universe_label: "Reading today",
 					creator_display_name: "https://example.com/article",
 					creator_handle: null,
 					thumbnail_url: null,
@@ -548,6 +548,36 @@ describe("source surfaces", () => {
 				identity_status: null,
 			}),
 		).toBe("youtube.com");
+		expect(
+			resolveFeedDisplaySourceName({
+				feed_id: "feed-bili-raw",
+				job_id: "job-bili-raw",
+				video_url: "https://www.bilibili.com/video/BV1xx411c7mD",
+				title: "BV1xx411c7mD",
+				source: "bilibili",
+				source_name: "bilibili",
+				canonical_source_name: "",
+				canonical_author_name: "",
+				category: "creator",
+				published_at: "2026-04-12T00:00:00Z",
+				summary_md: "Summary",
+				artifact_type: "digest",
+				subscription_id: null,
+				affiliation_label: "",
+				relation_kind: "unmatched_source",
+				thumbnail_url: null,
+				avatar_url: null,
+				avatar_label: "",
+				published_document_title: null,
+				published_document_publish_status: null,
+				published_with_gap: false,
+				reader_route: null,
+				content_type: "video",
+				saved: false,
+				feedback_label: null,
+				identity_status: null,
+			}),
+		).toBe("bilibili.com");
 
 		const readerIdentity = resolveReaderSourceIdentity({
 			source_item_id: "source-1",
@@ -595,8 +625,8 @@ describe("source surfaces", () => {
 			identity_status: null,
 			claim_kinds: [],
 		});
-		expect(readerRawUrlIdentity.title).toBe("YouTube source");
-		expect(readerRawUrlIdentity.subtitle).toBe("youtube.com");
+		expect(readerRawUrlIdentity.title).toBe("youtube.com");
+		expect(readerRawUrlIdentity.subtitle).toBe("YouTube");
 
 		expect(
 			decorateAskRoute("/ask#evidence", {

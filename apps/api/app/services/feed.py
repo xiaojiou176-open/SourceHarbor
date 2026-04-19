@@ -281,7 +281,9 @@ class FeedService:
                     "affiliation_label": source_name
                     if subscription_id
                     else (
-                        "Today lane" if source_origin == "manual_injected" else "Unmatched source"
+                        "Reading today"
+                        if source_origin == "manual_injected"
+                        else "Unmatched source"
                     ),
                     "relation_kind": "matched_subscription"
                     if subscription_id

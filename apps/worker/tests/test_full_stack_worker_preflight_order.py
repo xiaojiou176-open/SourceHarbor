@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import socket
 import socketserver
 import subprocess
@@ -191,11 +192,11 @@ def test_full_stack_up_attempts_self_heal_for_unhealthy_temporal_namespace_befor
     deploy_dir = scripts_dir / "deploy"
     web_bin_dir = tmp_path / "apps" / "web" / "node_modules" / ".bin"
     fake_bin_dir = tmp_path / "fake-bin"
-    worker_signature_regex = f"worker\\.main run-worker {tmp_path.name}"
     scripts_dir.mkdir(parents=True, exist_ok=True)
     deploy_dir.mkdir(parents=True, exist_ok=True)
     web_bin_dir.mkdir(parents=True, exist_ok=True)
     fake_bin_dir.mkdir(parents=True, exist_ok=True)
+    worker_signature_regex = re.escape(str(scripts_dir / "dev_worker.sh"))
 
     runtime_full_stack_target = scripts_dir / "runtime" / "full_stack.sh"
     runtime_full_stack_target.write_text(
@@ -292,7 +293,11 @@ exit 0
         encoding="utf-8",
     )
     (fake_bin_dir / "uv").write_text(
-        "#!/usr/bin/env bash\nset -euo pipefail\nexit 0\n",
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 1\n",
+        encoding="utf-8",
+    )
+    (fake_bin_dir / "pgrep").write_text(
+        "#!/usr/bin/env bash\nset -euo pipefail\nexit 1\n",
         encoding="utf-8",
     )
     for path in (
@@ -302,6 +307,7 @@ exit 0
         web_bin_dir / "next",
         fake_bin_dir / "temporal",
         fake_bin_dir / "uv",
+        fake_bin_dir / "pgrep",
     ):
         path.chmod(0o755)
 
@@ -354,6 +360,7 @@ exit 0
         "DIAGNOSE stage=worker_start_retry" in proc.stderr
         or "DIAGNOSE stage=worker_start conclusion=worker_failed_to_start" in proc.stderr
         or "DIAGNOSE stage=worker_start conclusion=worker_process_not_detected" in proc.stderr
+        or "DIAGNOSE stage=worker_temporal_pollers conclusion=pollers_not_ready" in proc.stderr
     )
 
 
