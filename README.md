@@ -38,183 +38,54 @@ knowledge cards, traceable job runs, and MCP-ready operations. It stays
 source-first and proof-first: you can inspect it, run it locally, and verify
 each surface instead of trusting product copy on vibes alone.
 
-## Start With One Route
+## Start With One First Path
 
-Most people only need one of these on day one:
-
-- **Read the finished surface:** open `/reader`
-- **Follow a few sources:** open `/subscriptions`
-- **Search or ask about saved material:** open `/search` or `/ask`
-
-If you need ledgers instead of the product story, jump straight to
-[project-status.md](./docs/project-status.md), [proof.md](./docs/proof.md), and
-[public-distribution.md](./docs/public-distribution.md).
-
-The honest intake boundary today is:
-
-- **strong support:** YouTube channels and Bilibili creators
-- **general support:** RSSHub routes and generic RSS/Atom feeds
-- **not yet claimable:** route-by-route verification for the full RSSHub universe
-
-That intake split now lives behind one shared template catalog instead of
-separate Web-only presets: the `/subscriptions` front door, HTTP API, and MCP
-surface all point at the same strong-supported vs generalized intake contract.
-
-SourceHarbor is a **multi-surface product repo, not a single skill package**.
-Public starter packs and plugin-grade skill surfaces are adoption layers inside
-that repo. They are not the whole product, and they are not raw exports of the
-internal `.agents/skills` tree.
-
-<p align="center">
-  <img
-    src="./docs/assets/sourceharbor-developer-flywheel.svg"
-    alt="SourceHarbor developer flywheel showing sources, job trace, knowledge cards, grounded search, MCP and API reuse, and the operator loop."
-    width="100%"
-  />
-</p>
-
-## Why Developers Lean In
-
-This is the part that makes SourceHarbor more than a pretty README:
-
-| If you are... | What pulls you in | Why it feels different |
-| --- | --- | --- |
-| **A builder chasing Codex / GitHub Copilot / Claude Code / VS Code agent workflows** | one repo already exposes MCP, HTTP API, and a shared operator truth | you do not have to invent a fake assistant shell just to reach real jobs, artifacts, and retrieval |
-| **An operator who cares about proof** | job trace, ops inbox, watchlists, trends, and bundle exports all point back to the same pipeline | the repo keeps receipts, not just summaries |
-| **A maintainer deciding whether to contribute** | the product story, runtime truth, and testing story now line up | you can tell what is real, what is gated, and what is still a deliberate bet without re-reading the whole archive |
-
-The hook is simple:
-
-- **Search** gives the evidence surface.
-- **Subscriptions** gives the source-universe intake front door.
-- **Ask** gives the story-aware, briefing-backed answer/change/evidence front door, now pushed toward a server-owned page payload instead of a front-end stitched view model.
-- **MCP** gives Codex / GitHub Copilot / Claude Code / VS Code agent / builder reuse.
-- **Watchlists + Trends + Playground** make the system worth coming back to instead of treating it like a one-shot summarizer.
-
-## Choose Your First Path
-
-You do not need every door on day one.
-
-Pick the first path that matches why you are here:
+Choose only one first step:
 
 | If you want to... | Open this first | Why this is the right first door |
 | --- | --- | --- |
-| **See whether the product is real** | [docs/see-it-fast.md](./docs/see-it-fast.md), then [docs/proof.md](./docs/proof.md) | start with the shop window, then inspect the proof ladder before you commit to a longer run |
-| **Read the merged reader product directly** | `/reader` after local boot, then [docs/start-here.md](./docs/start-here.md) | this is the shortest truthful path to the new published-doc layer, navigation brief, yellow warning surface, and source contribution drawer |
-| **Run SourceHarbor as an operator** | [docs/start-here.md](./docs/start-here.md), then `/subscriptions`, `/feed`, `/search`, and `/ops` after local boot | this is the shortest truthful path from clone to source-universe intake, identity-first reading flow, evidence, and triage |
-| **Build on top of SourceHarbor** | [docs/builders.md](./docs/builders.md), [docs/mcp-quickstart.md](./docs/mcp-quickstart.md), and [docs/public-distribution.md](./docs/public-distribution.md) | these pages separate MCP, API, CLI, SDK, starter packs, and official-surface submission truth without mixing them into the newcomer path |
+| **See whether the product is worth your time** | [docs/see-it-fast.md](./docs/see-it-fast.md), then [docs/proof.md](./docs/proof.md) | start with the shop window, then inspect the evidence ladder before you boot anything |
+| **Run one real local flow** | [docs/start-here.md](./docs/start-here.md) | this is the shortest truthful path from clone to `/reader`, `/feed`, `/search`, `/ask`, and one real job |
+| **Build on top of SourceHarbor** | [docs/builders.md](./docs/builders.md) and [docs/public-distribution.md](./docs/public-distribution.md) | these pages keep MCP, API, CLI, SDK, starter packs, and official submit/read-back truth out of the newcomer path |
 
-## Front Doors
+If you only remember one sentence, remember this:
 
-The fastest way to understand the product is to open the highest-value rooms first:
+> SourceHarbor is a **reader-first, source-first, proof-first** product repo.
 
-| Front door | What it means | Current truth |
+Current intake truth:
+
+- **strong support:** YouTube channels and Bilibili creators
+- **general substrate:** RSSHub routes and generic RSS/Atom feeds
+- **not yet claimable:** route-by-route verification for the full RSSHub universe
+
+## Product In One Glance
+
+| Surface | Why open it first | Current truth |
 | --- | --- | --- |
-| **Reader** | Published-doc frontstage over frozen consumption batches, where merge docs and singleton polish docs share one reading surface with navigation brief, yellow warning, and source contribution drawer | Real Web route after local boot: `/reader`; current repo truth is local-first and repo-side proven, not hosted-distribution proof |
-| **Subscriptions** | Source-universe intake front door with one shared template catalog, tracked-universe atlas, and manual-intake workbench for strong-supported YouTube/Bilibili lanes, generalized RSSHub/RSS intake, and one-off video/article URLs that can enter today without becoming subscriptions first | Real Web route after local boot: `/subscriptions` + shared catalog through API and MCP |
-| **Search** | Operator-facing evidence search over digests, knowledge cards, transcripts, and related artifacts | Real Web route after local boot: `/search` |
-| **Ask your sources** | Story-aware, briefing-backed Ask front door: with watchlist and story context it returns the current answer, recent changes, and citation drill-down through a server-owned page payload; without context it falls back to grounded retrieval | Real Web route after local boot: `/ask` + the public proof ladder in [docs/proof.md](./docs/proof.md) |
-| **Briefings** | Lowest-cognitive-load unified story view for one watchlist: summary first, then differences, then evidence drill-down, with one canonical selected-story page payload that Ask reuses instead of parallel browser-side aliases | Real Web route after local boot: `/briefings`; grounded in watchlists, merged stories, jobs, and knowledge |
-| **Watchlists** | Durable tracking object surface for saved topics, claim kinds, platform slices, and source matchers | Real Web route after local boot: `/watchlists` |
-| **Trends** | Compounder front door that turns repeated watchlist hits into merged stories plus recent evidence runs | Real Web route after local boot: `/trends` |
-| **MCP** | Agent-facing surface on top of the same API and pipeline state | [docs/mcp-quickstart.md](./docs/mcp-quickstart.md) + `./bin/dev-mcp` |
-| **Ops / doctor** | First-run diagnosis, operator triage, and next-step guidance for runtime truth, failed jobs, ingest issues, and live-hardening gates | `./bin/doctor` + `/ops` after local boot + [docs/runtime-truth.md](./docs/runtime-truth.md) |
-| **Playground** | Clearly labeled sample-proof lane for demo corpus, example jobs, retrieval results, and use-case navigation without pretending to be live operator truth | Real Web route after local boot: `/playground` + [docs/samples/README.md](./docs/samples/README.md) |
+| **Reader** | See the finished surface instead of starting in a control panel | real local route after boot: `/reader` |
+| **Subscriptions + Feed** | Follow a few sources, then watch the reading flow fill in | real local routes after boot: `/subscriptions` and `/feed` |
+| **Search + Ask** | Search saved material or ask for the current story with evidence nearby | real local routes after boot: `/search` and `/ask` |
+| **Jobs + Proof** | Inspect the pipeline, artifacts, and truth layers instead of trusting marketing copy | `/jobs`, [docs/proof.md](./docs/proof.md), and [docs/project-status.md](./docs/project-status.md) |
 
-## Builder Entry Points
+SourceHarbor is a **multi-surface product repo, not a single skill package**.
+Public starter packs and plugin-grade bundles are adoption layers inside that
+repo. They are not the whole product, and they are not raw exports of the
+internal `.agents/skills` tree.
 
-SourceHarbor is not just a Web app. It already has multiple access layers for builders and agent workflows:
+## Builder Off-Ramp
 
-The builder-facing mental map should follow the same product line:
+If you are here as a builder, use the builder path on purpose:
 
-- `/subscriptions` establishes the intake contract
-- `/watchlists` stores the tracking object
-- `/trends` turns repeated runs into the compounder front door
-- `/briefings` and `/ask` share the story-aware page payload
-- `/mcp` reuses that same system truth for agents
+- **MCP / API / CLI / SDK map:** [docs/builders.md](./docs/builders.md)
+- **Official submit/read-back truth:** [docs/public-distribution.md](./docs/public-distribution.md)
+- **Public packages and starter packs:** [`packages/sourceharbor-cli`](./packages/sourceharbor-cli/README.md), [`packages/sourceharbor-sdk`](./packages/sourceharbor-sdk/README.md), [`starter-packs/README.md`](./starter-packs/README.md)
+- **Registry ownership marker:** `mcp-name: io.github.xiaojiou176-open/sourceharbor-mcp`
 
-| Entry point | Who it is for | Current truth |
-| --- | --- | --- |
-| **Codex / GitHub Copilot / Claude Code / VS Code agent workflows** | local operators who want an AI coding or operations agent to query and drive the same system truth | honest fit today through MCP + HTTP API, documented in [docs/builders.md](./docs/builders.md) |
-| **OpenClaw workflows** | builders who want a dedicated OpenClaw first hop instead of only generic MCP theory | first-cut fit today through [docs/compat/openclaw.md](./docs/compat/openclaw.md) plus [starter-packs/openclaw/README.md](./starter-packs/openclaw/README.md) |
-| **Plugin-grade bundles and official-surface templates** | builders who want the strongest public bundles or distribution templates beyond docs-only starters | real today through `starter-packs/codex/sourceharbor-codex-plugin/`, `starter-packs/github-copilot/sourceharbor-github-copilot-plugin/`, `starter-packs/claude-code/sourceharbor-claude-plugin/`, `starter-packs/vscode-agent/sourceharbor-vscode-agent-plugin/`, `starter-packs/openclaw/clawhub.package.template.json`, `starter-packs/mcp-registry/sourceharbor-server.template.json`, and `config/public/mcp-directory-profile.json`; readiness differs by platform |
-| **Packaged public CLI** | builders who want an installable command surface before memorizing repo entrypoints | real today in [`packages/sourceharbor-cli`](./packages/sourceharbor-cli/README.md); it stays thinner than the repo-local runtime CLI and delegates inside a checkout |
-| **Repo-local CLI substrate** | operators already inside a checkout who want the direct runtime and governance command truth | real today via `./bin/sourceharbor help`, which remains the underlying local command truth |
-| **MCP surface** | agent workflows and assistant clients that need governed access to jobs, artifacts, retrieval, ingest, reports, and notifications | real surface today via [`./bin/dev-mcp`](./docs/mcp-quickstart.md) |
-| **HTTP API contract** | product builders, automation, and SDK consumers | real contract today via [`contracts/source/openapi.yaml`](./contracts/source/openapi.yaml) |
-| **Public TypeScript SDK** | TypeScript builders who want a thin client over the same HTTP contract | real today in [`packages/sourceharbor-sdk`](./packages/sourceharbor-sdk/README.md); it stays contract-first and builder-facing |
-| **Public starter packs** | builders who want reproducible Codex / GitHub Copilot / Claude Code / VS Code agent / OpenClaw / SDK starting templates | available today as a first-cut surface in [`starter-packs/`](./starter-packs/README.md); these are public templates, starter skills, and compatibility notes, not raw internal `.agents/skills` exports |
+Container truth also stays separate on purpose:
 
-The packaging story is intentionally thin: the packaged CLI stays repo-aware and
-delegates to `./bin/sourceharbor` inside a checkout, the TypeScript SDK stays a
-contract-first wrapper over the HTTP API, and Python SDK support still stays
-later.
-
-Skill-repo criteria apply only **partially** here:
-
-| Surface | Skill-repo criteria apply? | Why |
-| --- | --- | --- |
-| **Whole SourceHarbor repo** | No | this repo ships Web, API, MCP, runtime, and builder layers together; it is a multi-surface product repo |
-| **`starter-packs/**`** | Yes, mostly | these are newcomer-facing starter surfaces with copyable prompts, templates, and clear adoption paths |
-| **plugin-grade bundle directories** | Yes, strongly | these are the closest repo-owned artifacts to official marketplace or registry submission |
-| **internal `.agents/skills/**`** | No public applicability | they stay internal operating aids, not newcomer-facing exports |
-
-Plugin-grade distribution is now one layer stronger than raw docs:
-
-- Codex has a plugin-shaped bundle for repo or personal marketplace distribution, but official Codex directory self-serve publishing is still not open.
-- GitHub Copilot now has a source-installable plugin bundle, but any official marketplace or directory listing is still a separate proof layer.
-- Claude Code has a submission-ready plugin bundle, but official listing still depends on Anthropic review.
-- VS Code agent workflows now have a source-installable plugin bundle, but a live Marketplace listing is still a separate proof layer.
-- OpenClaw has a first-cut local starter pack plus a publish-ready ClawHub package template, but not a live ClawHub publish receipt.
-- MCP now has a real Python package lane plus the official-registry-shaped template; the live PyPI / Official MCP Registry snapshot and third-party directory follow-through stay in [docs/public-distribution.md](./docs/public-distribution.md) so this front door does not duplicate fast-moving version or listing state.
-
-If you want the shortest truthful answer to "what already exists vs what still
-needs official submit/read-back proof," open
-[docs/public-distribution.md](./docs/public-distribution.md).
-
-## Public Packages Now
-
-These packages are the public box around the same repo-owned logic:
-
-- **CLI:** install [`packages/sourceharbor-cli`](./packages/sourceharbor-cli/README.md) when you want one thin command surface for the repo-local command substrate.
-- **TypeScript SDK:** install [`packages/sourceharbor-sdk`](./packages/sourceharbor-sdk/README.md) when you want a typed HTTP client instead of inventing a second fetch stack.
-- **MCP server package:** build the root Python package when you want the real `sourceharbor-mcp` console script and the PyPI-shaped install artifact that the MCP Registry template now targets.
-- **Starter packs:** open [`starter-packs/README.md`](./starter-packs/README.md) when you want reproducible Codex / GitHub Copilot / Claude Code / VS Code agent / OpenClaw / SDK starting templates rather than raw internal skill files; this surface is available today, but it is still first-cut.
-
-Registry ownership marker:
-
-`mcp-name: io.github.xiaojiou176-open/sourceharbor-mcp`
-
-## Container Truth Split
-
-Do not read every container-shaped artifact in this repo as a newcomer-facing
-product container.
-
-| Container surface | What it is for | Current truth |
-| --- | --- | --- |
-| **`infra/compose/core-services.compose.yml`** | repo-local core services for Postgres and Temporal | local operator/runtime helper for SourceHarbor boot; not a public product container distribution |
-| **`.devcontainer/devcontainer.json` + `.devcontainer/Dockerfile`** | contributor workspace parity | local development environment for people working inside a checkout; not a packaged newcomer product artifact |
-| **`infra/docker/sourceharbor-api.Dockerfile` + `ghcr.io/xiaojiou176-open/sourceharbor-api`** | dedicated product API image route | builder-facing API container lane; the GHCR package now reads back as `visibility: public`, but it still is a separate API-image builder surface rather than the default install story |
-| **`infra/config/strict_ci_contract.json` + `ghcr.io/xiaojiou176-open/sourceharbor-ci-standard`** | strict CI and devcontainer parity image | infrastructure image for CI, attestation, and repeatable tooling; **not** newcomer-facing product container distribution |
-
-So the honest newcomer path stays:
-
-- run the repo from [`docs/start-here.md`](./docs/start-here.md)
-- use the packaged CLI / SDK / starter packs when you want public builder surfaces
-- use the dedicated API image only when you explicitly want the API container lane
-- do **not** treat the strict CI GHCR image as the product's install story
-
-Minimal examples:
-
-```bash
-npm install --global ./packages/sourceharbor-cli
-cd /path/to/sourceharbor
-sourceharbor help
-
-npm install ./packages/sourceharbor-sdk
-
-uv build
-```
+- the repo newcomer path is still [docs/start-here.md](./docs/start-here.md)
+- the dedicated API image is a builder lane, not the default install story
+- core-services compose, devcontainer, and strict-CI images are runtime or infrastructure surfaces, not the product front door
 
 ## What It Does Not Claim Today
 

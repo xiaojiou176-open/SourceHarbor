@@ -56,11 +56,11 @@ export default function DashboardPage() {
 							{copy.heroSubtitle}
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-4 px-5 pt-0 sm:space-y-5 sm:px-6">
-						<div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-							<Button asChild variant="hero" size="lg">
-								<Link href="/reader">{copy.firstHop.evaluatePrimaryCta}</Link>
-							</Button>
+						<CardContent className="space-y-4 px-5 pt-0 sm:space-y-5 sm:px-6">
+							<div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+								<Button asChild variant="hero" size="lg">
+									<Link href="/reader">{copy.firstHop.evaluatePrimaryCta}</Link>
+								</Button>
 						</div>
 						<div className="flex flex-wrap items-center gap-2">
 							<Button asChild variant="outline" size="sm">
@@ -81,13 +81,51 @@ export default function DashboardPage() {
 									className="underline underline-offset-4 hover:text-foreground"
 								>
 									{copy.firstHop.evaluateSecondaryCta}
-								</Link>
-							</span>
-							.
-						</p>
-					</CardContent>
-				</Card>
-			</section>
-		</div>
+									</Link>
+								</span>
+								.
+							</p>
+							<div
+								aria-label={copy.sectionHeadings.whyNow}
+								className="grid gap-3 pt-1 sm:grid-cols-3"
+							>
+								{[
+									{
+										title: copy.whyNow.sharedTruthTitle,
+										description: copy.whyNow.sharedTruthDescription,
+									},
+									{
+										title: copy.whyNow.proofFirstTitle,
+										description: copy.whyNow.proofFirstDescription,
+									},
+									{
+										title: copy.whyNow.returnLoopTitle,
+										description: copy.whyNow.returnLoopDescription,
+									},
+								].map((item) => (
+									<div
+										key={item.title}
+										className="rounded-2xl border border-border/70 bg-background/80 px-4 py-4"
+									>
+										<p
+											className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
+										>
+											{copy.kicker}
+										</p>
+										<h2
+											className={`mt-2 text-lg leading-tight text-foreground ${editorialSerif.className}`}
+										>
+											{item.title}
+										</h2>
+										<p className="mt-2 text-sm leading-6 text-foreground/78">
+											{item.description}
+										</p>
+									</div>
+								))}
+							</div>
+						</CardContent>
+					</Card>
+				</section>
+			</div>
 	);
 }
