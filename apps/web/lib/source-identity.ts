@@ -296,18 +296,36 @@ export function resolveManualIntakeIdentity(
 export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 	const platform = normalizePlatform(item.source);
 	const title =
-		item.canonical_author_name?.trim() ||
-		item.canonical_source_name?.trim() ||
-		item.source_name.trim() ||
-		item.title.trim();
+		cleanDisplayText(item.canonical_author_name) ||
+		cleanDisplayText(item.canonical_source_name) ||
+		cleanDisplayText(item.source_name) ||
+		(hostnameLabel(item.video_url)
+			? `${platformMeta(platform).label} source`
+			: platformMeta(platform).label);
+	const subtitleCandidates = [
+		cleanDisplayText(item.affiliation_label),
+		hostnameLabel(item.video_url),
+		platformMeta(platform).label,
+	].filter(Boolean) as string[];
+	const subtitle =
+		subtitleCandidates.find((candidate) => candidate !== title) ||
+		platformMeta(platform).label;
+	const descriptionCandidate =
+		cleanDisplayText(item.title) || cleanDisplayText(item.published_document_title);
+	const description =
+		descriptionCandidate &&
+		descriptionCandidate !== title &&
+		descriptionCandidate !== subtitle
+			? descriptionCandidate
+			: undefined;
 	const relationKind = String(
 		item.relation_kind ||
 			(item.subscription_id ? "matched_subscription" : "unmatched_source"),
 	);
 	return {
 		title,
-		subtitle: item.affiliation_label?.trim() || platformMeta(platform).label,
-		description: item.title,
+		subtitle,
+		description,
 		eyebrow: item.content_type === "video" ? "Preview lane" : "Article preview",
 		thumbnailUrl:
 			item.thumbnail_url ||
@@ -320,15 +338,46 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 		avatarLabel: item.avatar_label || initials(title),
 		relationKind,
 		relationLabel: relationLabel(relationKind),
-		meta: safeList([
-			platformMeta(platform).label,
-			item.affiliation_label,
-			item.category,
-			item.identity_status === "derived_identity" ? "Linked identity" : null,
-			item.saved ? "Saved" : null,
-			item.feedback_label || null,
-		]),
+			meta: safeList([
+				platformMeta(platform).label,
+				item.affiliation_label,
+				item.category,
+				item.identity_status === "derived_identity" ? "Linked identity" : null,
+				item.saved ? "Saved" : null,
+				item.feedback_label || null,
+			]),
 	};
+}
+
+export function resolveFeedDisplayTitle(item: DigestFeedItem): string {
+	const platform = normalizePlatform(item.source);
+	return (
+		cleanDisplayText(item.title) ||
+		cleanDisplayText(item.published_document_title) ||
+		cleanDisplayText(item.canonical_author_name) ||
+		cleanDisplayText(item.canonical_source_name) ||
+		cleanDisplayText(item.source_name) ||
+		(hostnameLabel(item.video_url)
+			? `${platformMeta(platform).label} source`
+			: platformMeta(platform).label)
+	);
+}
+
+export function resolveFeedDisplaySourceName(item: DigestFeedItem): string {
+	const platform = normalizePlatform(item.source);
+	const title = resolveFeedDisplayTitle(item);
+	const candidates = [
+		cleanDisplayText(item.source_name),
+		cleanDisplayText(item.canonical_source_name),
+		cleanDisplayText(item.canonical_author_name),
+		cleanDisplayText(item.affiliation_label),
+		hostnameLabel(item.video_url),
+		platformMeta(platform).label,
+	].filter(Boolean) as string[];
+	return (
+		candidates.find((candidate) => candidate !== title) ||
+		platformMeta(platform).label
+	);
 }
 
 export function resolveReaderSourceIdentity(

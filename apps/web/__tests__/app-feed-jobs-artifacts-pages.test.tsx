@@ -478,6 +478,52 @@ describe("feed/jobs/artifacts pages", () => {
 	);
 
 	it(
+		"sanitizes raw URL feed titles before rendering the reading flow",
+		async () => {
+			mockGetDigestFeed.mockResolvedValue({
+				items: [
+					{
+						feed_id: "feed-raw-1",
+						job_id: "job-raw-1",
+						video_url: "https://www.youtube.com/watch?v=raw1",
+						title: "https://www.youtube.com/watch?v=raw1",
+						source: "youtube",
+						source_name: "",
+						category: "creator",
+						published_at: "2026-02-12T00:00:00Z",
+						summary_md: "## summary raw",
+						artifact_type: "digest",
+					},
+				],
+				has_more: false,
+				next_cursor: null,
+			});
+			mockGetArtifactMarkdown.mockResolvedValue({
+				markdown: "# Raw item\n\nMain reading body",
+				meta: { job: { id: "job-raw-1" }, frame_files: [] },
+			});
+			mockGetFeedFeedback.mockResolvedValue({
+				job_id: "job-raw-1",
+				saved: false,
+				feedback_label: null,
+				exists: false,
+				created_at: null,
+				updated_at: null,
+			});
+
+			render(await FeedPage({ searchParams: { item: "job-raw-1" } }));
+
+			expect(screen.getByRole("link", { name: /YouTube source/ })).toBeInTheDocument();
+			expect(screen.getAllByRole("heading", { name: "YouTube source" })).toHaveLength(2);
+			expect(
+				screen.queryByText("https://www.youtube.com/watch?v=raw1"),
+			).not.toBeInTheDocument();
+			expect(screen.getAllByText("youtube.com")).toHaveLength(2);
+		},
+		PAGE_TEST_TIMEOUT_MS,
+	);
+
+	it(
 		"passes subscription filter through feed query and preserves it in pagination urls",
 		async () => {
 			mockListSubscriptions.mockResolvedValue([
