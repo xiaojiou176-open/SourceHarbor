@@ -85,6 +85,47 @@ export default function DashboardPage() {
 							</span>
 							.
 						</p>
+						<section
+							aria-labelledby="dashboard-why-now-heading"
+							className="grid gap-3 pt-1 sm:grid-cols-3"
+						>
+							<h2 id="dashboard-why-now-heading" className="sr-only">
+								{copy.sectionHeadings.whyNow}
+							</h2>
+							{[
+								{
+									title: copy.whyNow.sharedTruthTitle,
+									description: copy.whyNow.sharedTruthDescription,
+								},
+								{
+									title: copy.whyNow.proofFirstTitle,
+									description: copy.whyNow.proofFirstDescription,
+								},
+								{
+									title: copy.whyNow.returnLoopTitle,
+									description: copy.whyNow.returnLoopDescription,
+								},
+							].map((item) => (
+								<div
+									key={item.title}
+									className="rounded-2xl border border-border/70 bg-background/80 px-4 py-4"
+								>
+									<p
+										className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
+									>
+										{copy.kicker}
+									</p>
+									<h3
+										className={`mt-2 text-lg leading-tight text-foreground ${editorialSerif.className}`}
+									>
+										{item.title}
+									</h3>
+									<p className="mt-2 text-sm leading-6 text-foreground/78">
+										{item.description}
+									</p>
+								</div>
+							))}
+						</section>
 					</CardContent>
 				</Card>
 			</section>
