@@ -513,8 +513,12 @@ describe("feed/jobs/artifacts pages", () => {
 
 			render(await FeedPage({ searchParams: { item: "job-raw-1" } }));
 
-			expect(screen.getByRole("link", { name: /YouTube source/ })).toBeInTheDocument();
-			expect(screen.getAllByRole("heading", { name: "YouTube source" })).toHaveLength(2);
+			expect(
+				screen.getByRole("link", { name: /YouTube source/ }),
+			).toBeInTheDocument();
+			expect(
+				screen.getAllByRole("heading", { name: "YouTube source" }),
+			).toHaveLength(2);
 			expect(
 				screen.queryByText("https://www.youtube.com/watch?v=raw1"),
 			).not.toBeInTheDocument();

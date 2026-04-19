@@ -311,7 +311,8 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 		subtitleCandidates.find((candidate) => candidate !== title) ||
 		platformMeta(platform).label;
 	const descriptionCandidate =
-		cleanDisplayText(item.title) || cleanDisplayText(item.published_document_title);
+		cleanDisplayText(item.title) ||
+		cleanDisplayText(item.published_document_title);
 	const description =
 		descriptionCandidate &&
 		descriptionCandidate !== title &&
@@ -338,14 +339,14 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 		avatarLabel: item.avatar_label || initials(title),
 		relationKind,
 		relationLabel: relationLabel(relationKind),
-			meta: safeList([
-				platformMeta(platform).label,
-				item.affiliation_label,
-				item.category,
-				item.identity_status === "derived_identity" ? "Linked identity" : null,
-				item.saved ? "Saved" : null,
-				item.feedback_label || null,
-			]),
+		meta: safeList([
+			platformMeta(platform).label,
+			item.affiliation_label,
+			item.category,
+			item.identity_status === "derived_identity" ? "Linked identity" : null,
+			item.saved ? "Saved" : null,
+			item.feedback_label || null,
+		]),
 	};
 }
 

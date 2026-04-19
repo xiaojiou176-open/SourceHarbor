@@ -59,14 +59,14 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 			<h2 className="sr-only">Digest entry list</h2>
 			<ScrollArea className="feed-entry-scroll">
 				<ul className="feed-entry-list">
-						{items.map((item, index) => {
-							const isVideo = (item.content_type ?? "video") === "video";
-							const isSelected = selectedJobId === item.job_id;
-							const displayTitle = resolveFeedDisplayTitle(item);
-							const displaySourceName = resolveFeedDisplaySourceName(item);
-							const staggerStyle = {
-								"--feed-stagger-index": index,
-							} as CSSProperties;
+					{items.map((item, index) => {
+						const isVideo = (item.content_type ?? "video") === "video";
+						const isSelected = selectedJobId === item.job_id;
+						const displayTitle = resolveFeedDisplayTitle(item);
+						const displaySourceName = resolveFeedDisplaySourceName(item);
+						const staggerStyle = {
+							"--feed-stagger-index": index,
+						} as CSSProperties;
 
 						return (
 							<li
@@ -106,20 +106,20 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 											) : null}
 										</div>
 										<div className="space-y-2">
-												<p
-													className={`feed-entry-kicker ${editorialMono.className}`}
-												>
-													{renderSourceName(item.source, displaySourceName)}
-													<span aria-hidden="true"> · </span>
-													<RelativeTime dateTime={item.published_at} />
-												</p>
-												<h3
-													className={`feed-entry-headline ${editorialSerif.className}`}
-												>
-													{displayTitle}
-												</h3>
-												<p className="feed-entry-support">
-													{item.published_document_title
+											<p
+												className={`feed-entry-kicker ${editorialMono.className}`}
+											>
+												{renderSourceName(item.source, displaySourceName)}
+												<span aria-hidden="true"> · </span>
+												<RelativeTime dateTime={item.published_at} />
+											</p>
+											<h3
+												className={`feed-entry-headline ${editorialSerif.className}`}
+											>
+												{displayTitle}
+											</h3>
+											<p className="feed-entry-support">
+												{item.published_document_title
 													? `Reader edition ready · ${item.published_document_title}`
 													: "Preview this item first, then decide whether to open the finished reader edition."}
 											</p>
@@ -138,9 +138,9 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 													? "Reading today"
 													: "Preview lane"}
 											</p>
-												<p className="mt-2 line-clamp-2 text-sm text-foreground">
-													{displaySourceName}
-												</p>
+											<p className="mt-2 line-clamp-2 text-sm text-foreground">
+												{displaySourceName}
+											</p>
 											<p className="mt-2 text-xs text-muted-foreground">
 												{item.subscription_id
 													? "Open the preview first. The source desk and notes can wait."
