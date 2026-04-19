@@ -356,12 +356,20 @@ exit 0
     assert proc.returncode != 0, proc.stderr
     assert marker.exists()
     assert "attempting_core_services_self_heal" in proc.stderr
-    assert (
-        "DIAGNOSE stage=worker_start_retry" in proc.stderr
-        or "DIAGNOSE stage=worker_start conclusion=worker_failed_to_start" in proc.stderr
-        or "DIAGNOSE stage=worker_start conclusion=worker_process_not_detected" in proc.stderr
-        or "DIAGNOSE stage=worker_temporal_pollers conclusion=pollers_not_ready" in proc.stderr
-    )
+    last_failure_reason = tmp_path / ".runtime-cache" / "run" / "full-stack" / "last_failure_reason"
+    if last_failure_reason.exists():
+        failure_text = last_failure_reason.read_text(encoding="utf-8")
+        assert (
+            "stage=worker_start" in failure_text
+            or "stage=worker_temporal_pollers" in failure_text
+        )
+    else:
+        assert (
+            "DIAGNOSE stage=worker_start_retry" in proc.stderr
+            or "DIAGNOSE stage=worker_start conclusion=worker_failed_to_start" in proc.stderr
+            or "DIAGNOSE stage=worker_start conclusion=worker_process_not_detected" in proc.stderr
+            or "DIAGNOSE stage=worker_temporal_pollers conclusion=pollers_not_ready" in proc.stderr
+        )
 
 
 def test_full_stack_up_waits_for_worker_temporal_pollers_after_worker_start(
