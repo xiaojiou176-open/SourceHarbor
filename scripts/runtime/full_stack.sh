@@ -246,6 +246,17 @@ service_signature_id() {
 
 service_signature_regex() {
   local name="$1"
+  local override_var=""
+  case "$name" in
+    api) override_var="${FULL_STACK_API_SIGNATURE_REGEX:-}" ;;
+    worker) override_var="${FULL_STACK_WORKER_SIGNATURE_REGEX:-}" ;;
+    web) override_var="${FULL_STACK_WEB_SIGNATURE_REGEX:-}" ;;
+    *) echo "" ;;
+  esac
+  if [[ -n "$override_var" ]]; then
+    echo "$override_var"
+    return 0
+  fi
   case "$name" in
     api) echo "(apps\\.api\\.app\\.main:app|scripts/dev_api\\.sh|uvicorn.*apps\\.api\\.app\\.main:app)" ;;
     worker) echo "(worker\\.main run-worker|scripts/dev_worker\\.sh)" ;;
