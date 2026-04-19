@@ -522,7 +522,7 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(
 				screen.queryByText("https://www.youtube.com/watch?v=raw1"),
 			).not.toBeInTheDocument();
-			expect(screen.getAllByText("youtube.com")).toHaveLength(2);
+			expect(screen.getAllByText("youtube.com")).toHaveLength(1);
 		},
 		PAGE_TEST_TIMEOUT_MS,
 	);

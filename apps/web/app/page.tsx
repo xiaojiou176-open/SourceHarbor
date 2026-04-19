@@ -67,10 +67,9 @@ export default function DashboardPage() {
 								<Link href="/feed">{copy.firstHop.operateSecondaryCta}</Link>
 							</Button>
 							<Button asChild variant="outline" size="sm">
-								<Link href="/search">{copy.frontDoors.searchCta}</Link>
-							</Button>
-							<Button asChild variant="outline" size="sm">
-								<Link href="/ask">{copy.frontDoors.askCta}</Link>
+								<Link href="/subscriptions">
+									{copy.firstHop.operatePrimaryCta}
+								</Link>
 							</Button>
 						</div>
 						<p className="text-xs leading-5 text-muted-foreground">
@@ -83,7 +82,7 @@ export default function DashboardPage() {
 									{copy.firstHop.evaluateSecondaryCta}
 								</Link>
 							</span>
-							.
+							. Search and Ask stay nearby after the first click.
 						</p>
 						<section
 							aria-labelledby="dashboard-why-now-heading"

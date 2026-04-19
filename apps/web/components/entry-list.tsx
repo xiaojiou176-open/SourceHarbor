@@ -124,29 +124,16 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 													: "Preview this item first, then decide whether to open the finished reader edition."}
 											</p>
 										</div>
-										<div
+										<p
 											className={cn(
-												"rounded-[1rem] border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground",
-												isSelected &&
-													"border-primary/45 bg-[color:var(--color-primary-light)]/40",
+												"text-xs text-muted-foreground",
+												isSelected && "text-foreground/78",
 											)}
 										>
-											<p
-												className={`text-[10px] uppercase tracking-[0.18em] text-muted-foreground ${editorialMono.className}`}
-											>
-												{item.subscription_id
-													? "Reading today"
-													: "Preview lane"}
-											</p>
-											<p className="mt-2 line-clamp-2 text-sm text-foreground">
-												{displaySourceName}
-											</p>
-											<p className="mt-2 text-xs text-muted-foreground">
-												{item.subscription_id
-													? "Open the preview first. The source desk and notes can wait."
-													: "Start with the preview, then decide whether this item belongs in the reading flow."}
-											</p>
-										</div>
+											{item.subscription_id
+												? `${displaySourceName} · Open the preview first. The source desk and notes can wait.`
+												: `${displaySourceName} · Start with the preview, then decide whether this item belongs in the reading flow.`}
+										</p>
 									</div>
 								</Link>
 							</li>
