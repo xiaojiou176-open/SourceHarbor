@@ -65,6 +65,37 @@ function cleanDisplayText(value: string | null | undefined): string | null {
 	return text;
 }
 
+function isGenericPlatformLabel(
+	value: string | null | undefined,
+	platform: string | null | undefined,
+): boolean {
+	const text = String(value || "")
+		.trim()
+		.toLowerCase();
+	if (!text) return false;
+	const normalizedPlatform = normalizePlatform(platform);
+	return (
+		text === normalizedPlatform ||
+		text === platformMeta(platform).label.toLowerCase()
+	);
+}
+
+function looksLikeOpaqueVideoId(
+	value: string | null | undefined,
+	platform: string | null | undefined,
+): boolean {
+	const text = String(value || "").trim();
+	if (!text) return false;
+	const normalizedPlatform = normalizePlatform(platform);
+	if (normalizedPlatform === "youtube") {
+		return /^[A-Za-z0-9_-]{11}$/.test(text);
+	}
+	if (normalizedPlatform === "bilibili") {
+		return /^BV[0-9A-Za-z]{10,}$/i.test(text) || /^av\d+$/i.test(text);
+	}
+	return false;
+}
+
 function hostnameLabel(rawUrl: string | null | undefined): string | null {
 	try {
 		const parsed = new URL(String(rawUrl || "").trim());
@@ -353,11 +384,15 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 export function resolveFeedDisplayTitle(item: DigestFeedItem): string {
 	const platform = normalizePlatform(item.source);
 	return (
-		cleanDisplayText(item.title) ||
+		(!looksLikeOpaqueVideoId(item.title, platform)
+			? cleanDisplayText(item.title)
+			: null) ||
 		cleanDisplayText(item.published_document_title) ||
 		cleanDisplayText(item.canonical_author_name) ||
 		cleanDisplayText(item.canonical_source_name) ||
-		cleanDisplayText(item.source_name) ||
+		(!isGenericPlatformLabel(item.source_name, platform)
+			? cleanDisplayText(item.source_name)
+			: null) ||
 		(hostnameLabel(item.video_url)
 			? `${platformMeta(platform).label} source`
 			: platformMeta(platform).label)

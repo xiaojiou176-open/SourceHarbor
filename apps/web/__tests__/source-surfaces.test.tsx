@@ -489,6 +489,36 @@ describe("source surfaces", () => {
 			}),
 		).toBe("YouTube source");
 		expect(
+			resolveFeedDisplayTitle({
+				feed_id: "feed-bili-raw",
+				job_id: "job-bili-raw",
+				video_url: "https://www.bilibili.com/video/BV1xx411c7mD",
+				title: "BV1xx411c7mD",
+				source: "bilibili",
+				source_name: "bilibili",
+				canonical_source_name: "",
+				canonical_author_name: "",
+				category: "creator",
+				published_at: "2026-04-12T00:00:00Z",
+				summary_md: "Summary",
+				artifact_type: "digest",
+				subscription_id: null,
+				affiliation_label: "",
+				relation_kind: "unmatched_source",
+				thumbnail_url: null,
+				avatar_url: null,
+				avatar_label: "",
+				published_document_title: null,
+				published_document_publish_status: null,
+				published_with_gap: false,
+				reader_route: null,
+				content_type: "video",
+				saved: false,
+				feedback_label: null,
+				identity_status: null,
+			}),
+		).toBe("Bilibili source");
+		expect(
 			resolveFeedDisplaySourceName({
 				feed_id: "feed-raw",
 				job_id: "job-raw",
