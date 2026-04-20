@@ -65,6 +65,52 @@ function cleanDisplayText(value: string | null | undefined): string | null {
 	return text;
 }
 
+function isGenericPlatformLabel(
+	value: string | null | undefined,
+	platform: string | null | undefined,
+): boolean {
+	const text = String(value || "")
+		.trim()
+		.toLowerCase();
+	if (!text) return false;
+	const normalizedPlatform = normalizePlatform(platform);
+	return (
+		text === normalizedPlatform ||
+		text === platformMeta(platform).label.toLowerCase()
+	);
+}
+
+function isGenericReaderAffiliationLabel(
+	value: string | null | undefined,
+): boolean {
+	const normalized = String(value || "")
+		.trim()
+		.toLowerCase();
+	return [
+		"today lane",
+		"reading today",
+		"reading source",
+		"tracked source",
+		"unmatched source",
+	].includes(normalized);
+}
+
+function looksLikeOpaqueVideoId(
+	value: string | null | undefined,
+	platform: string | null | undefined,
+): boolean {
+	const text = String(value || "").trim();
+	if (!text) return false;
+	const normalizedPlatform = normalizePlatform(platform);
+	if (normalizedPlatform === "youtube") {
+		return /^[A-Za-z0-9_-]{11}$/.test(text);
+	}
+	if (normalizedPlatform === "bilibili") {
+		return /^BV[0-9A-Za-z]{10,}$/i.test(text) || /^av\d+$/i.test(text);
+	}
+	return false;
+}
+
 function hostnameLabel(rawUrl: string | null | undefined): string | null {
 	try {
 		const parsed = new URL(String(rawUrl || "").trim());
@@ -167,7 +213,7 @@ function relationLabel(kind: SourceRelationKind): string {
 	if (kind === "subscription_tracked") return "Tracked source";
 	if (kind === "manual_injected") return "Reading today";
 	if (kind === "subscription_candidate") return "Needs review";
-	return "Unmatched source";
+	return "Not saved yet";
 }
 
 function supportTierLabel(value: string | null | undefined): string | null {
@@ -296,18 +342,37 @@ export function resolveManualIntakeIdentity(
 export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 	const platform = normalizePlatform(item.source);
 	const title =
-		item.canonical_author_name?.trim() ||
-		item.canonical_source_name?.trim() ||
-		item.source_name.trim() ||
-		item.title.trim();
+		cleanDisplayText(item.canonical_author_name) ||
+		cleanDisplayText(item.canonical_source_name) ||
+		cleanDisplayText(item.source_name) ||
+		(hostnameLabel(item.video_url)
+			? `${platformMeta(platform).label} source`
+			: platformMeta(platform).label);
+	const subtitleCandidates = [
+		cleanDisplayText(item.affiliation_label),
+		hostnameLabel(item.video_url),
+		platformMeta(platform).label,
+	].filter(Boolean) as string[];
+	const subtitle =
+		subtitleCandidates.find((candidate) => candidate !== title) ||
+		platformMeta(platform).label;
+	const descriptionCandidate =
+		cleanDisplayText(item.title) ||
+		cleanDisplayText(item.published_document_title);
+	const description =
+		descriptionCandidate &&
+		descriptionCandidate !== title &&
+		descriptionCandidate !== subtitle
+			? descriptionCandidate
+			: undefined;
 	const relationKind = String(
 		item.relation_kind ||
 			(item.subscription_id ? "matched_subscription" : "unmatched_source"),
 	);
 	return {
 		title,
-		subtitle: item.affiliation_label?.trim() || platformMeta(platform).label,
-		description: item.title,
+		subtitle,
+		description,
 		eyebrow: item.content_type === "video" ? "Preview lane" : "Article preview",
 		thumbnailUrl:
 			item.thumbnail_url ||
@@ -331,6 +396,45 @@ export function resolveFeedIdentity(item: DigestFeedItem): SourceIdentityModel {
 	};
 }
 
+export function resolveFeedDisplayTitle(item: DigestFeedItem): string {
+	const platform = normalizePlatform(item.source);
+	return (
+		(!looksLikeOpaqueVideoId(item.title, platform)
+			? cleanDisplayText(item.title)
+			: null) ||
+		cleanDisplayText(item.published_document_title) ||
+		cleanDisplayText(item.canonical_author_name) ||
+		cleanDisplayText(item.canonical_source_name) ||
+		(!isGenericPlatformLabel(item.source_name, platform)
+			? cleanDisplayText(item.source_name)
+			: null) ||
+		(hostnameLabel(item.video_url)
+			? `${platformMeta(platform).label} source`
+			: platformMeta(platform).label)
+	);
+}
+
+export function resolveFeedDisplaySourceName(item: DigestFeedItem): string {
+	const platform = normalizePlatform(item.source);
+	const title = resolveFeedDisplayTitle(item);
+	const candidates = [
+		!isGenericPlatformLabel(item.source_name, platform)
+			? cleanDisplayText(item.source_name)
+			: null,
+		!isGenericPlatformLabel(item.canonical_source_name, platform)
+			? cleanDisplayText(item.canonical_source_name)
+			: null,
+		cleanDisplayText(item.canonical_author_name),
+		cleanDisplayText(item.affiliation_label),
+		hostnameLabel(item.video_url),
+		platformMeta(platform).label,
+	].filter(Boolean) as string[];
+	return (
+		candidates.find((candidate) => candidate !== title) ||
+		platformMeta(platform).label
+	);
+}
+
 export function resolveReaderSourceIdentity(
 	source: SourceIdentityRef,
 ): SourceIdentityModel {
@@ -340,17 +444,16 @@ export function resolveReaderSourceIdentity(
 		cleanDisplayText(source.creator_display_name) ||
 		cleanDisplayText(source.title) ||
 		cleanDisplayText(source.matched_subscription_name) ||
-		cleanDisplayText(source.affiliation_label);
+		(!isGenericReaderAffiliationLabel(source.affiliation_label)
+			? cleanDisplayText(source.affiliation_label)
+			: null);
 	const urlHost = hostnameLabel(source.source_url);
 	const title =
 		readableTitle ||
-		(urlHost && platform === "generic"
-			? urlHost
-			: urlHost
-				? `${platformMeta(platform).label} source`
-				: source.source_origin === "manual_injected"
-					? "Reading source"
-					: "Tracked source");
+		urlHost ||
+		(source.source_origin === "manual_injected"
+			? "Reading source"
+			: "Tracked source");
 	const relationKind = String(
 		source.relation_kind ||
 			(source.source_origin === "subscription_tracked"

@@ -173,7 +173,7 @@ describe("RouteTransition", () => {
 		);
 
 		expect(screen.getByRole("status")).toHaveTextContent(
-			"Switched to: Reading desk",
+			"Switched to: Timeline",
 		);
 	});
 

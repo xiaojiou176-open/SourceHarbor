@@ -35,6 +35,25 @@ function isSingletonReadingMode(mode: string): boolean {
 	return mode === "singleton_polish" || mode === "polish_only";
 }
 
+function humanizeReaderPlatform(
+	platform: string | null | undefined,
+	host: string | null | undefined,
+): string {
+	const normalized = String(platform || "")
+		.trim()
+		.toLowerCase();
+	const normalizedHost = String(host || "")
+		.trim()
+		.toLowerCase();
+	if (normalized === "youtube" || normalizedHost === "youtube.com")
+		return "YouTube";
+	if (normalized === "bilibili" || normalizedHost === "bilibili.com") {
+		return "Bilibili";
+	}
+	if (normalized === "rss" || normalized === "rss_generic") return "RSS";
+	return String(host || "").trim();
+}
+
 function isGenericSourceFallbackTitle(
 	value: string | null | undefined,
 ): boolean {
@@ -48,6 +67,21 @@ function isGenericSourceFallbackTitle(
 	return normalized.endsWith(" source") && normalized.split(/\s+/).length <= 2;
 }
 
+function isGenericReaderShelfTitle(value: string | null | undefined): boolean {
+	const normalized = String(value || "")
+		.trim()
+		.toLowerCase();
+	return [
+		"today lane",
+		"reading today",
+		"reading lane",
+		"published story",
+		"reading note",
+		"finished story",
+		"finished note",
+	].includes(normalized);
+}
+
 function formatReaderShelfTitle(document: {
 	title: string;
 	topic_label?: string | null;
@@ -55,7 +89,11 @@ function formatReaderShelfTitle(document: {
 	source_refs?: Array<Parameters<typeof resolveReaderSourceIdentity>[0]>;
 }): string {
 	const rawTitle = document.title.trim();
-	if (!looksLikeRawUrl(rawTitle)) {
+	if (
+		rawTitle &&
+		!looksLikeRawUrl(rawTitle) &&
+		!isGenericReaderShelfTitle(rawTitle)
+	) {
 		return rawTitle || "Published story";
 	}
 	const topicLabel = String(document.topic_label || "").trim();
@@ -65,24 +103,49 @@ function formatReaderShelfTitle(document: {
 	const firstSource = Array.isArray(document.source_refs)
 		? document.source_refs[0]
 		: null;
+	const sourcePlatform = String(firstSource?.platform || "").trim();
 	const sourceTitle = firstSource
 		? resolveReaderSourceIdentity(firstSource).title
 		: "";
+	const sourceHost =
+		firstSource?.source_url && looksLikeRawUrl(firstSource.source_url)
+			? (() => {
+					try {
+						return new URL(firstSource.source_url).hostname.replace(
+							/^www\./,
+							"",
+						);
+					} catch {
+						return "";
+					}
+				})()
+			: "";
 	if (
 		sourceTitle &&
 		!looksLikeRawUrl(sourceTitle) &&
 		!isGenericSourceFallbackTitle(sourceTitle)
 	) {
+		if (sourceHost && sourceTitle === sourceHost && sourcePlatform) {
+			return `${humanizeReaderPlatform(sourcePlatform, sourceHost)} ${
+				isSingletonReadingMode(document.materialization_mode) ? "note" : "story"
+			}`;
+		}
 		return sourceTitle;
 	}
 	if (firstSource?.platform) {
+		const platformLabel = humanizeReaderPlatform(sourcePlatform, sourceHost);
+		if (platformLabel) {
+			return `${platformLabel} ${
+				isSingletonReadingMode(document.materialization_mode) ? "note" : "story"
+			}`;
+		}
 		return isSingletonReadingMode(document.materialization_mode)
-			? "Reading note"
-			: "Published story";
+			? "Finished note"
+			: "Finished story";
 	}
 	return isSingletonReadingMode(document.materialization_mode)
-		? "Reading note"
-		: "Published story";
+		? "Finished note"
+		: "Finished story";
 }
 
 function formatReaderShelfSummary(document: {
@@ -102,6 +165,78 @@ function formatReaderShelfSummary(document: {
 		document.materialization_mode === "polish_only"
 		? "A finished reading note. Open notes later only when you need provenance."
 		: "A finished story. Open notes later only when you need provenance.";
+}
+
+function formatReaderModeLabel(mode: string): string {
+	if (mode === "merge_then_polish") return "Merged story";
+	if (mode === "singleton_polish" || mode === "polish_only") {
+		return "Single-source note";
+	}
+	if (mode === "repair_patch") return "Repaired story";
+	return "Finished story";
+}
+
+function formatReaderCardMeta(document: {
+	source_item_count: number;
+	source_refs?: Array<Parameters<typeof resolveReaderSourceIdentity>[0]>;
+}) {
+	const sourceCountLabel = `${document.source_item_count} source${
+		document.source_item_count === 1 ? "" : "s"
+	}`;
+	const firstSource = Array.isArray(document.source_refs)
+		? document.source_refs[0]
+		: null;
+	if (!firstSource) return sourceCountLabel;
+	const sourceIdentity = resolveReaderSourceIdentity(firstSource);
+	const sourceLabel =
+		sourceIdentity.subtitle && sourceIdentity.subtitle !== sourceIdentity.title
+			? sourceIdentity.subtitle
+			: sourceIdentity.title;
+	return sourceLabel
+		? `${sourceCountLabel} · ${sourceLabel}`
+		: sourceCountLabel;
+}
+
+function formatReaderNavigationTitle(item: {
+	title: string;
+	platform?: string | null;
+}): string {
+	const rawTitle = String(item.title || "").trim();
+	if (rawTitle && !looksLikeRawUrl(rawTitle)) return rawTitle;
+	try {
+		const host = new URL(rawTitle).hostname.replace(/^www\./, "");
+		const platformLabel = humanizeReaderPlatform(item.platform, host);
+		return platformLabel ? `${platformLabel} note` : "Finished story";
+	} catch {
+		return "Finished story";
+	}
+}
+
+function formatReaderNavigationSummary(item: {
+	title: string;
+	summary?: string | null;
+	platform?: string | null;
+}): string | null {
+	const summary = String(item.summary || "").trim();
+	if (
+		summary &&
+		!looksLikeRawUrl(summary) &&
+		!summary.toLowerCase().includes("polish-only reader")
+	) {
+		return summary;
+	}
+	try {
+		const host = new URL(String(item.title || "").trim()).hostname.replace(
+			/^www\./,
+			"",
+		);
+		const platformLabel = humanizeReaderPlatform(item.platform, host) || host;
+		return platformLabel
+			? `Finished reading note from ${platformLabel}.`
+			: null;
+	} catch {
+		return null;
+	}
 }
 
 export default async function ReaderPage() {
@@ -209,7 +344,7 @@ export default async function ReaderPage() {
 							<div className="grid gap-4 rounded-[1.75rem] border border-dashed border-border/70 bg-muted/20 p-6 md:grid-cols-[minmax(0,1.3fr)_minmax(260px,0.8fr)]">
 								<div>
 									<p className="text-sm uppercase tracking-[0.24em] text-muted-foreground">
-										Lead reading deck
+										Start with one story
 									</p>
 									<p className="mt-3 max-w-2xl text-base leading-7 text-muted-foreground">
 										Bring in one source, let the first story finish, then come
@@ -223,11 +358,11 @@ export default async function ReaderPage() {
 								</div>
 								<div className="rounded-2xl border border-border/60 bg-background/90 p-5">
 									<p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-										Showroom specimen
+										Sample story
 									</p>
 									<p className="mt-3 text-sm leading-6 text-muted-foreground">
 										Open one sample story first, then come back once the live
-										shelf has materialized.
+										shelf is ready.
 									</p>
 									<Button asChild variant="outline" className="mt-4 w-full">
 										<Link href={`/reader/${DEMO_READER_DOCUMENT_ID}`}>
@@ -245,7 +380,9 @@ export default async function ReaderPage() {
 				<section className="space-y-4">
 					<div className="flex items-end justify-between gap-3">
 						<div>
-							<h2 className="font-serif text-3xl tracking-tight">Up next</h2>
+							<h2 className="font-serif text-3xl tracking-tight">
+								Keep reading
+							</h2>
 							<p className="text-sm text-muted-foreground">
 								Use this only after you finish the story you opened first.
 							</p>
@@ -263,10 +400,12 @@ export default async function ReaderPage() {
 										{String(index + 1).padStart(2, "0")}
 									</span>
 									<div className="min-w-0">
-										<p className="font-medium">{item.title}</p>
+										<p className="font-medium">
+											{formatReaderNavigationTitle(item)}
+										</p>
 										{item.summary ? (
 											<p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-												{item.summary}
+												{formatReaderNavigationSummary(item) ?? item.summary}
 											</p>
 										) : null}
 									</div>
@@ -281,7 +420,7 @@ export default async function ReaderPage() {
 				<section className="space-y-4">
 					<div className="space-y-2">
 						<h2 className="font-serif text-3xl tracking-tight">
-							Stories with notes
+							Read with notes nearby
 						</h2>
 						<p className="text-sm text-muted-foreground">
 							These stories are still readable. Open them when you want the
@@ -306,19 +445,20 @@ export default async function ReaderPage() {
 											Read with caution
 										</p>
 										<CardTitle className="font-serif text-2xl leading-7">
-											{document.title}
+											{formatReaderShelfTitle(document)}
 										</CardTitle>
 										<CardDescription className="mt-2 leading-6">
-											{document.summary ??
+											{formatReaderShelfSummary(document) ??
 												"Readable now, with one note to keep nearby while you read."}
 										</CardDescription>
 									</div>
 								</CardHeader>
 								<CardContent className="space-y-4">
 									<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-										<span>Edition {document.window_id}</span>
-										<span>Revision {document.version}</span>
-										<span>Sources used {document.source_item_count}</span>
+										<span>{formatReaderCardMeta(document)}</span>
+										<span>
+											{formatReaderModeLabel(document.materialization_mode)}
+										</span>
 									</div>
 									<Button asChild className="w-full">
 										<Link href={`/reader/${document.id}`}>Open story</Link>
@@ -334,7 +474,7 @@ export default async function ReaderPage() {
 				<div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
 					<div>
 						<h2 className="font-serif text-3xl tracking-tight">
-							Reader library
+							Finished stories
 						</h2>
 						<p className="text-sm text-muted-foreground">
 							Every card below is already a finished story you can read
@@ -356,7 +496,7 @@ export default async function ReaderPage() {
 								<CardHeader className="space-y-3">
 									<div className="flex flex-wrap items-center gap-2">
 										<Badge variant="secondary">
-											{document.materialization_mode}
+											{formatReaderModeLabel(document.materialization_mode)}
 										</Badge>
 										<Badge variant="outline">Clear</Badge>
 										{document.topic_label ? (
@@ -368,24 +508,21 @@ export default async function ReaderPage() {
 											Finished story
 										</p>
 										<CardTitle className="font-serif text-2xl leading-7">
-											{document.title}
+											{formatReaderShelfTitle(document)}
 										</CardTitle>
 										<CardDescription className="mt-2 leading-6">
-											{document.summary ??
+											{formatReaderShelfSummary(document) ??
 												"Open the story to read it cleanly, then open notes only if you want more context."}
 										</CardDescription>
 									</div>
 								</CardHeader>
 								<CardContent className="space-y-4">
 									<div className="flex flex-wrap gap-2 text-sm text-muted-foreground">
-										<span>Edition {document.window_id}</span>
-										<span>Revision {document.version}</span>
-										<span>Sources used {document.source_item_count}</span>
+										<span>{formatReaderCardMeta(document)}</span>
 									</div>
 									<p className="text-sm text-muted-foreground">
-										Built from {document.source_item_count} source
-										{document.source_item_count === 1 ? "" : "s"} and ready to
-										read as one finished story.
+										Open the finished take first. Notes and provenance stay
+										below when you want a closer look.
 									</p>
 									<Button asChild className="w-full">
 										<Link href={`/reader/${document.id}`}>Open story</Link>

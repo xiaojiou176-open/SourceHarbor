@@ -194,6 +194,27 @@ describe("ReadingPane coverage", () => {
 		expect(await screen.findByText("Bilibili")).toBeInTheDocument();
 	});
 
+	it("prefers markdown heading over opaque bilibili ids", async () => {
+		mockGetArtifactMarkdown.mockResolvedValueOnce({
+			markdown: "# Bilibili 历史见证：全站现存最早的视频之一\n\n正文",
+			meta: {},
+		});
+
+		render(
+			<ReadingPane
+				jobId="job-bili-title-1"
+				title="BV1xx411c7mD"
+				source="bilibili"
+			/>,
+		);
+
+		expect(
+			await screen.findByRole("heading", {
+				name: "Bilibili 历史见证：全站现存最早的视频之一",
+			}),
+		).toBeInTheDocument();
+	});
+
 	it("keeps unknown source label as-is", async () => {
 		mockGetArtifactMarkdown.mockResolvedValueOnce({
 			markdown: "正文",

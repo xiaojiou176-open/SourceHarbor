@@ -18,7 +18,11 @@ import {
 	type SearchParamsInput,
 } from "@/lib/search-params";
 import { buildProductMetadata } from "@/lib/seo";
-import { resolveSubscriptionIdentity } from "@/lib/source-identity";
+import {
+	resolveFeedDisplaySourceName,
+	resolveFeedDisplayTitle,
+	resolveSubscriptionIdentity,
+} from "@/lib/source-identity";
 
 const feedCopy = getLocaleMessages().feedPage;
 
@@ -272,6 +276,12 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 		: null;
 	const effectiveSelectedItem = selectedItem ?? items[0] ?? null;
 	const effectiveSelectedJobId = effectiveSelectedItem?.job_id ?? null;
+	const effectiveSelectedTitle = effectiveSelectedItem
+		? resolveFeedDisplayTitle(effectiveSelectedItem)
+		: undefined;
+	const effectiveSelectedSourceName = effectiveSelectedItem
+		? resolveFeedDisplaySourceName(effectiveSelectedItem)
+		: undefined;
 	const leadReadingHref =
 		effectiveSelectedItem?.reader_route?.trim() ||
 		(effectiveSelectedJobId
@@ -307,11 +317,9 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 							data-route-heading
 							tabIndex={-1}
 						>
-							Reading desk
+							{copy.heroTitle}
 						</h1>
-						<p className="folo-page-subtitle">
-							Open one item and read. Filters and reactions can wait.
-						</p>
+						<p className="folo-page-subtitle">{copy.heroSubtitle}</p>
 					</div>
 					<div className="folo-page-toolbar flex-wrap">
 						{effectiveSelectedJobId ? (
@@ -386,9 +394,9 @@ export default async function FeedPage({ searchParams }: FeedPageProps) {
 					<div className="space-y-4">
 						<ReadingPane
 							jobId={effectiveSelectedJobId}
-							title={effectiveSelectedItem?.title}
+							title={effectiveSelectedTitle}
 							source={effectiveSelectedItem?.source}
-							sourceName={effectiveSelectedItem?.source_name}
+							sourceName={effectiveSelectedSourceName}
 							videoUrl={effectiveSelectedItem?.video_url}
 							publishedAt={effectiveSelectedItem?.published_at}
 							publishedDateLabel={formatPublishedDateLabel(

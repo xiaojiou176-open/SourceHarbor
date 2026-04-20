@@ -10,6 +10,14 @@ Think of it like product evidence in layers:
 4. **Supervisor clean path** proves the repo-managed operator path locally
 5. **Long live smoke** extends into secret and provider gates on purpose
 
+## Start With One Verification Path
+
+| If you want to know... | Start here | What it answers |
+| --- | --- | --- |
+| **Can I trust the repo locally?** | `./bin/doctor`, `bash scripts/ci/python_tests.sh`, then `./bin/full-stack up` | environment, Python contracts, and the repo-managed operator path |
+| **Can I trust a pull request?** | the GitHub required checks below | branch-protected merge truth for code, secrets, and workflow safety |
+| **Can I trust public, release, or publish claims?** | the maintainer appendix later on this page | release/publication truth, external lanes, and closeout-grade audits |
+
 ## Five-Layer Verification Contract
 
 Think of this like airport checkpoints:
@@ -154,21 +162,15 @@ Important boundary:
 - if you specifically want notification/provider closure too, rerun with `--live-smoke-require-notification-lane 1`
 - if you specifically want the reader stack checked too, rerun with `--require-reader 1`
 
-## Local-Only Login Browser Lane
+## Maintainer Appendix
 
-GitHub-hosted CI stays login-free.
+Everything below this line is maintainer depth, not the newcomer verification
+path.
 
-If a browser flow genuinely depends on a real signed-in Chrome session, treat it
-as a **local-only** proof lane instead of a hosted CI lane.
+### Local-only login browser lane
 
-SourceHarbor now uses a dedicated isolated Chrome root:
-
-- `SOURCE_HARBOR_CHROME_USER_DATA_DIR`
-- single profile directory: `SOURCE_HARBOR_CHROME_PROFILE_DIR`
-- single repo-owned Chrome instance
-- CDP attach instead of `launch_persistent_context`
-
-Bootstrap and start it with:
+GitHub-hosted CI stays login-free. If a browser flow genuinely needs a signed-in
+Chrome session, keep it local and repo-scoped:
 
 ```bash
 ./bin/bootstrap-repo-chrome --json
@@ -177,10 +179,9 @@ python3 scripts/runtime/resolve_chrome_profile.py --mode repo-runtime --json
 bash scripts/ci/external_playwright_smoke.sh --browser chromium --real-profile --url https://example.com
 ```
 
-Hosted workflows must not reference `SOURCE_HARBOR_CHROME_*` or try to reuse a
-local persistent browser profile.
+For the deeper browser/login runbook, read [runbook-local.md](./runbook-local.md).
 
-## Git Hooks
+### Git hooks
 
 Install hooks with:
 
@@ -188,54 +189,39 @@ Install hooks with:
 ./bin/install-git-hooks
 ```
 
-Pre-commit and pre-push should block:
+Pre-commit and pre-push should keep real regressions, secret leaks, and broken
+public workflows out of ordinary pushes.
 
-- real regressions
-- secret leaks
-- broken public workflows
+### PR-facing security and dependency checks
 
-## PR-Facing Security And Dependency Checks
+Remote required checks widen the proof surface beyond local boot:
 
-These checks now sit on the remote branch-protected pull-request path together
-with `python-tests`, `web-lint`, and `pre-commit`. They still answer a
-different question from the small local proof path above: they widen
-GitHub-side supply-chain, workflow-safety, and secret-scanning coverage rather
-than replacing the repo-managed local supervisor proof.
+- `dependency-review.yml`
+- `codeql.yml`
+- `zizmor.yml`
+- `trivy.yml`
+- `trufflehog.yml`
 
-- `dependency-review.yml` inspects pull-request dependency changes
-- `codeql.yml` runs code scanning on the tracked languages
-- `zizmor.yml` lint-checks GitHub Actions workflow safety
-- `trivy.yml` scans the repository filesystem and dependency manifests for high-severity issues
-- `trufflehog.yml` scans pushed and pull-request Git history deltas for verified or unknown secrets
+Treat them as part of the branch-protected pull-request contract, not as
+optional extras.
 
-Those branch-protected checks are current remote required checks today, so this
-page should not describe them as optional or merely advisory.
+### External-proof workflow-dispatch lanes
 
-## External-Proof Workflow-Dispatch Lanes
+These stay outside the default pull-request gate:
 
-These still stay outside the default pull-request gate:
+- `build-public-api-image.yml`
+- `build-ci-standard-image.yml`
+- `release-evidence-attest.yml`
+- `publish-pypi.yml`
+- `publish-mcp-registry.yml`
 
-- `build-public-api-image.yml`, `build-ci-standard-image.yml`, `release-evidence-attest.yml`, `publish-pypi.yml`, and `publish-mcp-registry.yml` stay in the external-proof lane, not the default pull-request gate
-- those external lanes are `workflow_dispatch` only and run behind protected environments so ordinary pull requests never touch their secrets or publication paths
-- `publish-pypi.yml` is the repo-side Trusted Publisher lane for the `sourceharbor` package and runs behind protected environment `external-pypi-publish`; its current blocker is the PyPI-side Trusted Publisher mismatch surfaced as `invalid-publisher`
-- `publish-mcp-registry.yml` is the repo-side registry refresh lane for `io.github.xiaojiou176-open/sourceharbor-mcp` and runs behind protected environment `external-mcp-registry-publish`; its current first blocker is that live PyPI still serves `sourceharbor==0.1.14`, so the registry refresh refuses to proceed until PyPI reaches `0.1.19`
-- all active GitHub workflows run on `ubuntu-latest`; local `repo-side-strict-ci`
-  remains a repo-side proof command, not a self-hosted CI runner
+They run behind protected environments because they prove harder publication or
+distribution claims than the default local + PR lanes.
 
-Think of them like specialist inspectors after the core exam:
+### Manual truth audits and closeout lanes
 
-- the required path proves the repo is locally honest and rerunnable
-- the branch-protected security and dependency checks widen GitHub-side
-  supply-chain and secret coverage without changing the core local-proof contract
-- the external lanes prove harder publication claims when you actually need them
-- publication or attestation happens only after an owner deliberately opens that lane and approves the protected environment
-
-## Manual Truth Audits And Closeout Lanes
-
-These commands are the closer's toolkit, not the default newcomer path.
-
-Use them when you need remote/public truth, current-proof receipts, or release
-and provider evidence that go beyond the ordinary local and PR-facing lanes.
+Use these only when you need remote/public truth, release/publication truth, or
+closeout-grade evidence:
 
 ```bash
 ./bin/repo-side-strict-ci --mode pre-push
@@ -252,63 +238,12 @@ python3 scripts/governance/render_newcomer_result_proof.py && python3 scripts/go
 python3 scripts/governance/render_current_state_summary.py && python3 scripts/governance/check_current_state_summary.py
 ```
 
-Reader-frontstage UI proof note:
+These lanes prove:
 
-- `python3 scripts/runtime/run_reader_clean_ui_audit.py` is the local
-  reader-proof lane for current-head screenshot capture plus `/api/v1/ui-audit/run`.
-- It captures a clean proof pack into system temp space, hides Next dev-only
-  overlay noise from the screenshots, and writes a local `ui-audit-report.json`
-  beside the captured images.
-- If the full screenshot pack hits a Gemini provider timeout, the runner
-  automatically retries with a smaller mini pack so the maintainer-local UI
-  review lane can still produce a usable verdict.
-- Treat it as a maintainer-local proof helper, not a hosted-distribution claim.
-
-Frontstage UI proof note:
-
-- `python3 scripts/runtime/run_frontstage_clean_ui_audit.py` is the broader
-  public-surface lane for `/`, `/feed`, `/subscriptions`, and `/reader/demo`.
-- It captures a clean frontstage proof pack into system temp space, hides
-  dev-only overlay noise from the screenshots, and submits that pack to
-  `/api/v1/ui-audit/run`.
-- If the full pack hits a Gemini provider timeout, the runner automatically
-  retries with a smaller mini pack so the public-surface audit can still return
-  a usable verdict.
-- Treat it as a maintainer-local proof helper for frontstage IA and UI quality,
-  not as hosted-distribution proof.
-
-Closeout note:
-
-- `./bin/repo-side-strict-ci --mode pre-push` still prefers the repo-owned
-  standard-env container path when Docker is healthy.
-- If the Docker daemon is unavailable on a maintainer workstation, the wrapper
-  now falls back to the host-bootstrapped pre-push quality gate instead of
-  failing before the actual repo-side gates even start.
-- That host fallback still enforces the same runtime contracts: env
-  registration, documentation drift, scratch-space budget, and namespace-aware
-  Temporal startup truth.
-
-Mutation-readiness note:
-
-- `repo-side-strict-ci` now prefers a fresh current-commit mutation stats
-  artifact at `.runtime-cache/reports/mutation/mutmut-cicd-stats.json` when one
-  already exists for the current HEAD.
-- If that artifact is missing or stale, the mutation gate reruns
-  `scripts/ci/run_mutmut.sh` and rewrites the report before evaluating the
-  thresholds.
-- The mutation report is expected to carry the real status split (`killed`,
-  `survived`, `no_tests`, `timeout`, `not_checked`, `caught_by_type_check`) so
-  a failed mutation lane points at an exact leaf instead of a blank
-  `killed+survived=0` summary.
-
-What this layer proves:
-
-- the live remote required-check contract still matches the tracked docs
-- remote code-scanning and secret-scanning alerts remain clean
-- external-proof workflow-dispatch lanes still point at the current public truth
+- remote required checks and security alerts still match the docs
+- external-proof workflows still point at the current public truth
 - current-proof, newcomer, and current-state receipts still match the current HEAD
-- release/publication truth is being read as its own ledger instead of being mixed into the default local path
-- reader route contracts, published-doc navigation surfaces, and public-sensitive wording can be audited without pretending hosted proof already exists
+- UI/public-surface audits can run without pretending hosted proof already exists
 
 ## Public-Proof Boundary
 

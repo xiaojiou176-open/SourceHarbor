@@ -50,8 +50,8 @@ const LOADING_CASES: LoadingCase[] = [
 	{
 		name: "feed loading",
 		Component: FeedLoading,
-		heading: "Preparing the digest desk",
-		message: "Loading the current reading stack.",
+		heading: "Preparing the timeline",
+		message: "Loading the current reading flow.",
 		describedBy: "feed-loading-message",
 	},
 ];

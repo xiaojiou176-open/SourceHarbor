@@ -176,6 +176,52 @@ def test_step_collect_subtitles_handles_empty_youtube_transcript_and_asr_disable
     assert "youtube_transcript_empty" in execution.output["fallback_chain"]
 
 
+def test_subtitle_helpers_cover_transition_skip_and_empty_asr_result(tmp_path: Path) -> None:
+    download_dir = tmp_path / "downloads"
+    download_dir.mkdir(parents=True, exist_ok=True)
+    (download_dir / "demo.txt").write_text("   ", encoding="utf-8")
+
+    assert subtitles.subtitle_to_text("caption --> note\nvisible line") == "visible line"
+    assert subtitles.collect_asr_output_text(download_dir, str(download_dir / "demo.mp4")) == ""
+
+
+def test_step_collect_subtitles_records_empty_parsed_subtitles_and_invalid_timeout_override(
+    tmp_path: Path,
+) -> None:
+    ctx = _make_ctx(tmp_path, youtube_transcript_fallback_enabled=True, asr_fallback_enabled=False)
+    (ctx.download_dir / "empty.srt").write_text(
+        "1\n00:00:00,000 --> 00:00:02,000\n",
+        encoding="utf-8",
+    )
+
+    async def _unused_run_command(_: PipelineContext, __: list[str]) -> CommandResult:
+        raise AssertionError("run_command should not be called when ASR is disabled")
+
+    execution = asyncio.run(
+        subtitles.step_collect_subtitles(
+            ctx,
+            {
+                "platform": "youtube",
+                "source_url": "https://example.com/not-youtube",
+                "video_uid": "",
+                "overrides": {
+                    "subtitles": {
+                        "subprocess_timeout_seconds": "invalid-timeout",
+                    }
+                },
+            },
+            run_command=_unused_run_command,
+            fetch_youtube_transcript_text_fn=lambda _video_id: "",
+        )
+    )
+
+    assert execution.status == "succeeded"
+    assert execution.degraded is True
+    assert execution.reason == "asr_fallback_disabled"
+    assert "subtitle_text_empty_after_parse" in execution.output["fallback_chain"]
+    assert "youtube_video_id_not_resolved" in execution.output["fallback_chain"]
+
+
 def test_step_collect_subtitles_asr_fallback_success_after_missing_binary(
     tmp_path: Path,
 ) -> None:
@@ -217,6 +263,98 @@ def test_step_collect_subtitles_asr_fallback_success_after_missing_binary(
     assert execution.state_updates["transcript"] == "asr transcript"
 
 
+def test_step_collect_subtitles_retries_after_empty_asr_output(tmp_path: Path) -> None:
+    ctx = _make_ctx(
+        tmp_path,
+        youtube_transcript_fallback_enabled=False,
+        asr_fallback_enabled=True,
+    )
+    media_path = ctx.download_dir / "sample.mp4"
+    media_path.write_bytes(b"video")
+    call_count = 0
+
+    async def _run_command(current_ctx: PipelineContext, __: list[str]) -> CommandResult:
+        nonlocal call_count
+        call_count += 1
+        if call_count == 2:
+            (current_ctx.download_dir / "sample.txt").write_text(
+                "second pass transcript", encoding="utf-8"
+            )
+        return CommandResult(ok=True)
+
+    execution = asyncio.run(
+        subtitles.step_collect_subtitles(
+            ctx,
+            {
+                "platform": "bilibili",
+                "source_url": "https://www.bilibili.com/video/BV1xx",
+                "video_uid": "BV1xx",
+                "media_path": str(media_path.resolve()),
+            },
+            run_command=_run_command,
+            fetch_youtube_transcript_text_fn=lambda _video_id: "",
+        )
+    )
+
+    assert call_count == 2
+    assert execution.status == "succeeded"
+    assert execution.degraded is False
+    assert execution.output["transcript_provider"] == "asr_fallback"
+    assert execution.state_updates["transcript"] == "second pass transcript"
+
+
+def test_step_collect_subtitles_subtitle_override_enables_asr_when_default_disabled(
+    tmp_path: Path,
+) -> None:
+    ctx = _make_ctx(
+        tmp_path,
+        youtube_transcript_fallback_enabled=False,
+        asr_fallback_enabled=False,
+        asr_model_size="small",
+    )
+    media_path = ctx.download_dir / "sample.mp4"
+    media_path.write_bytes(b"video")
+    seen_commands: list[list[str]] = []
+
+    async def _run_command(current_ctx: PipelineContext, cmd: list[str]) -> CommandResult:
+        seen_commands.append(cmd)
+        (current_ctx.download_dir / "sample.txt").write_text(
+            "override transcript",
+            encoding="utf-8",
+        )
+        return CommandResult(ok=True)
+
+    execution = asyncio.run(
+        subtitles.step_collect_subtitles(
+            ctx,
+            {
+                "platform": "bilibili",
+                "source_url": "https://www.bilibili.com/video/BV1xx",
+                "video_uid": "BV1xx",
+                "media_path": str(media_path.resolve()),
+                "overrides": {
+                    "subtitles": {
+                        "asr_fallback_enabled": True,
+                        "asr_model_size": "tiny",
+                        "subprocess_timeout_seconds": 420,
+                    }
+                },
+            },
+            run_command=_run_command,
+            fetch_youtube_transcript_text_fn=lambda _video_id: "",
+        )
+    )
+
+    assert execution.status == "succeeded"
+    assert execution.degraded is False
+    assert execution.output["transcript_provider"] == "asr_fallback"
+    assert execution.output["asr_model_size"] == "tiny"
+    assert execution.output["subprocess_timeout_seconds"] == 420
+    assert execution.state_updates["transcript"] == "override transcript"
+    assert any("tiny" in arg for cmd in seen_commands for arg in cmd)
+    assert seen_commands
+
+
 def test_step_collect_subtitles_breaks_on_non_binary_asr_failure(tmp_path: Path) -> None:
     ctx = _make_ctx(
         tmp_path,
@@ -250,3 +388,33 @@ def test_step_collect_subtitles_breaks_on_non_binary_asr_failure(tmp_path: Path)
     assert execution.status == "succeeded"
     assert execution.degraded is True
     assert execution.reason == "asr_failed:non_zero_exit"
+
+
+def test_step_collect_subtitles_reports_missing_media_path_for_asr(tmp_path: Path) -> None:
+    ctx = _make_ctx(
+        tmp_path,
+        youtube_transcript_fallback_enabled=False,
+        asr_fallback_enabled=True,
+    )
+
+    async def _unused_run_command(_: PipelineContext, __: list[str]) -> CommandResult:
+        raise AssertionError("run_command should not be called when media_path is missing")
+
+    execution = asyncio.run(
+        subtitles.step_collect_subtitles(
+            ctx,
+            {
+                "platform": "bilibili",
+                "source_url": "https://www.bilibili.com/video/BV1xx",
+                "video_uid": "BV1xx",
+                "media_path": "",
+            },
+            run_command=_unused_run_command,
+            fetch_youtube_transcript_text_fn=lambda _video_id: "",
+        )
+    )
+
+    assert execution.status == "succeeded"
+    assert execution.degraded is True
+    assert execution.reason == "asr_media_path_missing"
+    assert "asr_media_path_missing" in execution.output["fallback_chain"]

@@ -125,8 +125,6 @@ function SidebarNavContent({
 		pathname.startsWith("/trends") ||
 		pathname.startsWith("/briefings") ||
 		pathname.startsWith("/knowledge");
-	const _searchOrAskFocused =
-		pathname.startsWith("/search") || pathname.startsWith("/ask");
 	const compounderFocused =
 		pathname.startsWith("/watchlists") ||
 		pathname.startsWith("/trends") ||
@@ -168,7 +166,7 @@ function SidebarNavContent({
 				},
 				{
 					href: "/feed",
-					label: "Reading desk",
+					label: "Timeline",
 					icon: Sparkles,
 					active: isFeed && !currentCategory && !currentSub,
 				},

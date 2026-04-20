@@ -46,6 +46,47 @@ function extractHeadings(
 	return headings;
 }
 
+function looksLikeOpaqueReadingTitle(
+	value: string | undefined,
+	source: string | undefined,
+): boolean {
+	const text = String(value || "").trim();
+	if (!text) return false;
+	const normalizedSource = String(source || "")
+		.trim()
+		.toLowerCase();
+	if (normalizedSource === "youtube") {
+		return /^[A-Za-z0-9_-]{11}$/.test(text);
+	}
+	if (normalizedSource === "bilibili") {
+		return /^BV[0-9A-Za-z]{10,}$/i.test(text) || /^av\d+$/i.test(text);
+	}
+	return false;
+}
+
+function resolveReadingTitle(
+	title: string | undefined,
+	source: string | undefined,
+	markdown: string | null,
+): string {
+	const fallback = String(title || "").trim();
+	if (!markdown) return fallback || "Untitled";
+	const primaryHeading =
+		extractHeadings(markdown)
+			.find((heading) => heading.level === 1)
+			?.text.trim() ||
+		extractHeadings(markdown)[0]?.text.trim() ||
+		"";
+	if (
+		primaryHeading &&
+		looksLikeOpaqueReadingTitle(fallback, source) &&
+		primaryHeading.toLowerCase() !== fallback.toLowerCase()
+	) {
+		return primaryHeading;
+	}
+	return fallback || primaryHeading || "Untitled";
+}
+
 function toSourceLabel(source: string): string {
 	const normalized = source.trim().toLowerCase();
 	if (normalized === "youtube") return "YouTube";
@@ -275,6 +316,7 @@ export function ReadingPane({
 	}
 
 	const headings = markdown ? extractHeadings(markdown) : [];
+	const displayTitle = resolveReadingTitle(title, source, markdown);
 	const safeVideoUrl = videoUrl ? sanitizeExternalUrl(videoUrl) : null;
 	const safeReaderRoute = identity?.reader_route?.trim().startsWith("/reader/")
 		? identity.reader_route.trim()
@@ -305,7 +347,7 @@ export function ReadingPane({
 				<article className="prose prose-sm dark:prose-invert reading-pane-prose feed-reading-article">
 					<header className="feed-reading-header">
 						<h2 className={`feed-reading-title ${editorialSerif.className}`}>
-							{title || "Untitled"}
+							{displayTitle}
 						</h2>
 						<div className="feed-reading-meta">
 							{sourceLabel ? (
@@ -359,7 +401,7 @@ export function ReadingPane({
 								) : null}
 								{identity?.published_document_title ? (
 									<p className={`feed-reading-link ${editorialMono.className}`}>
-										Reader edition ready · {identity.published_document_title}
+										Finished reader ready · {identity.published_document_title}
 										{identity.published_document_publish_status
 											? ` · ${identity.published_document_publish_status}`
 											: ""}

@@ -10,6 +10,10 @@ import {
 	editorialSans,
 	editorialSerif,
 } from "@/lib/editorial-fonts";
+import {
+	resolveFeedDisplaySourceName,
+	resolveFeedDisplayTitle,
+} from "@/lib/source-identity";
 import { cn } from "@/lib/utils";
 
 import { RelativeTime } from "./relative-time";
@@ -58,6 +62,8 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 					{items.map((item, index) => {
 						const isVideo = (item.content_type ?? "video") === "video";
 						const isSelected = selectedJobId === item.job_id;
+						const displayTitle = resolveFeedDisplayTitle(item);
+						const displaySourceName = resolveFeedDisplaySourceName(item);
 						const staggerStyle = {
 							"--feed-stagger-index": index,
 						} as CSSProperties;
@@ -103,45 +109,31 @@ export function EntryList({ items, selectedJobId }: EntryListProps) {
 											<p
 												className={`feed-entry-kicker ${editorialMono.className}`}
 											>
-												{renderSourceName(item.source, item.source_name)}
+												{renderSourceName(item.source, displaySourceName)}
 												<span aria-hidden="true"> · </span>
 												<RelativeTime dateTime={item.published_at} />
 											</p>
 											<h3
 												className={`feed-entry-headline ${editorialSerif.className}`}
 											>
-												{item.title}
+												{displayTitle}
 											</h3>
 											<p className="feed-entry-support">
 												{item.published_document_title
-													? `Reader edition ready · ${item.published_document_title}`
-													: "Preview this item first, then decide whether to open the finished reader edition."}
+													? `Finished reader ready · ${item.published_document_title}`
+													: "Open the preview first. Notes and source tools can wait."}
 											</p>
 										</div>
-										<div
+										<p
 											className={cn(
-												"rounded-[1rem] border border-border/60 bg-background/70 px-3 py-2 text-xs text-muted-foreground",
-												isSelected &&
-													"border-primary/45 bg-[color:var(--color-primary-light)]/40",
+												"text-xs text-muted-foreground",
+												isSelected && "text-foreground/78",
 											)}
 										>
-											<p
-												className={`text-[10px] uppercase tracking-[0.18em] text-muted-foreground ${editorialMono.className}`}
-											>
-												{item.subscription_id
-													? "Reading today"
-													: "Preview lane"}
-											</p>
-											<p className="mt-2 line-clamp-2 text-sm text-foreground">
-												{item.source_name ||
-													renderSourceName(item.source, item.source_name)}
-											</p>
-											<p className="mt-2 text-xs text-muted-foreground">
-												{item.subscription_id
-													? "Open the preview first. The source desk and notes can wait."
-													: "Start with the preview, then decide whether this item belongs in the reading flow."}
-											</p>
-										</div>
+											{item.subscription_id
+												? "Preview first. Open the source desk only after you know this belongs in the reading loop."
+												: "Preview first. If it earns a second read, open the source desk or the finished reader later."}
+										</p>
 									</div>
 								</Link>
 							</li>

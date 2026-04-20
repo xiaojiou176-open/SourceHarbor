@@ -60,7 +60,7 @@ export function buildDemoReaderDocument(): ReaderDocument {
 		source_refs: [
 			{
 				source_item_id: "preview-source-1",
-				title: "Reading desk principle",
+				title: "Timeline principle",
 				canonical_author_name: "SourceHarbor Editorial Desk",
 				affiliation_label: "Tracked specimen universe",
 				relation_kind: "matched_subscription",

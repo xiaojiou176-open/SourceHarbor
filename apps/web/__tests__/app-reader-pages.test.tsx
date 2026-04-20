@@ -135,11 +135,87 @@ describe("reader pages", () => {
 		expect(
 			screen.getByRole("link", { name: "Continue reading" }),
 		).toHaveAttribute("href", "/reader/doc-2");
-		expect(screen.getByText("Up next")).toBeInTheDocument();
+		expect(screen.getByText("Keep reading")).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "Open story" })).toHaveAttribute(
 			"href",
 			"/reader/doc-1",
 		);
+	});
+
+	it("prefers non-generic shelf titles for reader home cards and lead copy", async () => {
+		mockListPublishedReaderDocuments.mockResolvedValue([
+			{
+				id: "doc-generic",
+				slug: "today-lane-v1",
+				window_id: "2026-04-09@America/Los_Angeles",
+				title: "Reading today",
+				summary: "https://example.com/raw-summary",
+				materialization_mode: "merge_then_polish",
+				version: 1,
+				published_with_gap: false,
+				source_item_count: 1,
+				topic_label: "SourceHarbor daily read",
+				consumption_batch_id: "batch-generic",
+				source_refs: [
+					{
+						source_item_id: "src-generic",
+						title: "SourceHarbor daily read",
+						platform: "bilibili",
+						source_origin: "manual_injected",
+						source_url: "https://www.bilibili.com/video/BV1xx411c7mD",
+						digest_preview: "A calmer shelf title should win.",
+						relation_kind: "manual_injected",
+						affiliation_label: "",
+					},
+				],
+			},
+			{
+				id: "doc-raw",
+				slug: "raw-title-v1",
+				window_id: "2026-04-10@America/Los_Angeles",
+				title: "https://example.com/raw-title",
+				summary: null,
+				materialization_mode: "singleton_polish",
+				version: 1,
+				published_with_gap: false,
+				source_item_count: 1,
+				topic_label: null,
+				consumption_batch_id: "batch-raw",
+				source_refs: [
+					{
+						source_item_id: "src-raw",
+						title: "A real finished story title",
+						platform: "youtube",
+						source_origin: "manual_injected",
+						source_url: "https://www.youtube.com/watch?v=demo",
+						digest_preview:
+							"Use the source-derived title instead of the raw URL.",
+						relation_kind: "manual_injected",
+						affiliation_label: "",
+					},
+				],
+			},
+		]);
+		mockGetNavigationBrief.mockResolvedValue(null);
+
+		render(await ReaderPage());
+
+		expect(
+			screen.getByRole("heading", {
+				name: "SourceHarbor daily read",
+				level: 1,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				name: "A real finished story title",
+				level: 3,
+			}),
+		).toBeInTheDocument();
+		expect(screen.queryByText("Today lane")).not.toBeInTheDocument();
+		expect(
+			screen.queryByText("https://example.com/raw-title"),
+		).not.toBeInTheDocument();
 	});
 
 	it("renders reader detail with warning banner and source drawer", async () => {

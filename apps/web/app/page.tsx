@@ -56,35 +56,100 @@ export default function DashboardPage() {
 							{copy.heroSubtitle}
 						</CardDescription>
 					</CardHeader>
-					<CardContent className="space-y-4 px-5 pt-0 sm:space-y-5 sm:px-6">
-						<div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-							<Button asChild variant="hero" size="lg">
-								<Link href="/reader">{copy.firstHop.evaluatePrimaryCta}</Link>
-							</Button>
-						</div>
-						<div className="flex flex-wrap items-center gap-2">
-							<Button asChild variant="outline" size="sm">
-								<Link href="/feed">{copy.firstHop.operateSecondaryCta}</Link>
-							</Button>
-							<Button asChild variant="outline" size="sm">
-								<Link href="/search">{copy.frontDoors.searchCta}</Link>
-							</Button>
-							<Button asChild variant="outline" size="sm">
-								<Link href="/ask">{copy.frontDoors.askCta}</Link>
-							</Button>
-						</div>
-						<p className="text-xs leading-5 text-muted-foreground">
-							If you want a softer first step,{" "}
-							<span className="rounded-full border border-border/70 bg-background/80 px-2.5 py-1">
-								<Link
-									href="/reader/demo"
-									className="underline underline-offset-4 hover:text-foreground"
+					<CardContent className="px-5 pt-0 sm:px-6">
+						<div className="grid gap-6 md:grid-cols-[minmax(0,1.05fr)_minmax(280px,0.95fr)]">
+							<div className="space-y-4 sm:space-y-5">
+								<div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+									<Button asChild variant="hero" size="lg">
+										<Link href="/reader">
+											{copy.firstHop.evaluatePrimaryCta}
+										</Link>
+									</Button>
+								</div>
+								<div className="flex flex-wrap items-center gap-2">
+									<Button asChild variant="outline" size="sm">
+										<Link href="/feed">
+											{copy.firstHop.operateSecondaryCta}
+										</Link>
+									</Button>
+								</div>
+								<div className="space-y-2 pt-1">
+									<p
+										className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
+									>
+										{copy.sourceStripKicker}
+									</p>
+									<div className="flex flex-wrap gap-2">
+										{copy.sourceStrip.map((item) => (
+											<span
+												key={item}
+												className="rounded-full border border-border/70 bg-background/85 px-3 py-1 text-xs text-foreground/78"
+											>
+												{item}
+											</span>
+										))}
+									</div>
+								</div>
+								<p className="text-xs leading-5 text-muted-foreground">
+									If you want a softer first step,{" "}
+									<span className="rounded-full border border-border/70 bg-background/80 px-2.5 py-1">
+										<Link
+											href="/reader/demo"
+											className="underline underline-offset-4 hover:text-foreground"
+										>
+											{copy.firstHop.evaluateSecondaryCta}
+										</Link>
+									</span>
+									. You can follow new sources after the first click.
+								</p>
+								<section
+									aria-labelledby="dashboard-why-now-heading"
+									className="pt-1"
 								>
-									{copy.firstHop.evaluateSecondaryCta}
-								</Link>
-							</span>
-							.
-						</p>
+									<h2 id="dashboard-why-now-heading" className="sr-only">
+										{copy.sectionHeadings.whyNow}
+									</h2>
+									<p className="rounded-2xl border border-border/70 bg-background/80 px-4 py-3 text-sm leading-6 text-foreground/78">
+										{copy.whyNowCompact}
+									</p>
+								</section>
+							</div>
+							<div className="space-y-3 rounded-[1.5rem] border border-border/70 bg-background/85 p-4">
+								<p
+									className={`text-[11px] uppercase tracking-[0.22em] text-muted-foreground ${editorialMono.className}`}
+								>
+									What opens next
+								</p>
+								{[
+									{
+										title: copy.firstHop.evaluateTitle,
+										description: copy.firstHop.evaluateDescription,
+									},
+									{
+										title: copy.firstHop.operateTitle,
+										description: copy.firstHop.operateDescription,
+									},
+									{
+										title: copy.firstHop.buildTitle,
+										description: copy.firstHop.buildDescription,
+									},
+								].map((item) => (
+									<div
+										key={item.title}
+										className="rounded-2xl border border-border/60 bg-background/90 px-4 py-3"
+									>
+										<p
+											className={`text-[11px] uppercase tracking-[0.2em] text-muted-foreground ${editorialMono.className}`}
+										>
+											{item.title}
+										</p>
+										<p className="mt-2 text-sm leading-6 text-foreground/78">
+											{item.description}
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
 					</CardContent>
 				</Card>
 			</section>

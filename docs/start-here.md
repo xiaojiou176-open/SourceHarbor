@@ -16,12 +16,12 @@ individual entrypoints, start here:
 That helper stays intentionally thin. The direct `bin/*` commands below remain
 the underlying truth.
 
-## Before You Start
+## Pick Your Path
 
-- If you want the **operator path**, stay on this page and keep going.
-- If you want the **builder/distribution path**, leave this page early and jump to [builders.md](./builders.md) plus [public-distribution.md](./public-distribution.md).
-- If you want the **API image lane**, treat `ghcr.io/xiaojiou176-open/sourceharbor-api` as a separate builder surface, not the whole product stack.
-- Do not treat `ghcr.io/xiaojiou176-open/sourceharbor-ci-standard` as the install story. That image is CI/devcontainer infrastructure.
+- **Fast fit check first:** [see-it-fast.md](./see-it-fast.md)
+- **One real local result:** stay on this page
+- **Deep operator runbook:** [runbook-local.md](./runbook-local.md)
+- **Builder or distribution path:** [builders.md](./builders.md) + [public-distribution.md](./public-distribution.md)
 
 If you specifically want the packaged public wrapper instead of the operator
 path, install it after you understand the repo-local flow:
@@ -30,10 +30,6 @@ path, install it after you understand the repo-local flow:
 npm install --global ./packages/sourceharbor-cli
 sourceharbor help
 ```
-
-## Public docs as stable summary
-
-This page keeps the shortest operator story without pulling in internal ledger details. Reader-first surfaces come first, proof ladders stay nearby, and builder or docs-blueprint context only appears when it is a stable public fact. Release-ready language, external distribution status, and gated engines are described through the linked [project-status](./project-status.md) and [proof](./proof.md) summaries so that visitors can verify each layer without chasing execution notes.
 
 ## What You Should See By The End
 
@@ -211,97 +207,15 @@ curl -sS -X POST "${SOURCE_HARBOR_API_BASE_URL}/api/v1/retrieval/search" \
   -d '{"query":"summary","top_k":5,"mode":"keyword"}' | jq
 ```
 
-## Release vs main vs distribution ledger
+## After Your First Result
 
-This doc keeps all three public truth ledgers obvious. [project-status.md](./project-status.md) records the release-current proof, [proof.md](./proof.md) shows the evidence ladder for release vs remote vs local, and [public-distribution.md](./public-distribution.md) holds the external submission matrix. When you cite release or distribution claims, link back to those ledgers so readers can verify the exact proof set instead of chasing dated hashes.
+Use these off-ramps instead of keeping every deep operator detail on this page:
 
-Open these UI views:
-
-- `/` for the command center
-- `/ops` for operator diagnostics and live-hardening gates
-- `/subscriptions` for strong-supported video templates plus generalized RSSHub/RSS intake, now staged as a tracked-universe atlas and manual-intake workbench backed by the same template catalog contract that the API and MCP surfaces expose, including one-off video/article URLs that can enter today without first becoming recurring subscriptions
-- `/search` for grounded search across SourceHarbor artifacts
-- `/ask` for the story-aware, briefing-backed Ask front door, with a server-owned story page payload over the answer/change/evidence view
-- `/reader` for the published-doc frontstage: merged reader docs, singleton polish docs, navigation brief, yellow warning, and source contribution drawer
-- `/feed` for the digest reading flow, with source identity cards, affiliation cues, and a direct bridge into the current reader edition whenever that digest already materialized into a published reader document
-- `/jobs?job_id=<job-id>` for pipeline trace and artifacts
-- `/watchlists` for long-lived tracking objects
-- `/trends` for merged stories plus recent evidence runs
-- `/briefings` for the summary-first watchlist briefing: current story, then changes, then evidence drill-down, with one canonical selected-story payload and Ask handoff owned by the server
-- `/mcp` for the MCP front door and quickstart
-- `/settings` for notifications and test sends
-
-## Operator Path: Continuous Intake
-
-If you want the longer-lived workflow instead of one-off processing:
-
-1. Add one or more subscriptions in the web UI or via `POST /api/v1/subscriptions`
-2. Use the built-in template split honestly:
-   - strong-supported YouTube/Bilibili presets when you want the richer video lane
-   - generalized RSSHub / generic RSS intake when the source universe widens
-   - do not treat generalized intake as route-by-route RSSHub proof
-3. Trigger `POST /api/v1/ingest/poll` to refresh the Track lane and update the pending pool
-4. Keep the returned `run_id` so you can inspect `GET /api/v1/ingest/runs/<run-id>`
-5. Trigger `POST /api/v1/ingest/consume` when you want the Consume lane to freeze one batch and process queued items
-6. Trigger `POST /api/v1/reader/batches/<batch-id>/materialize` when you want the batch to become published reader docs immediately
-7. Read the resulting documents in `/reader`
-8. Inspect `/trends` when you want the merged-story view over repeated themes
-9. Inspect `/briefings` when you want the lower-cognitive-load unified story view for one watchlist; the selected story and Ask handoff should now stay on the same server-owned story truth instead of parallel page aliases
-10. Inspect the job page for retries, degradations, and artifact links
-
-That path is what turns SourceHarbor from a one-shot processor into a knowledge intake system.
-
-## Local-Only Dedicated Chrome Root
-
-When a local browser flow genuinely depends on login state, SourceHarbor now
-uses its own isolated Chrome root instead of borrowing your default Chrome user
-data directory.
-
-Think of it like moving from “sharing a desk in the public lobby” to “having one
-dedicated studio for this repo”.
-
-One-time bootstrap:
-
-```bash
-./bin/bootstrap-repo-chrome --json
-```
-
-That command copies only:
-
-- the source `Local State`
-- the source `sourceharbor` profile directory
-
-into the repo-owned target:
-
-- `${SOURCE_HARBOR_CHROME_USER_DATA_DIR}/Local State`
-- `${SOURCE_HARBOR_CHROME_USER_DATA_DIR}/${SOURCE_HARBOR_CHROME_PROFILE_DIR}/`
-
-After bootstrap, start exactly one repo-owned Chrome instance:
-
-```bash
-./bin/start-repo-chrome --json
-./bin/open-repo-chrome-tabs --site-set login-strong-check --json
-python3 scripts/runtime/resolve_chrome_profile.py --mode repo-runtime --json
-```
-
-From then on, local automation attaches to that single instance over CDP. It
-does not second-launch Chrome against the same root.
-
-If you want to reset the repo-owned Chrome session before a fresh manual login
-check, use:
-
-```bash
-./bin/stop-repo-chrome --json
-./bin/start-repo-chrome --json
-./bin/open-repo-chrome-tabs --site-set login-strong-check --json
-```
-
-Hosted CI stays login-free on purpose:
-
-- GitHub-hosted workflows must not consume `SOURCE_HARBOR_CHROME_*`
-- login-dependent browser proof is local-only
-- if a browser lane needs real login state, classify it as local proof instead of
-  forcing it into hosted CI
+- **Keep operating SourceHarbor:** `/subscriptions`, `/feed`, `/reader`, `/search`, `/ask`, `/briefings`, `/watchlists`, `/trends`, and `/jobs?job_id=<job-id>`
+- **Go from one-off processing to continuous intake:** [runbook-local.md](./runbook-local.md)
+- **Verify more than the newcomer path:** [testing.md](./testing.md)
+- **Debug runtime truth or local browser/login proof:** [runtime-truth.md](./runtime-truth.md) and [runbook-local.md](./runbook-local.md)
+- **Check release vs remote vs distribution truth:** [project-status.md](./project-status.md), [proof.md](./proof.md), and [public-distribution.md](./public-distribution.md)
 
 ## Minimum Verification
 
@@ -362,3 +276,5 @@ doctor` is already healthy.
 
 For the explicit evidence ladder, go to [proof.md](./proof.md).
 For the storage/runtime truth split, read [runtime-truth.md](./runtime-truth.md).
+For the full local operator and browser/login runbook, read
+[runbook-local.md](./runbook-local.md).

@@ -129,7 +129,7 @@ describe("feed/jobs/artifacts pages", () => {
 				screen.getAllByText("YouTube · Tech Channel").length,
 			).toBeGreaterThanOrEqual(1);
 			expect(
-				screen.getAllByText("Reader edition ready · AI Weekly edition").length,
+				screen.getAllByText("Finished reader ready · AI Weekly edition").length,
 			).toBeGreaterThanOrEqual(1);
 			expect(screen.getAllByText("Saved").length).toBeGreaterThan(0);
 			expect(screen.getByText("useful")).toBeInTheDocument();
@@ -470,9 +470,59 @@ describe("feed/jobs/artifacts pages", () => {
 			).toHaveAttribute("href", "/feed?sub=sub-reader-1");
 			expect(
 				screen.getByText(
-					"Reader edition ready · Reader edition one · published",
+					"Finished reader ready · Reader edition one · published",
 				),
 			).toBeInTheDocument();
+		},
+		PAGE_TEST_TIMEOUT_MS,
+	);
+
+	it(
+		"sanitizes raw URL feed titles before rendering the reading flow",
+		async () => {
+			mockGetDigestFeed.mockResolvedValue({
+				items: [
+					{
+						feed_id: "feed-raw-1",
+						job_id: "job-raw-1",
+						video_url: "https://www.youtube.com/watch?v=raw1",
+						title: "https://www.youtube.com/watch?v=raw1",
+						source: "youtube",
+						source_name: "",
+						category: "creator",
+						published_at: "2026-02-12T00:00:00Z",
+						summary_md: "## summary raw",
+						artifact_type: "digest",
+					},
+				],
+				has_more: false,
+				next_cursor: null,
+			});
+			mockGetArtifactMarkdown.mockResolvedValue({
+				markdown: "# Raw item\n\nMain reading body",
+				meta: { job: { id: "job-raw-1" }, frame_files: [] },
+			});
+			mockGetFeedFeedback.mockResolvedValue({
+				job_id: "job-raw-1",
+				saved: false,
+				feedback_label: null,
+				exists: false,
+				created_at: null,
+				updated_at: null,
+			});
+
+			render(await FeedPage({ searchParams: { item: "job-raw-1" } }));
+
+			expect(
+				screen.getByRole("link", { name: /YouTube source/ }),
+			).toBeInTheDocument();
+			expect(
+				screen.getAllByRole("heading", { name: "YouTube source" }),
+			).toHaveLength(2);
+			expect(
+				screen.queryByText("https://www.youtube.com/watch?v=raw1"),
+			).not.toBeInTheDocument();
+			expect(screen.getAllByText("youtube.com")).toHaveLength(1);
 		},
 		PAGE_TEST_TIMEOUT_MS,
 	);
@@ -541,7 +591,11 @@ describe("feed/jobs/artifacts pages", () => {
 			expect(screen.getByText("Article")).toBeInTheDocument();
 			expect(screen.getByText("Pinned source")).toBeInTheDocument();
 			expect(screen.getAllByText("Macro Universe").length).toBeGreaterThan(0);
-			expect(screen.getByText(/Open one item and read/i)).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					/Scan the timeline, open one item, and leave filters or reactions for later/i,
+				),
+			).toBeInTheDocument();
 			expect(
 				screen.getByRole("link", { name: "← Previous page" }),
 			).toHaveAttribute("href", "/feed?sub=sub-123&item=job-sub");

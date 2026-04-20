@@ -46,7 +46,7 @@
 
   <rect x="1054" y="186" width="466" height="280" rx="28" fill="#FFF9F2" stroke="#DCCDBA"/>
   <rect x="1086" y="216" width="402" height="52" rx="18" fill="#E8F5F0"/>
-  <text x="1114" y="250" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">Digest Feed</text>
+  <text x="1114" y="250" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700">Timeline</text>
   <rect x="1086" y="294" width="402" height="64" rx="18" fill="#FFFFFF"/>
   <text x="1114" y="324" fill="#0E2D2B" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700">AI Weekly</text>
   <text x="1114" y="348" fill="#506561" font-family="Arial, Helvetica, sans-serif" font-size="16">YouTube • Tech Channel • Tech</text>

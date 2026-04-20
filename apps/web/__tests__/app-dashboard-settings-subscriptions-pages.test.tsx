@@ -192,18 +192,21 @@ describe("dashboard/settings/subscriptions pages", () => {
 			expect(
 				screen.getByText(/If you want a softer first step/i),
 			).toBeInTheDocument();
-			expect(screen.getByRole("link", { name: "Open Feed" })).toHaveAttribute(
-				"href",
-				"/feed",
-			);
-			expect(screen.getByRole("link", { name: "Open Search" })).toHaveAttribute(
-				"href",
-				"/search",
-			);
-			expect(screen.getByRole("link", { name: "Open Ask" })).toHaveAttribute(
-				"href",
-				"/ask",
-			);
+			expect(
+				screen.getByRole("link", { name: "Open Timeline" }),
+			).toHaveAttribute("href", "/feed");
+			expect(
+				screen.queryByRole("link", { name: "Follow sources" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open Ask" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole("link", { name: "Open Search" }),
+			).not.toBeInTheDocument();
+			expect(
+				screen.getByText(/You can follow new sources after the first click/i),
+			).toBeInTheDocument();
 			expect(
 				screen.queryByRole("link", { name: "Open saved topics" }),
 			).not.toBeInTheDocument();

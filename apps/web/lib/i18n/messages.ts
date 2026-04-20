@@ -27,7 +27,7 @@ const MESSAGES = {
 				knowledge: "Source notes",
 				jobs: "Processing history",
 				ingestRuns: "Import history",
-				feed: "Reading desk",
+				feed: "Timeline",
 				settings: "Settings",
 				useCases: "Use cases",
 				page: "Page",
@@ -45,8 +45,8 @@ const MESSAGES = {
 				message: "This will only take a moment.",
 			},
 			feed: {
-				title: "Preparing the digest desk",
-				message: "Loading the current reading stack.",
+				title: "Preparing the timeline",
+				message: "Loading the current reading flow.",
 			},
 			jobs: {
 				title: "Job trace loading",
@@ -121,6 +121,8 @@ const MESSAGES = {
 			heroTitle: "Start with something worth reading",
 			heroSubtitle:
 				"Open the reader, scan today's feed, or follow a few new sources. Everything else can wait.",
+			sourceStripKicker: "Follow from the sources you already trust",
+			sourceStrip: ["YouTube", "Bilibili", "GitHub", "RSSHub", "RSS"],
 			frontDoors: {
 				subscriptionsTitle: "Follow sources",
 				subscriptionsDescription:
@@ -163,6 +165,8 @@ const MESSAGES = {
 				returnLoopDescription:
 					"Saved topics and briefs give you a reason to come back tomorrow.",
 			},
+			whyNowCompact:
+				"Reader first. Source trails stay nearby. Saved topics give you a reason to come back tomorrow.",
 			firstHop: {
 				evaluateTitle: "Read the finished surface first",
 				evaluateDescription: "Start with the clean reading surface first.",
@@ -172,7 +176,7 @@ const MESSAGES = {
 				operateDescription:
 					"Add a creator, site, or feed, then let the reading list catch up.",
 				operatePrimaryCta: "Follow sources",
-				operateSecondaryCta: "Open Feed",
+				operateSecondaryCta: "Open Timeline",
 				operateTertiaryCta: "Open Trends",
 				buildTitle: "Use developer tools later",
 				buildDescription:
@@ -506,13 +510,13 @@ const MESSAGES = {
 			},
 		},
 		feedPage: {
-			metadataTitle: "Reading Feed",
+			metadataTitle: "Timeline",
 			metadataDescription:
 				"SourceHarbor digest feed for reading entries, filtering source/category/feedback, and moving from feed curation into reading pane, job trace, and evidence.",
-			kicker: "SourceHarbor Feed",
-			heroTitle: "Reading Feed",
+			kicker: "Follow the story",
+			heroTitle: "Timeline",
 			heroSubtitle:
-				"Browse the desk, preview one item, then open the finished reader only when it is worth the jump.",
+				"Scan the timeline, open one item, and leave filters or reactions for later.",
 			filterRegionLabel: "Digest filters",
 			filterLabels: {
 				source: "Source",
@@ -1293,7 +1297,7 @@ const MESSAGES = {
 				knowledge: "Source notes",
 				jobs: "Processing history",
 				ingestRuns: "Import history",
-				feed: "Reading desk",
+				feed: "Timeline",
 				settings: "Settings",
 				useCases: "Use cases",
 				page: "Page",
@@ -1381,6 +1385,8 @@ const MESSAGES = {
 			heroTitle: "从 source intake 走到 finished reading",
 			heroSubtitle:
 				"先选一条第一路径：挂接 source universe、进入阅读桌面，或在故事成形后直接打开 reader。builder rail 保持次级入口。",
+			sourceStripKicker: "先从你已经信任的来源开始",
+			sourceStrip: ["YouTube", "Bilibili", "GitHub", "RSSHub", "RSS"],
 			frontDoors: {
 				subscriptionsTitle: "Source-universe intake",
 				subscriptionsDescription:
@@ -1425,6 +1431,8 @@ const MESSAGES = {
 				returnLoopDescription:
 					"Watchlists、trends、briefings、bundles 和 playground 让 SourceHarbor 更像可反复回来的阅读系统，而不是一次性 summarizer。",
 			},
+			whyNowCompact:
+				"先把故事读完，来源线索留在手边，保存的主题和 brief 负责让你下次再回来。",
 			firstHop: {
 				evaluateTitle: "Read the finished surface first",
 				evaluateDescription:
@@ -1435,7 +1443,7 @@ const MESSAGES = {
 				operateDescription:
 					"先挂上一个 source universe，再在 source 动起来后进入 digest desk。",
 				operatePrimaryCta: "Open Subscriptions",
-				operateSecondaryCta: "Open Feed",
+				operateSecondaryCta: "Open Timeline",
 				operateTertiaryCta: "Open Trends",
 				buildTitle: "开发者入口",
 				buildDescription:
@@ -1765,13 +1773,13 @@ const MESSAGES = {
 			},
 		},
 		feedPage: {
-			metadataTitle: "Digest Feed",
+			metadataTitle: "Timeline",
 			metadataDescription:
 				"SourceHarbor 的 digest feed，用于阅读条目、按 source/category/feedback 过滤，并从 feed curation 回到 reading pane、job trace 与 evidence。",
-			kicker: "SourceHarbor Feed",
-			heroTitle: "Digest Feed",
+			kicker: "跟着故事走",
+			heroTitle: "Timeline",
 			heroSubtitle:
-				"先看桌面、预览一条，再决定要不要打开 finished reader；过滤器只在需要时再打开。",
+				"先扫一遍时间线，打开一条开始读；过滤器和反馈动作都放到后面。",
 			filterRegionLabel: "Digest filters",
 			filterLabels: {
 				source: "Source",

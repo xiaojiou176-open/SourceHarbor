@@ -61,7 +61,7 @@ Why it matters:
 
 - it turns the repo from "a bunch of scripts" into a usable operating surface
 
-### 2. Digest Feed
+### 2. Timeline
 
 This is the reading surface.
 

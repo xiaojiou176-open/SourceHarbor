@@ -955,11 +955,24 @@ process_video() {
   local url="$2"
   local mode="$3"
   local label="$4"
+  local subtitle_asr_enabled="${5:-0}"
+  local subtitle_asr_model="${6:-}"
+  local subtitle_timeout_seconds="${7:-}"
   local idempotency_key
   idempotency_key="$(
-    PLATFORM="$platform" URL="$url" MODE="$mode" python3 - <<'PY'
+    PLATFORM="$platform" URL="$url" MODE="$mode" SUBTITLE_ASR_ENABLED="$subtitle_asr_enabled" SUBTITLE_ASR_MODEL="$subtitle_asr_model" SUBTITLE_TIMEOUT_SECONDS="$subtitle_timeout_seconds" python3 - <<'PY'
 import hashlib
+import json
 import os
+
+overrides = {}
+if os.environ.get("SUBTITLE_ASR_ENABLED") == "1":
+    subtitles = {"asr_fallback_enabled": True}
+    if os.environ.get("SUBTITLE_ASR_MODEL"):
+        subtitles["asr_model_size"] = os.environ["SUBTITLE_ASR_MODEL"]
+    if os.environ.get("SUBTITLE_TIMEOUT_SECONDS"):
+        subtitles["subprocess_timeout_seconds"] = int(os.environ["SUBTITLE_TIMEOUT_SECONDS"])
+    overrides["subtitles"] = subtitles
 
 raw = "|".join(
     (
@@ -967,6 +980,7 @@ raw = "|".join(
         os.environ["PLATFORM"],
         os.environ["URL"],
         os.environ["MODE"],
+        json.dumps(overrides, ensure_ascii=False, sort_keys=True),
         "force=true",
     )
 )
@@ -976,13 +990,21 @@ PY
 
   local payload
   payload="$(
-    PLATFORM="$platform" URL="$url" MODE="$mode" python3 - <<'PY'
+    PLATFORM="$platform" URL="$url" MODE="$mode" SUBTITLE_ASR_ENABLED="$subtitle_asr_enabled" SUBTITLE_ASR_MODEL="$subtitle_asr_model" SUBTITLE_TIMEOUT_SECONDS="$subtitle_timeout_seconds" python3 - <<'PY'
 import json
 import os
+overrides = {}
+if os.environ.get("SUBTITLE_ASR_ENABLED") == "1":
+    subtitles = {"asr_fallback_enabled": True}
+    if os.environ.get("SUBTITLE_ASR_MODEL"):
+        subtitles["asr_model_size"] = os.environ["SUBTITLE_ASR_MODEL"]
+    if os.environ.get("SUBTITLE_TIMEOUT_SECONDS"):
+        subtitles["subprocess_timeout_seconds"] = int(os.environ["SUBTITLE_TIMEOUT_SECONDS"])
+    overrides["subtitles"] = subtitles
 print(json.dumps({
   "video": {"platform": os.environ["PLATFORM"], "url": os.environ["URL"]},
   "mode": os.environ["MODE"],
-  "overrides": {},
+  "overrides": overrides,
   "force": True,
 }))
 PY
@@ -1143,7 +1165,8 @@ PY
 wait_for_terminal_status() {
   local job_id="$1"
   local label="$2"
-  local deadline=$((SECONDS + LIVE_SMOKE_TIMEOUT_SECONDS))
+  local timeout_seconds="${3:-$LIVE_SMOKE_TIMEOUT_SECONDS}"
+  local deadline=$((SECONDS + timeout_seconds))
   local status=""
   local pipeline_final_status=""
   local effective_final_status=""
@@ -1322,8 +1345,8 @@ main() {
 
   log "Scenario: Bilibili full"
   local bilibili_job_id
-  bilibili_job_id="$(process_video "bilibili" "$BILIBILI_SMOKE_URL" "full" "bilibili_full")"
-  wait_for_terminal_status "$bilibili_job_id" "video_process:bilibili_full"
+  bilibili_job_id="$(process_video "bilibili" "$BILIBILI_SMOKE_URL" "full" "bilibili_full" "1" "tiny" "420")"
+  wait_for_terminal_status "$bilibili_job_id" "video_process:bilibili_full" "420"
 
   log "Scenario: Gemini degrade(text_only fallback path)"
   local degrade_job_id

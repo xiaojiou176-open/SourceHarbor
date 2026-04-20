@@ -651,7 +651,9 @@ class ReaderPipelineService:
         metadata_thumbnail = str(digest_meta.get("thumbnail") or "").strip() or None
         identity_status = "derived_identity"
         relation_kind = "manual_one_off" if source_origin == "manual_injected" else source_origin
-        affiliation_label: str | None = "Today lane" if source_origin == "manual_injected" else None
+        affiliation_label: str | None = (
+            "Reading today" if source_origin == "manual_injected" else None
+        )
         if subscription_row is not None:
             source_name = resolve_source_name(
                 source_type=str(getattr(subscription_row, "source_type", "") or ""),
