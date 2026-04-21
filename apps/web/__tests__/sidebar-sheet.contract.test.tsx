@@ -264,10 +264,10 @@ describe("Sidebar + Sheet contract", () => {
 				/>,
 			);
 
-			const toggle = screen.getByRole("button", { name: "Collapse sidebar" });
+			const toggle = screen.getByRole("button", { name: "Expand sidebar" });
 			fireEvent.click(toggle);
 			expect(
-				screen.getByRole("button", { name: "Open navigation panel" }),
+				screen.getByRole("button", { name: "Collapse sidebar" }),
 			).toBeInTheDocument();
 		},
 		SIDEBAR_TIMEOUT_MS,

@@ -158,9 +158,15 @@ def test_build_evidence_bundle_flattens_meta_and_surfaces_rich_evidence() -> Non
     }
     service.resolve_llm_gate_fields = lambda **kwargs: (True, True, None)
     service.get_pipeline_final_status = lambda job_id, fallback_status: "succeeded"
+    service._build_commentary_evidence = lambda artifact_root, digest_path: {
+        "top_comment_count": 2,
+        "reply_bucket_count": 1,
+        "top_threads": [{"author": "demo-user", "like_count": 12, "reply_count": 3}],
+    }
     service.get_artifacts_index = lambda artifact_root, artifact_digest_md, steps: {
         "digest": "digest.md",
         "danmaku": "danmaku.json",
+        "comments": "comments.json",
     }
     service.get_degradations = lambda artifact_root, artifact_digest_md, steps: []
     service.get_notification_retry = lambda job_id: None
@@ -173,6 +179,7 @@ def test_build_evidence_bundle_flattens_meta_and_surfaces_rich_evidence() -> Non
     assert payload["digest_meta"]["raw_stage_contract"]["video_contract_satisfied"] is True
     assert payload["rich_evidence"]["danmaku"]["entry_count"] == 1
     assert payload["rich_evidence"]["site_objects"]["owner"]["mid"] == "12345"
+    assert payload["rich_evidence"]["commentary"]["top_comment_count"] == 2
     assert payload["artifact_manifest"]["danmaku"] == "danmaku.json"
 
 
