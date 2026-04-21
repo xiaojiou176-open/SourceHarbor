@@ -44,19 +44,28 @@ LOGIN_SITE_SETS: dict[str, list[dict[str, str]]] = {
 def _classify_site_result(
     *, label: str, requested_url: str, final_url: str, final_title: str
 ) -> dict[str, str]:
-    normalized_url = final_url.lower().strip()
+    parsed_url = urllib.parse.urlparse(final_url)
+    hostname = str(parsed_url.hostname or "").strip().lower()
+    path = str(parsed_url.path or "").strip().lower()
     login_state = "unknown"
     if label == "bilibili_account":
-        if "account.bilibili.com/account/home" in normalized_url:
+        if hostname == "account.bilibili.com" and path == "/account/home":
             login_state = "authenticated"
-        elif "passport.bilibili.com" in normalized_url or "login" in normalized_url:
+        elif hostname == "passport.bilibili.com" or path.startswith("/login"):
             login_state = "login_required"
     elif label == "google_account":
-        login_state = "authenticated" if "myaccount.google.com" in normalized_url else "unknown"
+        login_state = "authenticated" if hostname == "myaccount.google.com" else "unknown"
     elif label == "youtube_home":
-        login_state = "authenticated" if "youtube.com" in normalized_url else "unknown"
+        login_state = (
+            "authenticated"
+            if hostname in {"www.youtube.com", "youtube.com", "m.youtube.com"}
+            else "unknown"
+        )
     elif label == "resend_login":
-        login_state = "login_required" if "resend.com/login" in normalized_url else "authenticated"
+        if hostname == "resend.com" and path.startswith("/login"):
+            login_state = "login_required"
+        elif hostname == "resend.com":
+            login_state = "authenticated"
     proof_kind = "url_page_state" if final_url else "open_tab_only"
     return {
         "requested_url": requested_url,

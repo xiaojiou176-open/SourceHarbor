@@ -442,6 +442,36 @@ def test_open_repo_chrome_tabs_reports_bilibili_login_state(
     assert bilibili_result["final_url"] == "https://account.bilibili.com/account/home"
 
 
+def test_classify_site_result_uses_parsed_hostname_instead_of_substring_match() -> None:
+    module = _load_module(
+        "scripts/runtime/open_repo_chrome_tabs.py",
+        "open_repo_chrome_tabs_classify_site_result",
+    )
+
+    bilibili = module._classify_site_result(
+        label="bilibili_account",
+        requested_url="https://account.bilibili.com/account/home",
+        final_url="https://evil.example/path?next=https://account.bilibili.com/account/home",
+        final_title="evil",
+    )
+    google = module._classify_site_result(
+        label="google_account",
+        requested_url="https://myaccount.google.com/",
+        final_url="https://evil.example/myaccount.google.com/",
+        final_title="evil",
+    )
+    youtube = module._classify_site_result(
+        label="youtube_home",
+        requested_url="https://www.youtube.com/",
+        final_url="https://evil.example/redirect/youtube.com",
+        final_title="evil",
+    )
+
+    assert bilibili["login_state"] == "unknown"
+    assert google["login_state"] == "unknown"
+    assert youtube["login_state"] == "unknown"
+
+
 def test_open_repo_chrome_tabs_fails_when_repo_owned_process_is_missing(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
