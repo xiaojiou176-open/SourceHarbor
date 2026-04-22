@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { WebActionSessionHiddenInput } from "@/components/web-action-session-hidden-input";
 import { apiClient } from "@/lib/api/client";
+import type { VendorSignalCatalogResponse } from "@/lib/api/types";
 import { formatDateTime } from "@/lib/format";
 import { getLocaleMessages } from "@/lib/i18n/messages";
 import {
@@ -28,7 +29,6 @@ import {
 	type SearchParamsInput,
 } from "@/lib/search-params";
 import { buildProductMetadata } from "@/lib/seo";
-import type { VendorSignalCatalogResponse } from "@/lib/api/types";
 
 const watchlistsCopy = getLocaleMessages().watchlistsPage;
 
@@ -90,8 +90,8 @@ export default async function WatchlistsPage({
 			.catch(() => ({ items: [], error: true })),
 		apiClient
 			.getOpsInbox({ limit: 4, window_hours: 24 })
-				.then((payload) => ({ payload, error: false }))
-				.catch(() => ({ payload: null, error: true })),
+			.then((payload) => ({ payload, error: false }))
+			.catch(() => ({ payload: null, error: true })),
 		apiClient
 			.listVendorSignalTemplates()
 			.then((payload) => ({ payload, error: false }))
@@ -116,12 +116,14 @@ export default async function WatchlistsPage({
 		deliveryChannel: deliveryChannelParam.trim() || "dashboard",
 	};
 	const starterVendor = !editingWatchlist
-		? vendorCatalog.vendors.find(
+		? (vendorCatalog.vendors.find(
 				(vendor) =>
 					vendor.starter_watchlist.name === starterDefaults.name ||
-					(vendor.starter_watchlist.matcher_type === starterDefaults.matcherType &&
-						vendor.starter_watchlist.matcher_value === starterDefaults.matcherValue),
-			) ?? null
+					(vendor.starter_watchlist.matcher_type ===
+						starterDefaults.matcherType &&
+						vendor.starter_watchlist.matcher_value ===
+							starterDefaults.matcherValue),
+			) ?? null)
 		: null;
 	const trendWatchlist = editingWatchlist ?? watchlists[0] ?? null;
 	const trendResult = trendWatchlist
@@ -372,9 +374,9 @@ export default async function WatchlistsPage({
 							<CardHeader>
 								<CardTitle>Continue with {starterVendor.label}</CardTitle>
 								<CardDescription>
-									Step 2 of 3. Name the watchlist, confirm the matcher, then
-									use briefings to read the current story, the recent changes,
-									and the receipts together.
+									Step 2 of 3. Name the watchlist, confirm the matcher, then use
+									briefings to read the current story, the recent changes, and
+									the receipts together.
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="space-y-3">
@@ -407,7 +409,8 @@ export default async function WatchlistsPage({
 								<CardTitle>Vendor starters</CardTitle>
 								<CardDescription>
 									Start from the vendor you already care about. Keep the
-									briefing goal and signal mix visible, then tune matching later.
+									briefing goal and signal mix visible, then tune matching
+									later.
 								</CardDescription>
 							</CardHeader>
 							<CardContent className="grid gap-3">
@@ -455,7 +458,9 @@ export default async function WatchlistsPage({
 					<details
 						className="group rounded-xl border border-border/70 bg-card text-card-foreground folo-surface"
 						id="create-watchlist"
-						open={openCreateWatchlist || isReadyEmpty || Boolean(editingWatchlist)}
+						open={
+							openCreateWatchlist || isReadyEmpty || Boolean(editingWatchlist)
+						}
 					>
 						<summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-6 py-6 marker:content-none [&::-webkit-details-marker]:hidden">
 							<div className="space-y-1">
@@ -528,7 +533,8 @@ export default async function WatchlistsPage({
 									}
 									type="text"
 									defaultValue={
-										editingWatchlist?.matcher_value ?? starterDefaults.matcherValue
+										editingWatchlist?.matcher_value ??
+										starterDefaults.matcherValue
 									}
 									placeholder={copy.matcherValuePlaceholder}
 									required

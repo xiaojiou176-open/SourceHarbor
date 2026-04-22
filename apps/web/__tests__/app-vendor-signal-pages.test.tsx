@@ -117,7 +117,8 @@ describe("vendor signal surfaces", () => {
 						matcher_type: "source_match",
 						matcher_value: "openai",
 						delivery_channel: "dashboard",
-						briefing_goal: "What changed across official OpenAI channels this week?",
+						briefing_goal:
+							"What changed across official OpenAI channels this week?",
 					},
 					channels: [
 						{
@@ -159,7 +160,10 @@ describe("vendor signal surfaces", () => {
 		expect(screen.getAllByText("Observation layer").length).toBeGreaterThan(0);
 		expect(
 			screen.getByRole("link", { name: "Paste first confirmed source" }),
-		).toHaveAttribute("href", expect.stringContaining("/subscriptions?raw_input="));
+		).toHaveAttribute(
+			"href",
+			expect.stringContaining("/subscriptions?raw_input="),
+		);
 		expect(
 			screen.getByRole("link", { name: "Create vendor watchlist" }),
 		).toHaveAttribute("href", expect.stringContaining("/watchlists?compose=1"));
@@ -172,11 +176,16 @@ describe("vendor signal surfaces", () => {
 			screen.getByRole("heading", { name: "Vendor starters" }),
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(/What changed across official OpenAI channels this week/i),
+			screen.getByText(
+				/What changed across official OpenAI channels this week/i,
+			),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", { name: "Create starter watchlist" }),
-		).toHaveAttribute("href", expect.stringContaining("matcher_type=source_match"));
+		).toHaveAttribute(
+			"href",
+			expect.stringContaining("matcher_type=source_match"),
+		);
 	});
 
 	it("opens the create form when vendor starter params prefill a watchlist", async () => {
@@ -192,9 +201,7 @@ describe("vendor signal surfaces", () => {
 			}),
 		);
 
-		expect(
-			screen.getByText("Continue with OpenAI"),
-		).toBeInTheDocument();
+		expect(screen.getByText("Continue with OpenAI")).toBeInTheDocument();
 		expect(screen.getByDisplayValue("OpenAI signals")).toBeInTheDocument();
 		expect(screen.getByDisplayValue("openai")).toBeInTheDocument();
 	});
@@ -202,7 +209,9 @@ describe("vendor signal surfaces", () => {
 	it("points empty briefings back to vendor sources and watchlists", async () => {
 		render(await BriefingsPage({ searchParams: {} }));
 
-		expect(screen.getByText(/Start with vendor sources first/i)).toBeInTheDocument();
+		expect(
+			screen.getByText(/Start with vendor sources first/i),
+		).toBeInTheDocument();
 		expect(screen.getByText("Current summary")).toBeInTheDocument();
 		expect(screen.getByText("Recent changes")).toBeInTheDocument();
 		expect(screen.getByText("Evidence nearby")).toBeInTheDocument();

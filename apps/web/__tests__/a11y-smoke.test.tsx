@@ -159,7 +159,8 @@ describe("a11y smoke", () => {
 						matcher_type: "source_match",
 						matcher_value: "openai",
 						delivery_channel: "dashboard",
-						briefing_goal: "What changed across official OpenAI channels this week?",
+						briefing_goal:
+							"What changed across official OpenAI channels this week?",
 					},
 					confirmation_chain: [],
 					channels: [

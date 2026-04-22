@@ -208,7 +208,9 @@ export default async function BriefingsPage({
 						</div>
 						<div className="flex flex-wrap gap-3">
 							<Button asChild variant="hero" size="sm">
-								<Link href="/subscriptions#vendor-sources">Open vendor sources</Link>
+								<Link href="/subscriptions#vendor-sources">
+									Open vendor sources
+								</Link>
 							</Button>
 							<Button asChild variant="outline" size="sm">
 								<Link href="/watchlists?compose=1#create-watchlist">

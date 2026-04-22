@@ -11,10 +11,10 @@ import {
 	FormSelectField,
 } from "@/components/form-field";
 import { ManualSourceIntakePanel } from "@/components/manual-source-intake-panel";
+import { SignalStrip } from "@/components/signal-strip";
 import { SourceIdentityCard } from "@/components/source-identity-card";
 import { SubmitButton } from "@/components/submit-button";
 import { SubscriptionBatchPanel } from "@/components/subscription-batch-panel";
-import { SignalStrip } from "@/components/signal-strip";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -224,34 +224,34 @@ export default async function SubscriptionsPage({
 	const sessionToken = getActionSessionTokenForForm();
 	const [subscriptionsResult, templateCatalogResult, vendorCatalogResult] =
 		await Promise.all([
-		apiClient
-			.listSubscriptions()
-			.then((data) => ({ data, errorCode: null as string | null }))
-			.catch(() => ({
-				data: [] as Awaited<ReturnType<typeof apiClient.listSubscriptions>>,
-				errorCode: "ERR_REQUEST_FAILED",
-			})),
-		apiClient
-			.listSubscriptionTemplates()
-			.then((data) => ({ data, errorCode: null as string | null }))
-			.catch(() => ({
-				data: {
-					support_tiers: [],
-				templates: [],
-			} satisfies SubscriptionTemplateCatalogResponse,
-				errorCode: "ERR_REQUEST_FAILED",
-			})),
-		apiClient
-			.listVendorSignalTemplates()
-			.then((data) => ({ data, errorCode: null as string | null }))
-			.catch(() => ({
-				data: {
-					signal_layers: [],
-					vendors: [],
-				} satisfies VendorSignalCatalogResponse,
-				errorCode: "ERR_REQUEST_FAILED",
-			})),
-	]);
+			apiClient
+				.listSubscriptions()
+				.then((data) => ({ data, errorCode: null as string | null }))
+				.catch(() => ({
+					data: [] as Awaited<ReturnType<typeof apiClient.listSubscriptions>>,
+					errorCode: "ERR_REQUEST_FAILED",
+				})),
+			apiClient
+				.listSubscriptionTemplates()
+				.then((data) => ({ data, errorCode: null as string | null }))
+				.catch(() => ({
+					data: {
+						support_tiers: [],
+						templates: [],
+					} satisfies SubscriptionTemplateCatalogResponse,
+					errorCode: "ERR_REQUEST_FAILED",
+				})),
+			apiClient
+				.listVendorSignalTemplates()
+				.then((data) => ({ data, errorCode: null as string | null }))
+				.catch(() => ({
+					data: {
+						signal_layers: [],
+						vendors: [],
+					} satisfies VendorSignalCatalogResponse,
+					errorCode: "ERR_REQUEST_FAILED",
+				})),
+		]);
 	const subscriptions = subscriptionsResult.data;
 	const templateCatalog = templateCatalogResult.data;
 	const vendorCatalog = vendorCatalogResult.data;
@@ -423,12 +423,15 @@ export default async function SubscriptionsPage({
 						<p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
 							Vendor radar
 						</p>
-						<h2 className={`text-2xl font-semibold ${editorialSerif.className}`}>
+						<h2
+							className={`text-2xl font-semibold ${editorialSerif.className}`}
+						>
 							Vendor sources
 						</h2>
 						<CardDescription>
 							Follow official changelog, release-note, status, and blog lanes
-							first. Keep X as a fast signal later, not as the main truth source.
+							first. Keep X as a fast signal later, not as the main truth
+							source.
 						</CardDescription>
 					</CardHeader>
 					<CardContent className="space-y-4">
@@ -621,7 +624,9 @@ export default async function SubscriptionsPage({
 							</span>
 						</summary>
 						<div className="border-t border-border/50 px-6 pb-6 pt-4">
-							<BilibiliDiscoveryDesk trackedCreators={bilibiliTrackedCreators} />
+							<BilibiliDiscoveryDesk
+								trackedCreators={bilibiliTrackedCreators}
+							/>
 						</div>
 					</details>
 				</section>
