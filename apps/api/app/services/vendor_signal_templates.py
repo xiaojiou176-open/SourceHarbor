@@ -6,9 +6,7 @@ from typing import Any
 
 from apps.runtime_paths import get_runtime_config_root
 
-_TEMPLATE_FILE = (
-    get_runtime_config_root() / "source-templates" / "vendor_signal_templates.json"
-)
+_TEMPLATE_FILE = get_runtime_config_root() / "source-templates" / "vendor_signal_templates.json"
 
 
 def _normalize_signal_layer(item: Any) -> dict[str, str] | None:
@@ -44,8 +42,7 @@ def _normalize_starter_watchlist(item: Any) -> dict[str, Any] | None:
         "name": str(item.get("name") or "").strip(),
         "matcher_type": str(item.get("matcher_type") or "").strip(),
         "matcher_value": str(item.get("matcher_value") or "").strip(),
-        "delivery_channel": str(item.get("delivery_channel") or "dashboard").strip()
-        or "dashboard",
+        "delivery_channel": str(item.get("delivery_channel") or "dashboard").strip() or "dashboard",
         "briefing_goal": str(item.get("briefing_goal") or "").strip(),
     }
     if not normalized["name"] or not normalized["matcher_type"] or not normalized["matcher_value"]:

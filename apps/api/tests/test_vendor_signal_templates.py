@@ -20,13 +20,11 @@ def test_vendor_signal_catalog_exposes_official_and_observation_layers() -> None
     assert openai["starter_watchlist"]["matcher_type"] == "source_match"
     assert openai["starter_watchlist"]["matcher_value"] == "openai"
     assert any(
-        channel["channel_kind"] == "x_account"
-        and channel["signal_layer"] == "observation"
+        channel["channel_kind"] == "x_account" and channel["signal_layer"] == "observation"
         for channel in openai["channels"]
     )
     assert any(
-        channel["channel_kind"] == "changelog"
-        and channel["signal_layer"] == "confirmed"
+        channel["channel_kind"] == "changelog" and channel["signal_layer"] == "confirmed"
         for channel in openai["channels"]
     )
 
