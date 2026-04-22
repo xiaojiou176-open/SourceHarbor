@@ -183,6 +183,93 @@ def test_build_evidence_bundle_flattens_meta_and_surfaces_rich_evidence() -> Non
     assert payload["artifact_manifest"]["danmaku"] == "danmaku.json"
 
 
+def test_build_commentary_evidence_reads_digest_parent_and_falls_back_to_reply_buckets(
+    tmp_path: Path,
+) -> None:
+    digest_root = tmp_path / "digest-root"
+    digest_root.mkdir(parents=True, exist_ok=True)
+    digest_path = digest_root / "digest.md"
+    digest_path.write_text("# digest", encoding="utf-8")
+    comments_path = digest_root / "comments.json"
+    comments_path.write_text(
+        json.dumps(
+            {
+                "sort": "hot",
+                "top_comments": [
+                    {"comment_id": 101, "author": "alice", "content": "top", "like_count": 7},
+                    "skip-me",
+                    {
+                        "comment_id": 202,
+                        "author": "bob",
+                        "content": "inline replies",
+                        "like_count": 3,
+                        "replies": [{"id": 1}, {"id": 2}],
+                    },
+                ],
+                "replies": {"101": [{"id": 11}, {"id": 12}, {"id": 13}]},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    service = _service()
+    service._resolve_artifact_root = lambda **_: None  # type: ignore[method-assign]
+
+    payload = service._build_commentary_evidence(
+        artifact_root=None,
+        digest_path=str(digest_path),
+    )
+
+    assert payload == {
+        "sort": "hot",
+        "top_comment_count": 3,
+        "reply_bucket_count": 1,
+        "top_threads": [
+            {
+                "author": "alice",
+                "content": "top",
+                "like_count": 7,
+                "reply_count": 3,
+            },
+            {
+                "author": "bob",
+                "content": "inline replies",
+                "like_count": 3,
+                "reply_count": 2,
+            },
+        ],
+    }
+
+
+def test_build_commentary_evidence_returns_none_for_non_dict_comments_payload() -> None:
+    service = _service()
+    service._read_artifact_json = lambda **_: ["not-a-dict"]  # type: ignore[method-assign]
+
+    assert service._build_commentary_evidence(artifact_root="/tmp", digest_path=None) is None
+
+
+def test_read_artifact_json_skips_invalid_root_file_and_uses_digest_parent(tmp_path: Path) -> None:
+    artifact_root = tmp_path / "artifacts"
+    artifact_root.mkdir(parents=True, exist_ok=True)
+    digest_root = tmp_path / "digest-root"
+    digest_root.mkdir(parents=True, exist_ok=True)
+    digest_path = digest_root / "digest.md"
+    digest_path.write_text("# digest", encoding="utf-8")
+    (artifact_root / "comments.json").write_text("{bad-json", encoding="utf-8")
+    expected_payload = {"top_comments": [{"comment_id": 1}]}
+    (digest_root / "comments.json").write_text(json.dumps(expected_payload), encoding="utf-8")
+
+    service = _service()
+
+    payload = service._read_artifact_json(
+        artifact_root=str(artifact_root),
+        digest_path=str(digest_path),
+        filename="comments.json",
+    )
+
+    assert payload == expected_payload
+
+
 def test_extract_thought_metadata_supports_legacy_payload() -> None:
     payload = {
         "thought_metadata": {

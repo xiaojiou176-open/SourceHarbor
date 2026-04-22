@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib
 import os
 from datetime import UTC, datetime
+from pathlib import Path
 from types import SimpleNamespace
 
 from sqlalchemy.exc import DBAPIError
@@ -193,6 +194,63 @@ def test_build_computer_use_gate_ready_with_provider_secret() -> None:
 
     assert payload["status"] == "ready"
     assert payload["details"]["provider"] == "gemini"
+
+
+def test_load_repo_browser_proof_handles_missing_invalid_and_empty_site_payloads(
+    tmp_path, monkeypatch
+) -> None:
+    module = _load_ops_module()
+    proof_path = tmp_path / "repo-chrome-open-tabs.json"
+
+    monkeypatch.setattr(module, "REPO_ROOT", tmp_path, raising=False)
+    monkeypatch.setattr(module, "REPO_BROWSER_PROOF_PATH", proof_path, raising=False)
+
+    missing = module._load_repo_browser_proof()
+    assert missing["status"] == "blocked"
+    assert missing["artifact_path"] == Path("repo-chrome-open-tabs.json").as_posix()
+
+    proof_path.write_text("{bad-json", encoding="utf-8")
+    invalid = module._load_repo_browser_proof()
+    assert invalid["status"] == "warn"
+    assert invalid["sites"] == []
+
+    proof_path.write_text(
+        """
+        {
+          "generated_at": "2026-04-21T19:40:05Z",
+          "site_results": {
+            "bilibili_account": "skip-me"
+          }
+        }
+        """,
+        encoding="utf-8",
+    )
+    empty = module._load_repo_browser_proof()
+    assert empty["status"] == "warn"
+    assert empty["generated_at"] == "2026-04-21T19:40:05Z"
+    assert empty["sites"] == []
+
+
+def test_build_bilibili_account_ops_gate_blocks_when_browser_proof_is_not_authenticated() -> None:
+    module = _load_ops_module()
+
+    payload = module.build_bilibili_account_ops_gate(
+        repo_browser_proof={
+            "artifact_path": ".runtime-cache/reports/runtime/repo-chrome-open-tabs.json",
+            "sites": [
+                {
+                    "label": "bilibili_account",
+                    "login_state": "logged_out",
+                    "final_url": "https://account.bilibili.com/account/home",
+                }
+            ],
+        },
+        bilibili_cookie_present=True,
+    )
+
+    assert payload["status"] == "blocked"
+    assert payload["details"]["login_state"] == "logged_out"
+    assert payload["details"]["cookie_present"] is True
 
 
 def test_build_disk_governance_gate_ready_when_runtime_and_duplicate_envs_are_clear() -> None:
