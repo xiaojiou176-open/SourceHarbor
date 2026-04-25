@@ -136,13 +136,22 @@ if [[ -n "$METADATA_FILE" ]]; then
 fi
 
 if [[ "$PUSH_IMAGE" == "1" ]]; then
-  docker buildx build \
-    "${common_args[@]}" \
-    --platform "$PLATFORMS" \
-    --push \
-    "${metadata_args[@]}" \
-    "${build_args[@]}" \
-    "$ROOT_DIR"
+  if [[ -n "$METADATA_FILE" ]]; then
+    docker buildx build \
+      "${common_args[@]}" \
+      --platform "$PLATFORMS" \
+      --push \
+      "${metadata_args[@]}" \
+      "${build_args[@]}" \
+      "$ROOT_DIR"
+  else
+    docker buildx build \
+      "${common_args[@]}" \
+      --platform "$PLATFORMS" \
+      --push \
+      "${build_args[@]}" \
+      "$ROOT_DIR"
+  fi
 elif [[ "$LOAD_IMAGE" == "1" ]]; then
   docker build \
     "${common_args[@]}" \
@@ -150,10 +159,18 @@ elif [[ "$LOAD_IMAGE" == "1" ]]; then
     "${build_args[@]}" \
     "$ROOT_DIR"
 else
-  docker buildx build \
-    "${common_args[@]}" \
-    --platform "$PLATFORMS" \
-    "${metadata_args[@]}" \
-    "${build_args[@]}" \
-    "$ROOT_DIR"
+  if [[ -n "$METADATA_FILE" ]]; then
+    docker buildx build \
+      "${common_args[@]}" \
+      --platform "$PLATFORMS" \
+      "${metadata_args[@]}" \
+      "${build_args[@]}" \
+      "$ROOT_DIR"
+  else
+    docker buildx build \
+      "${common_args[@]}" \
+      --platform "$PLATFORMS" \
+      "${build_args[@]}" \
+      "$ROOT_DIR"
+  fi
 fi
